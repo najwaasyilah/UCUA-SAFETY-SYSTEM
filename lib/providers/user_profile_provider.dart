@@ -16,7 +16,7 @@ class UserProfileProvider extends ChangeNotifier {
   }
 
   void changePassword(String newPassword) {
-    // Implement password change logic here
+    //  password
     notifyListeners();
   }
 }
