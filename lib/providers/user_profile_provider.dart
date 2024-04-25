@@ -3,7 +3,7 @@ import 'package:ucua_user_profile/models/user_profile.dart';
 
 class UserProfileProvider extends ChangeNotifier {
   UserProfile _userProfile = UserProfile(
-    name: 'John Doe',
+    name: 'Najwa',
     email: 'john.doe@example.com',
     department: 'Safety Department',
   );
