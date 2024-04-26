@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:ucua_user_profile/features/app/splash_screen.dart';
-import 'package:ucua_user_profile/features/user_auth/screens/pages/homePage.dart';
-import 'package:ucua_user_profile/features/user_auth/screens/pages/loginPage.dart';
-import 'package:ucua_user_profile/features/user_auth/screens/pages/signUpPage.dart';
-//import 'package:firebase_core/firebase_core.dart';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
