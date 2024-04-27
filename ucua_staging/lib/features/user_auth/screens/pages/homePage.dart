@@ -14,13 +14,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Employee Homepage"),
+        //title: const Text("Employee Homepage"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Center(
+            Center(
               child: Text(
                 "Welcome to Employee Homepage",
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),

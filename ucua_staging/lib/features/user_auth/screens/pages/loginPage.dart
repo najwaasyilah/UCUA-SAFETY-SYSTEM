@@ -40,6 +40,11 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(
+              width: 180, // Adjust width as needed
+              height: 180, // Adjust height as needed
+              child: Image.asset('assets/ucua-logo.png'),
+            ),
               Text(
                 "Login",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
