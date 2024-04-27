@@ -14,13 +14,20 @@ class NavBar extends StatelessWidget {
             accountEmail: const Text('aimanhaiqal@gmail.com'),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image.asset('assets/ucua-logo.png'),
+                child: Image.asset('assets/pfp.png'),
               ),
             ),
             decoration: const BoxDecoration(
               color: Colors.blue,
             ),
           ),
+          ListTile(
+            leading: Icon(Icons.account_circle),
+            title: Text('View Profile'),
+            onTap: () {
+            Navigator.pushNamed(context, "/view_profile");
+          },
+        ),
           ListTile(
             leading: Icon(Icons.description),
             title: Text('Unsafe Condition'),
