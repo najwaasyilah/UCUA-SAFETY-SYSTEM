@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     // Navigate to the next screen after the splash animation completes
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         isLoading = false;
       });
