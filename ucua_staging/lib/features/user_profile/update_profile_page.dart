@@ -3,29 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/user_profile/view_profile_page.dart';
 
 class UpdateProfilePage extends StatelessWidget {
+  const UpdateProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Profile'),
+        title: const Text('Update Profile'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Department'),
+              decoration: const InputDecoration(labelText: 'Department'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Implement update profile logic
@@ -35,7 +37,7 @@ class UpdateProfilePage extends StatelessWidget {
                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set text color to white
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), // Set button background color to blue
               ),
-              child: Text('Update Profile'),
+              child: const Text('Update Profile'),
             ),
           ],
         ),

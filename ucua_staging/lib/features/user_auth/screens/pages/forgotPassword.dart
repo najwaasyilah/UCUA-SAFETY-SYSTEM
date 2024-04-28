@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/user_auth/screens/widgets/form_container_widget.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({Key? key}) : super(key: key);
+  const ForgotPasswordPage({super.key});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -25,7 +25,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: Text("Password reset email sent successfully"),
           );
         },
@@ -55,20 +55,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 "Forgot Password",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
-              Center(
+              const Center(
                 child: Text(
                   "Enter your email and We will send you a password reset link",
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               FormContainerWidget(
@@ -76,7 +76,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 hintText: "Email",
                 isPasswordField: false,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               GestureDetector(
@@ -90,7 +90,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     color: const Color.fromARGB(255, 33, 82, 243),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Reset Password",
                       style: TextStyle(
@@ -101,7 +101,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
             ],

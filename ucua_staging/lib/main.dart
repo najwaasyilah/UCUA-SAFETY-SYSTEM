@@ -10,7 +10,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //must put this
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,13 +23,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'UCUA Safety Reporting System',
       routes: {
-        '/': (context) => SplashScreen(
+        '/': (context) => const SplashScreen(
           child: LoginPage(),
         ),
-        '/login': (context) => LoginPage(),
-        '/signUp': (context) => SignUp(),
-        '/home': (context) => HomePage(),
-        '/view_profile' : (context) => ViewProfilePage(),
+        '/login': (context) => const LoginPage(),
+        '/signUp': (context) => const SignUp(),
+        '/home': (context) => const HomePage(),
+        '/view_profile' : (context) => const ViewProfilePage(),
     
         
       },

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({Key? key});
-
+  const NavBar({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -22,25 +21,25 @@ class NavBar extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('User Profile'),
+            leading: const Icon(Icons.account_circle),
+            title: const Text('User Profile'),
             onTap: () {
               Navigator.pushNamed(context, "/view_profile");
             },
           ),
           ListTile(
-            leading: Icon(Icons.description),
-            title: Text('Unsafe Condition'),
+            leading: const Icon(Icons.description),
+            title: const Text('Unsafe Condition'),
             onTap: () => print('Unsafe Condition Form tapped'),
           ),
           ListTile(
-            leading: Icon(Icons.description),
-            title: Text('Unsafe Action'),
+            leading: const Icon(Icons.description),
+            title: const Text('Unsafe Action'),
             onTap: () => print('Unsafe Action Form tapped'),
           ),
           ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Logout'),
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
             onTap: () {
               Navigator.pushNamed(context, "/login");
             },

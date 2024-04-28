@@ -16,9 +16,9 @@ class _SignUpState extends State<SignUp> {
 
   final FirebaseAuthService _auth = FirebaseAuthService();
 
-  TextEditingController _staffIDController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _staffIDController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool isSigningUp = false;
 
@@ -44,12 +44,12 @@ class _SignUpState extends State<SignUp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children:[
-              Text(
+              const Text(
                 "Sign Up",
                 style: TextStyle(fontSize:28, fontWeight: FontWeight.bold
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               FormContainerWidget(
@@ -57,7 +57,7 @@ class _SignUpState extends State<SignUp> {
                 hintText: "Staff ID",
                 isPasswordField: false,
               ),
-              SizedBox(
+              const SizedBox(
                 height:10,
               ),
               FormContainerWidget(
@@ -65,7 +65,7 @@ class _SignUpState extends State<SignUp> {
                 hintText: "Email",
                 isPasswordField: false,
               ),
-              SizedBox(
+              const SizedBox(
                 height:10,
               ),
               FormContainerWidget(
@@ -73,7 +73,7 @@ class _SignUpState extends State<SignUp> {
                 hintText: "Password",
                 isPasswordField: true,
               ),
-              SizedBox(
+              const SizedBox(
                 height:30,
               ),
               GestureDetector(
@@ -91,7 +91,7 @@ class _SignUpState extends State<SignUp> {
                   child: Center(
                     child: isSigningUp ? const CircularProgressIndicator(
                       color: Colors.white,) :
-                      Text(
+                      const Text(
                       "Sign Up",
                       style: TextStyle(
                         color: Colors.white,
@@ -101,7 +101,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height:20,
               ),
               Row(

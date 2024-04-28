@@ -39,6 +39,7 @@ dependencies:
   fluttertoast: ^8.2.5
   flutter_spinkit: ^5.2.1
 
+  firebase_core: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

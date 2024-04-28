@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ucua_staging/features/user_auth/screens/pages/loginPage.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key, required LoginPage child}) : super(key: key);
+  const SplashScreen({super.key, required LoginPage child});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 size: 50.0,
               )
             : showWelcome
-                ? Column(
+                ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
