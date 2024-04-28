@@ -29,12 +29,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUp(),
         '/home': (context) => HomePage(),
-<<<<<<< HEAD
-        //'/profile':(context) => UserProfilePage();
-=======
         '/view_profile' : (context) => ViewProfilePage(),
     
->>>>>>> 2aa26bfab2aebac6afb156704683b766582b9a6d
         
       },
     );

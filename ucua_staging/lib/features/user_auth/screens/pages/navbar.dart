@@ -11,7 +11,7 @@ class NavBar extends StatelessWidget {
         children: [
           UserAccountsDrawerHeader(
             accountName: const Text('Aiman Haiqal'),
-            accountEmail: const Text('aimanhaiqal@gmail.com'),
+            accountEmail: const Text('aiman020404@gmail.com'),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.asset('assets/pfp.png'),
@@ -23,18 +23,11 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.account_circle),
-<<<<<<< HEAD
             title: Text('User Profile'),
-            //onTap: () {
-            //Navigator.pushNamed(context, "/login");
-          //},
-=======
-            title: Text('View Profile'),
             onTap: () {
-            Navigator.pushNamed(context, "/view_profile");
-          },
->>>>>>> 2aa26bfab2aebac6afb156704683b766582b9a6d
-        ),
+              Navigator.pushNamed(context, "/view_profile");
+            },
+          ),
           ListTile(
             leading: Icon(Icons.description),
             title: Text('Unsafe Condition'),
@@ -49,11 +42,9 @@ class NavBar extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Logout'),
             onTap: () {
-            Navigator.pushNamed(context, "/login");
-          },
-        ),
-
-
+              Navigator.pushNamed(context, "/login");
+            },
+          ),
         ],
       ),
     );
