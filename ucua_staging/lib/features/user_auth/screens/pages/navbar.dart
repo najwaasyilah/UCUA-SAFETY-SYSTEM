@@ -22,6 +22,13 @@ class NavBar extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.account_circle),
+            title: Text('User Profile'),
+            //onTap: () {
+            //Navigator.pushNamed(context, "/login");
+          //},
+        ),
+          ListTile(
             leading: Icon(Icons.description),
             title: Text('Unsafe Condition'),
             onTap: () => print('Unsafe Condition Form tapped'),
@@ -38,6 +45,7 @@ class NavBar extends StatelessWidget {
             Navigator.pushNamed(context, "/login");
           },
         ),
+
 
         ],
       ),
