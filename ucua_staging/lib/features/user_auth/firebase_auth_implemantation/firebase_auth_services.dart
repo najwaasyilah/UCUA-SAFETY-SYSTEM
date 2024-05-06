@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ucua_staging/global_common/toast.dart';
 //import 'package:latestucua/global_common/toast.dart';
 
 
@@ -53,10 +54,10 @@ class FirebaseAuthService {
     } on FirebaseAuthException catch (e) {
 
       if (e.code == 'email-already-in-use') {
-        //showToast(message: 'The email address is already in use.');
+        showToast(message: 'The email address is already in use.');
         print("Invalid email or password.");
       } else {
-        //showToast(message: 'An error occurred: ${e.code}');
+        showToast(message: 'An error occurred: ${e.code}');
         print("An error code");
       }
     }
@@ -71,10 +72,10 @@ class FirebaseAuthService {
       return credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        //showToast(message: 'Invalid email or password.');
+        showToast(message: 'Invalid email or password.');
         print("Invalid email or password.");
       } else {
-        //showToast(message: 'An error occurred: ${e.code}');
+        showToast(message: 'An error occurred: ${e.code}');
         print("An error code");
       }
     }
