@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/user_auth/firebase_auth_implemantation/firebase_auth_services.dart';
+import 'package:ucua_staging/features/user_auth/screens/pages/Admin/homeAdmin.dart';
+import 'package:ucua_staging/features/user_auth/screens/pages/Employee/homeEmp.dart';
+import 'package:ucua_staging/features/user_auth/screens/pages/SafetyDept/homeSafeDept.dart';
 import 'package:ucua_staging/features/user_auth/screens/pages/forgotPassword.dart';
 import 'package:ucua_staging/features/user_auth/screens/pages/signUpPage.dart';
 import 'package:ucua_staging/features/user_auth/screens/widgets/form_container_widget.dart';
@@ -131,6 +135,44 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void route() {
+    User? user = FirebaseAuth.instance.currentUser;
+    var kk = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .get()
+            .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        if (documentSnapshot.get('role') == "Employee") {
+           Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>  empHomePage(),
+          ),
+        );
+        }
+        else if (documentSnapshot.get('role') == "Safety Department") {
+           Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>  SafetyDeptHomePage(),
+          ),
+        );
+        }
+        else if (documentSnapshot.get('role') == "Admin") {
+           Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>  adminHomePage(),
+          ),
+        );
+        }
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+  }
+
   void _signIn() async {
     setState(() {
       _isSigning = true;
@@ -147,7 +189,8 @@ class _LoginPageState extends State<LoginPage> {
 
     if (user != null) {
       showToast(message: "User is successfully signed in");
-      Navigator.pushNamed(context, "/home");
+      //Navigator.pushNamed(context, "/home");
+      route();
     } else {
       showToast(message: "Some error occurred");
     }

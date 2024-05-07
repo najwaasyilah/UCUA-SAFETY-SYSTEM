@@ -2,14 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/user_auth/screens/pages/navbar.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+
+class empHomePage extends StatefulWidget {
+  const empHomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<empHomePage> createState() => _empHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _empHomePageState extends State<empHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,4 +50,5 @@ class _HomePageState extends State<HomePage> {
       // Handle the error as needed, e.g., show a snackbar or toast with the error message.
     }
   }
+
 }

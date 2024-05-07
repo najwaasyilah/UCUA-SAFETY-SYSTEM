@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ucua_staging/features/app/splash_screen.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/homePage.dart';
 import 'package:ucua_staging/features/user_auth/screens/pages/loginPage.dart';
 import 'package:ucua_staging/features/user_auth/screens/pages/signUpPage.dart';
 import 'package:ucua_staging/features/user_profile/view_profile_page.dart';
@@ -28,7 +27,6 @@ class MyApp extends StatelessWidget {
         ),
         '/login': (context) => const LoginPage(),
         '/signUp': (context) => const SignUp(),
-        '/home': (context) => const HomePage(),
         '/view_profile' : (context) => const ViewProfilePage(),
     
         
