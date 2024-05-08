@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ucua_staging/features/user_profile/update_profile_page.dart';
-import 'package:ucua_staging/features/user_profile/change_password_page.dart';
+import 'package:ucua_staging/features/user_auth/screens/pages/Employee/user_profile/change_password_page.dart';
+import 'package:ucua_staging/features/user_auth/screens/pages/Employee/user_profile/update_profile_page.dart';
 
 class ViewProfilePage extends StatelessWidget {
   const ViewProfilePage({super.key});
