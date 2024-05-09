@@ -29,9 +29,9 @@ class _SignUpState extends State<SignUp> {
 
   bool isSigningUp = false;
 
-  var options = ['Select Your Role', 'Employee', 'Safety Department', 'Admin'];
-  var _currentItemSelected = "Select Your Role";
-  var role = "Select Your Role";
+  var options = [ 'Employee', 'Safety Department', 'Admin'];
+  var _currentItemSelected = "Employee";
+  var role = "Employee";
 
   @override
   void dispose() {
