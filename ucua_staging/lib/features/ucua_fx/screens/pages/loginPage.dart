@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ucua_staging/features/user_auth/firebase_auth_implemantation/firebase_auth_services.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/Admin/homeAdmin.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/Employee/homeEmp.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/SafetyDept/homeSafeDept.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/forgotPassword.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/signUpPage.dart';
-import 'package:ucua_staging/features/user_auth/screens/widgets/form_container_widget.dart';
+import 'package:ucua_staging/features/ucua_fx/firebase_auth_implemantation/firebase_auth_services.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/homeEmp.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/forgotPassword.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/signUpPage.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 
 class LoginPage extends StatefulWidget {

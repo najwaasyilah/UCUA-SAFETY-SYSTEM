@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // ignore: unused_import
-import 'package:ucua_staging/features/user_auth/screens/pages/Admin/user_profile/view_profile_page.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
 
 class UpdateProfilePage extends StatelessWidget {
   const UpdateProfilePage({super.key});

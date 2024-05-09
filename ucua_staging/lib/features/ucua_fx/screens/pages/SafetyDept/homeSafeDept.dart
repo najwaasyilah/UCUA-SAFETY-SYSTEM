@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/navbar.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/navbar.dart';
 
 
 class SafetyDeptHomePage extends StatefulWidget {

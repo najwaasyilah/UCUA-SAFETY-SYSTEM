@@ -1,23 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ucua_staging/features/user_auth/screens/pages/navbar.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/navbar.dart';
 
 
-class adminHomePage extends StatefulWidget {
-  const adminHomePage({super.key});
+class empHomePage extends StatefulWidget {
+  const empHomePage({super.key});
 
   @override
-  State<adminHomePage> createState() => _adminHomePageState();
+  State<empHomePage> createState() => _empHomePageState();
 }
 
-class _adminHomePageState extends State<adminHomePage> {
+class _empHomePageState extends State<empHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const NavBar(),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Admin Homepage"),
+        title: const Text("Employee Homepage"),
         backgroundColor: Colors.blue,
       ),
       body: Center(
@@ -26,7 +26,7 @@ class _adminHomePageState extends State<adminHomePage> {
           children: [
             const Center(
               child: Text(
-                "Welcome to Admin Homepage",
+                "Welcome to Employee Homepage",
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
               ),
             ),
