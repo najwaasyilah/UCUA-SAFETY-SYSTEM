@@ -50,8 +50,8 @@ class _SignUpState extends State<SignUp> {
       showToast(message: "Please enter your phone number");
     }
     if (!RegExp(r'^[0-9]{10}$').hasMatch(value!)) {
-      return 'Please enter a valid 10-digit phone number';
-      //showToast(message: "Please enter a valid 10-digit phone number");
+      //return 'Please enter a valid 10-digit phone number';
+      showToast(message: "Please enter a valid 10-digit phone number");
     }
     return null;
   }
