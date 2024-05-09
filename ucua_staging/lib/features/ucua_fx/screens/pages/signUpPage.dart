@@ -7,7 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_wid
 import 'package:ucua_staging/global_common/toast.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key});
+  const SignUp({super.key, Key});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -130,7 +130,8 @@ class _SignUpState extends State<SignUp> {
                       //return 'Please enter your email';
                       showToast(message: "Please enter your email");
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value!)) {
                       //return 'Please enter a valid email';
                       showToast(message: "Please enter a valid email");
                     }
@@ -154,7 +155,7 @@ class _SignUpState extends State<SignUp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Role: ",
                       style: TextStyle(
                         fontSize: 15,
@@ -163,7 +164,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                     DropdownButton<String>(
-                      dropdownColor: Color.fromARGB(255, 197, 210, 248),
+                      dropdownColor: const Color.fromARGB(255, 197, 210, 248),
                       isDense: true,
                       isExpanded: false,
                       iconEnabledColor: Colors.black45,
@@ -173,7 +174,7 @@ class _SignUpState extends State<SignUp> {
                           value: dropDownStringItem,
                           child: Text(
                             dropDownStringItem,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black45,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
@@ -281,7 +282,8 @@ class _SignUpState extends State<SignUp> {
           'role': role, // Add role to Firestore
         });
 
-        showToast(message: "User is successfully created. Please verify your email.");
+        showToast(
+            message: "User is successfully created. Please verify your email.");
         Navigator.pushNamed(context, "/login");
       } else {
         //showToast(message: "Some error happened");

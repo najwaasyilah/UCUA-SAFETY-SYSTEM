@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({Key? key}) : super(key: key);
+  const NavBar({super.key});
 
   Future<Map<String, dynamic>> getUserData() async {
     // Assuming you have a 'users' collection in Firestore
@@ -17,7 +17,7 @@ class NavBar extends StatelessWidget {
       future: getUserData(),
       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
         final userData = snapshot.data ?? {};
         return Drawer(

@@ -230,21 +230,21 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => empHomePage(),
+            builder: (context) => const empHomePage(),
           ),
         );
       } else if (role == "Safety Department") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SafetyDeptHomePage(),
+            builder: (context) => const SafetyDeptHomePage(),
           ),
         );
       } else if (role == "Admin") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => adminHomePage(),
+            builder: (context) => const adminHomePage(),
           ),
         );
       }

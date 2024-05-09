@@ -91,7 +91,7 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
     } catch (e) {
       print('Error updating profile: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating profile. Please try again later.')),
+        const SnackBar(content: Text('Error updating profile. Please try again later.')),
       );
     } finally {
       setState(() {

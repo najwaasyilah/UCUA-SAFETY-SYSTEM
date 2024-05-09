@@ -5,7 +5,7 @@ import '../../../widgets/form_container_widget.dart';
 import 'change_password_page.dart';
 
 class AdminProfile extends StatefulWidget {
-  const AdminProfile({Key? key}) : super(key: key);
+  const AdminProfile({super.key});
 
   @override
   State<AdminProfile> createState() => _AdminProfileState();
@@ -91,7 +91,7 @@ class _AdminProfileState extends State<AdminProfile> {
     } catch (e) {
       print('Error updating profile: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating profile. Please try again later.')),
+        const SnackBar(content: Text('Error updating profile. Please try again later.')),
       );
     } finally {
       setState(() {

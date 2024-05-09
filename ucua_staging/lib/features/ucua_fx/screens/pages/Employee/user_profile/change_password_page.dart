@@ -3,16 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({Key? key});
+  const ChangePasswordPage({super.key, Key});
 
   @override
   _ChangePasswordPageState createState() => _ChangePasswordPageState();
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmNewPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController =
+      TextEditingController();
 
   bool isChangingPassword = false;
 
@@ -44,7 +46,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: currentPassword);
+        AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!, password: currentPassword);
         await user.reauthenticateWithCredential(credential);
         await user.updatePassword(newPassword);
         showToast(message: "Password changed successfully");
@@ -86,17 +89,21 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextFormField(
               controller: _confirmNewPasswordController,
-              decoration: const InputDecoration(labelText: 'Confirm New Password'),
+              decoration:
+                  const InputDecoration(labelText: 'Confirm New Password'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: isChangingPassword ? null : _changePassword,
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: Text(isChangingPassword ? 'Changing Password...' : 'Change Password'),
+              child: Text(isChangingPassword
+                  ? 'Changing Password...'
+                  : 'Change Password'),
             ),
           ],
         ),
