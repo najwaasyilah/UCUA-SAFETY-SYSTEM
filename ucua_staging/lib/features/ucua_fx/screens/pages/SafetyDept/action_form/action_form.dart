@@ -33,16 +33,28 @@ class _ActionFormState extends State<ActionForm> {
     String staffId = _staffIdController.text;
     String icPassport = _icPassportController.text;
 
-    // Handle form submission (e.g., print or send data)
+    // Add form data to Firestore
+    CollectionReference collRef =
+        FirebaseFirestore.instance.collection('actions');
+    collRef.add({
+      'violaterName': violaterName,
+      'staffId': staffId,
+      'icPassport': icPassport,
+      'date': _selectedDate, // Add the selected date as well
+    }).then((value) {
+      print("Data Added Successfully");
+      _resetForm(); // Reset the form after successful submission
+    }).catchError((error) {
+      print("Failed to add data: $error");
+    });
+
+    // Print form data (optional)
     print('Violater Name: $violaterName');
     print('Staff Id: $staffId');
     print('IC/Passport: $icPassport');
     if (_selectedDate != null) {
       print('Date: $_selectedDate');
     }
-
-    // Reset form after submission
-    _resetForm();
   }
 
   // Function to handle form reset
@@ -158,19 +170,8 @@ class _ActionFormState extends State<ActionForm> {
                     child: Text('Back'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      CollectionReference collRef =
-                          FirebaseFirestore.instance.collection('actions');
-                      collRef.add({
-                        'violaterName': _violaterNameController.text,
-                        'staffId': _staffIdController.text,
-                        'icPassport': _icPassportController.text,
-                      }).then((value) {
-                        print("Data Added Successfully");
-                      }).catchError((error) {
-                        print("Failed to add data: $error");
-                      });
-                    },
+                    onPressed:
+                        _submitForm, // Call _submitForm() when the button is pressed
                     child: const Text('Save'),
                   ),
                 ],
