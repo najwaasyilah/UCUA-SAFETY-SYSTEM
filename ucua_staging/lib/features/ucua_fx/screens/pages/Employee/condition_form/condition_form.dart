@@ -177,6 +177,17 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
                         },
                       ),
                       const SizedBox(height: 20.0),
+                      const Text(
+                        'Date:', 
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => _selectDate(context),
+                        child: Text(
+                          _selectedDate != null ? '$_selectedDate' : 'Select Date',
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
