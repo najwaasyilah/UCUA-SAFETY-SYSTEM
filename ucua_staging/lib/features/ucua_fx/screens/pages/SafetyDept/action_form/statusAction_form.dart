@@ -24,16 +24,19 @@ class ActionStatusPage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('No data found for this document.'));
+            return const Center(
+                child: Text('No data found for this document.'));
           }
 
           final data = snapshot.data!.data() as Map<String, dynamic>;
+
+          // Building a widget to display all fields
           return Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoRow('Violater Name:', data['violaterName'] ?? 'N/A'),
+                _buildInfoRow('Violator Name:', data['violaterName'] ?? 'N/A'),
                 _buildInfoRow('Staff Id:', data['staffId'] ?? 'N/A'),
                 _buildInfoRow('IC/Passport:', data['icPassport'] ?? 'N/A'),
                 _buildInfoRow('Date:', data['date'] ?? 'N/A'),
@@ -50,6 +53,7 @@ class ActionStatusPage extends StatelessWidget {
     );
   }
 
+  /// Helper function to generate rows of data for the display
   Widget _buildInfoRow(String title, String content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

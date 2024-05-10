@@ -1,72 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ActionStatusPage extends StatelessWidget {
-  final String documentId;
+class UpdateActionPage extends StatefulWidget {
+  final String docId;
+  final Map<String, dynamic> action;
 
-  const ActionStatusPage({super.key, required this.documentId});
+  const UpdateActionPage({Key? key, required this.docId, required this.action})
+      : super(key: key);
+
+  @override
+  _UpdateActionPageState createState() => _UpdateActionPageState();
+}
+
+class _UpdateActionPageState extends State<UpdateActionPage> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _locationController;
+  late TextEditingController _offenceController;
+
+  @override
+  void initState() {
+    super.initState();
+    _locationController =
+        TextEditingController(text: widget.action['location']);
+    _offenceController = TextEditingController(text: widget.action['offence']);
+  }
+
+  @override
+  void dispose() {
+    _locationController.dispose();
+    _offenceController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Action Status')),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
-            .collection('actions')
-            .doc(documentId)
-            .get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('No data found for this document.'));
-          }
-
-          final data = snapshot.data!.data() as Map<String, dynamic>?;
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildInfoRow('Violater Name:', data?['violaterName'] ?? 'N/A'),
-                _buildInfoRow('Staff ID:', data?['staffId'] ?? 'N/A'),
-                _buildInfoRow('IC/Passport:', data?['icPassport'] ?? 'N/A'),
-                _buildInfoRow('Date:', data?['date'] ?? 'N/A'),
-                const SizedBox(height: 20.0),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Back'),
-                ),
-              ],
-            ),
-          );
-        },
+      appBar: AppBar(
+        title: Text('Update Action'),
       ),
-    );
-  }
-
-  // Helper function to build a detailed information row
-  Widget _buildInfoRow(String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: const TextStyle(fontSize: 16.0)),
-        const SizedBox(height: 5.0),
-        Container(
-          padding: const EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: Text(content, style: const TextStyle(fontSize: 16.0)),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              controller: _locationController,
+              decoration: InputDecoration(labelText: 'Location'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a location';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _offenceController,
+              decoration: InputDecoration(labelText: 'Offence'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter an offence';
+                }
+                return null;
+              },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  FirebaseFirestore.instance
+                      .collection('actions')
+                      .doc(widget.docId)
+                      .update({
+                        'location': _locationController.text,
+                        'offence': _offenceController.text,
+                      })
+                      .then((value) => Navigator.pop(context))
+                      .catchError(
+                          (error) => print("Failed to update action: $error"));
+                }
+              },
+              child: Text('Update Action'),
+            ),
+          ],
         ),
-        const SizedBox(height: 10.0),
-      ],
+      ),
     );
   }
 }
