@@ -1,25 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:ucua_staging/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
+import 'package:ucua_staging/global_common/toast.dart';
 
 class ActionForm extends StatefulWidget {
+  const ActionForm({Key? key}) : super(key: key);
+
   @override
   _ActionFormState createState() => _ActionFormState();
 }
 
 class _ActionFormState extends State<ActionForm> {
-  // Controller for text input fields
-  final _violaterNameController = TextEditingController();
-  final _staffIdController = TextEditingController();
-  final _icPassportController = TextEditingController();
 
-  // Variable to store selected date
+  //final TextEditingController _locationController = TextEditingController();
+  //final TextEditingController _offenceCodeController = TextEditingController();
+  final TextEditingController _violaterNameController = TextEditingController();
+  final TextEditingController _staffIdController = TextEditingController();
+  final TextEditingController _icPassportController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+
+  String _selectedLocation = 'ICT Department';
+  List<String> locations = ['ICT Department', 'HR Department', 'Train Track','Safety Department'];
+
+  String _selectedOffenceCode = 'Not Fasting';
+  List<String> offenceCode = ['Not Fasting', 'Sleep During Work', 'Eat During Work','Not Wearing Safety Ves'];
+
+  String _selectedICA = 'Stop Work'; 
+  List<String> icActions = ['Stop Work', 'Verbal Warning'];
+
+  List<XFile> _imageFiles = [];
+  
 
   @override
   void dispose() {
-    // Dispose text editing controllers when widget is disposed
+    //_locationController.dispose();
+    //_offenceCodeController.dispose();
     _violaterNameController.dispose();
     _staffIdController.dispose();
     _icPassportController.dispose();
@@ -27,38 +44,58 @@ class _ActionFormState extends State<ActionForm> {
   }
 
   // Function to handle form submission
-  void _submitForm() {
+  void _submitForm() async {
     // Get form data
+    String location = _selectedLocation;
+    String offenceCode = _selectedOffenceCode;
+    String ica = _selectedICA;
     String violaterName = _violaterNameController.text;
     String staffId = _staffIdController.text;
     String icPassport = _icPassportController.text;
+    String date = _selectedDate.toString();
 
-    // Handle form submission (e.g., print or send data)
-    print('Violater Name: $violaterName');
-    print('Staff Id: $staffId');
-    print('IC/Passport: $icPassport');
-    if (_selectedDate != null) {
-      print('Date: $_selectedDate');
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    //String imageUrl = await uploadImageToStorage(_imageFile!);
+
+    /*List<XFile> _imageFiles = [];
+    for (XFile imageFile in _imageFiles) {
+      String imageUrl = await uploadImageToStorage(imageFile);
+      imageUrls.add(imageUrl);
+    }*/
+
+    try {
+      await firestore.collection('uaform').add({
+        'location': location,
+        'offenceCode': offenceCode,
+        'ica': ica,
+        'violaterName': violaterName,
+        'staffId': staffId,
+        'icPassport': icPassport,
+        'date': date,
+        //'imageUrls': imageUrls,
+      });
+      print('Form data saved successfully!');
+      //showToast("Form data saved successfully!");
+    } catch (e) {
+      print('Error saving form data: $e');
     }
 
-    // Reset form after submission
     _resetForm();
   }
 
-  // Function to handle form reset
   void _resetForm() {
-    // Clear text input fields
+    //_selectedLocation.clear();
+    //_offenceCodeController.clear();
     _violaterNameController.clear();
     _staffIdController.clear();
     _icPassportController.clear();
 
     // Reset selected date
     setState(() {
-      _selectedDate = DateTime.now();
+      _selectedDate = DateTime.timestamp();
     });
   }
 
-  // Function to show date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -73,111 +110,259 @@ class _ActionFormState extends State<ActionForm> {
     }
   }
 
+  Future<void> _getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _imageFiles.add(image);
+      });
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Action Form'),
+          title: const Text('Action Form'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Location:',
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Dropdown button for location
-              SizedBox(height: 20.0),
-              Text(
-                'Offence Code:', // Changed from 'Condition Details'
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Dropdown button for offence code
-              SizedBox(height: 20.0),
-              Text(
-                'Immediate Corrective Action:', // New dropdown button for immediate corrective action
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Dropdown button for immediate corrective action
-              SizedBox(height: 20.0),
-              Text(
-                'Violater Name:', // New text input for violater name
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Text field for violater name
-              TextField(
-                controller: _violaterNameController,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Staff Id:', // New text input for staff id
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Text field for staff id
-              TextField(
-                controller: _staffIdController,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'IC/Passport:', // New text input for IC/passport
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Text field for IC/passport
-              TextField(
-                controller: _icPassportController,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Date:', // New text input for date
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Date picker for date
-              ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: Text(
-                  _selectedDate != null ? '$_selectedDate' : 'Select Date',
+        body: Container(
+          color: Colors.grey.withOpacity(.35),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(10.0), 
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5), 
+                      spreadRadius: 5, 
+                      blurRadius: 7, 
+                      offset: Offset(0,3), 
+                    ),
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          '1. U-SEE',
+                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 151, 46, 170)),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Location:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      DropdownButtonFormField<String>(
+                        value: _selectedLocation,
+                        items: locations.map((String location) {
+                          return DropdownMenuItem<String>(
+                            value: location,
+                            child: Text(location),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedLocation = newValue!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Select Location',
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Offence Code:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      DropdownButtonFormField<String>(
+                        value: _selectedOffenceCode,
+                        items: offenceCode.map((String code) {
+                          return DropdownMenuItem<String>(
+                            value: code,
+                            child: Text(code),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedOffenceCode = newValue!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Select Offence Code',
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Upload Action Picture:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      FormContainerWidget(
+                        //controller: _offenceCodeController,
+                        hintText: "Upload Evidence",
+                        isPasswordField: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            //return 'Choose your location';
+                            showToast(message: "Upload Your Evidence");
+                          }
+                          return null;
+                        },
+                      ),
+                      /*Row(
+                        children: [
+                          ElevatedButton(
+                            //onPressed: _getImage,
+                            child: const Text('Upload Picture'),
+                          ),
+                          if (_imageFile != null)
+                            Image.file(File(_imageFile!.path)),
+                        ],
+                      ),*/
+                      const SizedBox(height: 30),
+                      Center(
+                        child: Text(
+                          '2. U-ACT',
+                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 151, 46, 170)),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Suggest Immediate Corrective Action:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      DropdownButtonFormField<String>(
+                        value: _selectedICA,
+                        items: icActions.map((String icas) {
+                          return DropdownMenuItem<String>(
+                            value: icas,
+                            child: Text(icas),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedICA = newValue!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Select Immediate Corrective Action',
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Violator:',
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Violator Name:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      FormContainerWidget(
+                        controller: _violaterNameController,
+                        hintText: "Violator Name",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            //return 'Choose your location';
+                            showToast(message: "Fill in Your Name");
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Staff ID:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      FormContainerWidget(
+                        controller: _staffIdController,
+                        hintText: "Staff ID",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            //return 'Choose your location';
+                            showToast(message: "Choose your location");
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'IC/Passport:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      FormContainerWidget(
+                        controller: _icPassportController,
+                        hintText: "IC/Passport",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            //return 'Choose your location';
+                            showToast(message: "Fill in your IC/Passport");
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Date:', 
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => _selectDate(context),
+                        child: Text(
+                          _selectedDate != null ? '$_selectedDate' : 'Select Date',
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Back'),
+                          ),
+                          ElevatedButton(
+                            onPressed: _submitForm,
+                            child: const Text('Submit'),
+                          ),
+                          ElevatedButton(
+                            onPressed: _resetForm,
+                            child: const Text('Reset'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Back'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      FirebaseFirestore firebaseFirestore =
-                          FirebaseFirestore.instance;
-                      CollectionReference usersRef =
-                          firebaseFirestore.collection('users');
-                      await usersRef.add({
-                        'violaterName': _violaterNameController.text,
-                        'staffId': _staffIdController.text,
-                        'icPassport': _icPassportController.text,
-                      }).then((value) {
-                        print("Data Added Successfully");
-                      }).catchError((error) {
-                        print("Failed to add data: $error");
-                      });
-                    },
-                    child: const Text('Save'),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -188,5 +373,7 @@ class _ActionFormState extends State<ActionForm> {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MaterialApp(
+    home: ActionForm(),
+  ));
 }
