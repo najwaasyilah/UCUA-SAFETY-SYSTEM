@@ -13,7 +13,6 @@ class ActionForm extends StatefulWidget {
 }
 
 class _ActionFormState extends State<ActionForm> {
-
   //final TextEditingController _locationController = TextEditingController();
   //final TextEditingController _offenceCodeController = TextEditingController();
   final TextEditingController _violaterNameController = TextEditingController();
@@ -22,16 +21,25 @@ class _ActionFormState extends State<ActionForm> {
   DateTime _selectedDate = DateTime.now();
 
   String _selectedLocation = 'ICT Department';
-  List<String> locations = ['ICT Department', 'HR Department', 'Train Track','Safety Department'];
+  List<String> locations = [
+    'ICT Department',
+    'HR Department',
+    'Train Track',
+    'Safety Department'
+  ];
 
   String _selectedOffenceCode = 'Not Fasting';
-  List<String> offenceCode = ['Not Fasting', 'Sleep During Work', 'Eat During Work','Not Wearing Safety Ves'];
+  List<String> offenceCode = [
+    'Not Fasting',
+    'Sleep During Work',
+    'Eat During Work',
+    'Not Wearing Safety Ves'
+  ];
 
-  String _selectedICA = 'Stop Work'; 
+  String _selectedICA = 'Stop Work';
   List<String> icActions = ['Stop Work', 'Verbal Warning'];
 
   List<XFile> _imageFiles = [];
-  
 
   @override
   void dispose() {
@@ -120,8 +128,6 @@ class _ActionFormState extends State<ActionForm> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -142,14 +148,14 @@ class _ActionFormState extends State<ActionForm> {
               padding: const EdgeInsets.all(20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white, 
-                  borderRadius: BorderRadius.circular(10.0), 
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), 
-                      spreadRadius: 5, 
-                      blurRadius: 7, 
-                      offset: Offset(0,3), 
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
@@ -160,8 +166,11 @@ class _ActionFormState extends State<ActionForm> {
                     children: [
                       Center(
                         child: Text(
-                          '1. U-SEE',
-                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 151, 46, 170)),
+                          '   ',
+                          style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 151, 46, 170)),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -243,8 +252,11 @@ class _ActionFormState extends State<ActionForm> {
                       const SizedBox(height: 30),
                       Center(
                         child: Text(
-                          '2. U-ACT',
-                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 151, 46, 170)),
+                          '  ',
+                          style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 151, 46, 170)),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -329,13 +341,15 @@ class _ActionFormState extends State<ActionForm> {
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
-                        'Date:', 
+                        'Date:',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       ElevatedButton(
                         onPressed: () => _selectDate(context),
                         child: Text(
-                          _selectedDate != null ? '$_selectedDate' : 'Select Date',
+                          _selectedDate != null
+                              ? '$_selectedDate'
+                              : 'Select Date',
                         ),
                       ),
                       const SizedBox(height: 20.0),
