@@ -23,7 +23,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //must put this
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -31,27 +31,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UCUA Safety Reporting System',
       routes: {
         '/': (context) => const SplashScreen(
-          child: LoginPage(),
-        ),
+              child: LoginPage(),
+            ),
         '/login': (context) => const LoginPage(),
         '/signUp': (context) => const SignUp(),
         //'/view_profile' : (context) => const ViewProfilePage(),
-        '/employeeProfile' : (context) => const empProfile(),
-        '/safeDeptProfile' : (context) => const safeDeptProfile(),
-        '/adminProfile' : (context) => const AdminProfile(),
+        '/employeeProfile': (context) => const empProfile(),
+        '/safeDeptProfile': (context) => const safeDeptProfile(),
+        '/adminProfile': (context) => const AdminProfile(),
         '/empHome': (context) => const empHomePage(),
         '/adminHome': (context) => const AdminHomePage(),
         '/safetyHome': (context) => const SafetyDeptHomePage(),
 
         //forms
-        
-        '/view_condition_form': (context) =>  ConditionFormPage(),
+
+        '/view_condition_form': (context) => ConditionFormPage(),
         '/view_action_form': (context) => ActionForm(),
         '/view_action_status': (context) => ActionStatusPage(
               name: 'John Doe',
@@ -66,10 +65,16 @@ class MyApp extends StatelessWidget {
               status: 'Pending',
               remarks: 'Awaiting further review',
             ),
-        '/view_action_form_list': (context) =>  ListActionPage(),
+        '/view_action_form_list': (context) => ListActionPage(),
         '/view_condition_form_list': (context) => ListConditionPage(),
-        '/update_action_form': (context) =>  UpdateActionForm(name: '', designation: '',),
-        '/update_condition_form': (context) => UpdateConditionForm(name: '', designation: '',),
+        '/update_action_form': (context) => UpdateActionForm(
+              name: '',
+              designation: '',
+            ),
+        '/update_condition_form': (context) => UpdateConditionForm(
+              name: '',
+              designation: '',
+            ),
       },
     );
   }

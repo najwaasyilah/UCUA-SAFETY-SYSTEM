@@ -17,6 +17,7 @@ class ViewActionForm extends StatelessWidget {
     required this.staffId,
     required this.icPassport,
     required this.date,
+    required String documentId,
   });
 
   @override
@@ -32,7 +33,8 @@ class ViewActionForm extends StatelessWidget {
           children: [
             _buildInfoRow('Location:', selectedLocation),
             _buildInfoRow('Offence Code:', selectedOffenceCode),
-            _buildInfoRow('Immediate Corrective Action:', selectedImmediateAction),
+            _buildInfoRow(
+                'Immediate Corrective Action:', selectedImmediateAction),
             _buildInfoRow('Violater Name:', violaterName),
             _buildInfoRow('Staff Id:', staffId),
             _buildInfoRow('IC/Passport:', icPassport),
