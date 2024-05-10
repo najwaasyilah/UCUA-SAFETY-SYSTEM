@@ -1,63 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ActionForm extends StatefulWidget {
+class ActionFormPage extends StatefulWidget {
   @override
-  _ActionFormState createState() => _ActionFormState();
+  _ActionFormPageState createState() => _ActionFormPageState();
 }
 
-class _ActionFormState extends State<ActionForm> {
-  // Controllers
+class _ActionFormPageState extends State<ActionFormPage> {
+  // Global key for the form
+  final _formKey = GlobalKey<FormState>();
+
+  // Form controllers
   final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _staffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
+  final TextEditingController _remarksController = TextEditingController();
 
-  // Variable to store selected date
+  // Status dropdown default valuer
+  String _status = "Pending";
+
+  // DateTime variable to hold the selected date
   DateTime _selectedDate = DateTime.now();
 
-  @override
-  void dispose() {
-    _violaterNameController.dispose();
-    _staffIdController.dispose();
-    _icPassportController.dispose();
-    super.dispose();
-  }
+  // Method to save data to Firestore
+  Future<void> _saveActionForm() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Add the form data to Firestore
+        await FirebaseFirestore.instance.collection('actions').add({
+          'violaterName': _violaterNameController.text,
+          'staffId': _staffIdController.text,
+          'icPassport': _icPassportController.text,
+          'date': _selectedDate.toIso8601String(),
+          'status': _status,
+          'remarks': _remarksController.text,
+        });
 
-  // Submit form data to Firestore
-  Future<void> _submitForm() async {
-    try {
-      await FirebaseFirestore.instance.collection('actions').add({
-        'violaterName': _violaterNameController.text,
-        'staffId': _staffIdController.text,
-        'icPassport': _icPassportController.text,
-        'date': _selectedDate.toIso8601String(),
-      });
-      _resetForm();
-    } catch (e) {
-      print('Error saving data: $e');
+        // Display success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Action Form Saved Successfully!')),
+        );
+
+        // Clear form data
+        _formKey.currentState?.reset();
+        _status = "Pending";
+        _selectedDate = DateTime.now();
+      } catch (e) {
+        // Display error message
+        print('Error saving data: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save the Action Form.')),
+        );
+      }
     }
   }
 
-  // Reset form
-  void _resetForm() {
-    _violaterNameController.clear();
-    _staffIdController.clear();
-    _icPassportController.clear();
-    setState(() {
-      _selectedDate = DateTime.now();
-    });
-  }
-
+  // Method to select the date
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime(1900),
+      firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    if (pickedDate != null && pickedDate != _selectedDate) {
+
+    // Update the selected date
+    if (picked != null && picked != _selectedDate) {
       setState(() {
-        _selectedDate = pickedDate;
+        _selectedDate = picked;
       });
     }
   }
@@ -65,37 +75,63 @@ class _ActionFormState extends State<ActionForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Action Form'),
-      ),
+      appBar: AppBar(title: Text('Action Form')),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Violater Name:'),
-            TextField(controller: _violaterNameController),
-            SizedBox(height: 20.0),
-            Text('Staff Id:'),
-            TextField(controller: _staffIdController),
-            SizedBox(height: 20.0),
-            Text('IC/Passport:'),
-            TextField(controller: _icPassportController),
-            SizedBox(height: 20.0),
-            Text('Date:'),
-            ElevatedButton(
-              onPressed: () => _selectDate(context),
-              child: Text('$_selectedDate'),
-            ),
-            SizedBox(height: 20.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(onPressed: _submitForm, child: Text('Submit')),
-                ElevatedButton(onPressed: _resetForm, child: Text('Reset')),
-              ],
-            ),
-          ],
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _violaterNameController,
+                decoration: InputDecoration(labelText: 'Violater Name'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a name' : null,
+              ),
+              TextFormField(
+                controller: _staffIdController,
+                decoration: InputDecoration(labelText: 'Staff Id'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter Staff Id' : null,
+              ),
+              TextFormField(
+                controller: _icPassportController,
+                decoration: InputDecoration(labelText: 'IC/Passport'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter IC/Passport' : null,
+              ),
+              SizedBox(height: 20),
+              ListTile(
+                title: Text('Date: ${_selectedDate.toLocal()}'.split(' ')[0]),
+                trailing: Icon(Icons.calendar_today),
+                onTap: () => _selectDate(context),
+              ),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(labelText: 'Status'),
+                value: _status,
+                onChanged: (value) {
+                  setState(() {
+                    _status = value!;
+                  });
+                },
+                items: ['Pending', 'Approved', 'Rejected']
+                    .map((label) => DropdownMenuItem(
+                          child: Text(label),
+                          value: label,
+                        ))
+                    .toList(),
+              ),
+              TextFormField(
+                controller: _remarksController,
+                decoration: InputDecoration(labelText: 'Remarks'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveActionForm,
+                child: Text('Save'),
+              ),
+            ],
+          ),
         ),
       ),
     );

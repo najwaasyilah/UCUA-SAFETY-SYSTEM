@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/viewAction_form.dart';
 
 class ListActionPage extends StatelessWidget {
   @override
@@ -29,6 +30,23 @@ class ListActionPage extends StatelessWidget {
                     document.reference.delete();
                   },
                 ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ViewActionForm(
+                        documentId: document.id,
+                        selectedOffenceCode: '',
+                        selectedLocation: '',
+                        selectedImmediateAction: '',
+                        violaterName: '',
+                        staffId: '',
+                        icPassport: '',
+                        date: '',
+                      ),
+                    ),
+                  );
+                },
               );
             }).toList(),
           );

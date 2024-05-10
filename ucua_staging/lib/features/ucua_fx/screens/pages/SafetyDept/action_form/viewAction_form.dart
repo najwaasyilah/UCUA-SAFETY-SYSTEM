@@ -37,6 +37,8 @@ class ViewActionForm extends StatelessWidget {
                 _buildInfoRow('Staff Id:', data['staffId'] ?? 'N/A'),
                 _buildInfoRow('IC/Passport:', data['icPassport'] ?? 'N/A'),
                 _buildInfoRow('Date:', data['date'] ?? 'N/A'),
+                _buildInfoRow('Status:', data['status'] ?? 'N/A'),
+                _buildInfoRow('Remarks:', data['remarks'] ?? 'N/A'),
                 SizedBox(height: 20.0),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
