@@ -1,59 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/viewAction_form.dart';
 
-class ListActionPage extends StatelessWidget {
-  const ListActionPage({super.key});
+class ListActionPage extends StatefulWidget {
+  @override
+  _ListActionPageState createState() => _ListActionPageState();
+}
+
+class _ListActionPageState extends State<ListActionPage> {
+  List<SubmittedForm> submittedForms = []; // List to hold submitted form data
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('List Unsafe Action Forms')),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('actions').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+      appBar: AppBar(
+        title: Text('List Unsafe action Form'), // Updated title
+      ),
+      body: ListView.builder(
+        itemCount: submittedForms.length,
+        itemBuilder: (context, index) {
+          // Determine the status color based on the approval status of the form
+          Color statusColor;
+          switch (submittedForms[index].status) {
+            case FormStatus.approved:
+              statusColor = Colors.green;
+              break;
+            case FormStatus.pending:
+              statusColor = Colors.yellow;
+              break;
+            case FormStatus.rejected:
+              statusColor = Colors.red;
+              break;
           }
 
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return ListTile(
-                title: Text(data['violaterName'] ?? 'No Name'),
-                subtitle: Text('Staff ID: ${data['staffId'] ?? 'Unknown'}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
+          return ListTile(
+            leading: Container(
+              width: 10, // Width of the status indicator
+              color: statusColor, // Color representing the approval status
+            ),
+            title: Text(submittedForms[index].title),
+            subtitle: Text(
+                'ID: ${submittedForms[index].id} - ${submittedForms[index].dateCreated}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove_red_eye),
                   onPressed: () {
-                    document.reference.delete();
+                    // Implement functionality to view the form
+                    // Navigate to the form details page or show a dialog with form details
+                    // You can use submittedForms[index] to access the form data
                   },
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ViewActionForm(
-                        documentId: document.id,
-                        selectedOffenceCode: '',
-                        selectedLocation: '',
-                        selectedImmediateAction: '',
-                        violaterName: '',
-                        staffId: '',
-                        icPassport: '',
-                        date: '',
-                      ),
-                    ),
-                  );
-                },
-              );
-            }).toList(),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    // Implement functionality to delete form
+                    setState(() {
+                      submittedForms.removeAt(index);
+                    });
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),
     );
   }
+}
+
+// Enum for form approval status
+enum FormStatus {
+  approved,
+  pending,
+  rejected,
+}
+
+class SubmittedForm {
+  final String title;
+  final String id;
+  final String dateCreated;
+  final FormStatus status; // Status of the form
+
+  SubmittedForm({
+    required this.title,
+    required this.id,
+    required this.dateCreated,
+    required this.status,
+  });
 }

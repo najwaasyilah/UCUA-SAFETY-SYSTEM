@@ -46,10 +46,12 @@ class NavBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildDropdownItem(context, 'Action Form', '/view_action_form'),
-              _buildDropdownItem(context, 'View Action Status', '/view_action_status'),
-              _buildDropdownItem(context, 'View Action List', '/view_action_form_list'),
-              _buildDropdownItem(context, 'Update Action', '/update_action_form'),
-
+              _buildDropdownItem(
+                  context, 'View Action Status', '/view_action_status'),
+              _buildDropdownItem(
+                  context, 'View Action List', '/view_action_form_list'),
+              _buildDropdownItem(
+                  context, 'Update Action', '/update_action_form'),
             ],
           ),
         ),
@@ -67,10 +69,14 @@ class NavBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildDropdownItem(context, 'Condition Form', '/view_condition_form'),
-              _buildDropdownItem(context, 'View Condition Status', '/view_condition_status'),
-              _buildDropdownItem(context, 'View Condition List', '/view_condition_form_list'),
-              _buildDropdownItem(context, 'Update Condition', '/update_condition_form'),
+              _buildDropdownItem(
+                  context, 'Condition Form', '/view_condition_form'),
+              _buildDropdownItem(
+                  context, 'View Condition Status', '/view_condition_status'),
+              _buildDropdownItem(
+                  context, 'View Condition List', '/view_condition_form_list'),
+              _buildDropdownItem(
+                  context, 'Update Condition', '/update_condition_form'),
             ],
           ),
         ),
