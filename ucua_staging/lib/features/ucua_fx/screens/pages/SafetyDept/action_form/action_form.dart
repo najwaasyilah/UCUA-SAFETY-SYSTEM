@@ -10,9 +10,9 @@ class ActionForm extends StatefulWidget {
 
 class _ActionFormState extends State<ActionForm> {
   // Controller for text input fields
-  final TextEditingController _violaterNameController = TextEditingController();
-  final TextEditingController _staffIdController = TextEditingController();
-  final TextEditingController _icPassportController = TextEditingController();
+  final _violaterNameController = TextEditingController();
+  final _staffIdController = TextEditingController();
+  final _icPassportController = TextEditingController();
 
   // Variable to store selected date
   DateTime _selectedDate = DateTime.now();
@@ -165,6 +165,10 @@ class _ActionFormState extends State<ActionForm> {
                         'violaterName': _violaterNameController.text,
                         'staffId': _staffIdController.text,
                         'icPassport': _icPassportController.text,
+                      }).then((value) {
+                        print("Data Added Successfully");
+                      }).catchError((error) {
+                        print("Failed to add data: $error");
                       });
                     },
                     child: const Text('Save'),
