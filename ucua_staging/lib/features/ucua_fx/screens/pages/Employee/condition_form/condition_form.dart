@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/homeEmp.dart';
 
 void main() {
-  runApp(ConditionFormPage());
+  runApp(const ConditionFormPage());
 }
 
 class ConditionFormPage extends StatelessWidget {
+  const ConditionFormPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,12 +18,14 @@ class ConditionFormPage extends StatelessWidget {
       routes: {
         '/empHome': (context) => const empHomePage(), // Define named route for employee homepage
       },
-      home: LocationOffenceForm(),
+      home: const LocationOffenceForm(),
     );
   }
 }
 
 class LocationOffenceForm extends StatefulWidget {
+  const LocationOffenceForm({super.key});
+
   @override
   _LocationOffenceFormState createState() => _LocationOffenceFormState();
 }
@@ -42,20 +46,20 @@ class _LocationOffenceFormState extends State<LocationOffenceForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Unsafe Condition Form'),
+        title: const Text('Unsafe Condition Form'),
         leading: IconButton( // Add leading IconButton for back navigation
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop(); // Pop the current route to navigate back
           },
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Location:',
               style: TextStyle(fontSize: 16.0),
             ),
@@ -73,31 +77,31 @@ class _LocationOffenceFormState extends State<LocationOffenceForm> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 20.0),
-            Text(
+            const SizedBox(height: 20.0),
+            const Text(
               'Condition Details:', // Changed from 'Offence Code'
               style: TextStyle(fontSize: 16.0),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0), // Add border radius for box-style container
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10.0), // Add padding for text input
+              padding: const EdgeInsets.symmetric(horizontal: 10.0), // Add padding for text input
               child: TextField(
                 controller: conditionDetailsController, // Assign the controller to the text field
                 onChanged: (newValue) {
                   // No need to setState as the controller will automatically update the value
                 },
                 maxLines: null, // Set maxLines to null for a multi-line text box
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: InputBorder.none, // Remove default border
                   hintText: 'Enter Condition Details', // Changed from 'Enter Offence Code'
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Align buttons evenly
               children: [
@@ -109,7 +113,7 @@ class _LocationOffenceFormState extends State<LocationOffenceForm> {
                       conditionDetailsController.text = ''; // Clear condition details using the controller
                     });
                   },
-                  child: Text('Reset'),
+                  child: const Text('Reset'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -119,10 +123,10 @@ class _LocationOffenceFormState extends State<LocationOffenceForm> {
                     // Navigate to the employee homepage after form submission
                     Navigator.pushReplacementNamed(context, "/empHome");
                   },
-                  child: Text('Submit'),
+                  child: const Text('Submit'),
                 ),
                 IconButton( // Back button IconButton
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     Navigator.of(context).pop(); // Pop the current route to navigate back
                   },

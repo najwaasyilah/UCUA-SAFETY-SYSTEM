@@ -9,7 +9,7 @@ class ViewActionForm extends StatelessWidget {
   final String icPassport;
   final String date;
 
-  ViewActionForm({
+  const ViewActionForm({super.key, 
     required this.selectedLocation,
     required this.selectedOffenceCode,
     required this.selectedImmediateAction,
@@ -24,10 +24,10 @@ class ViewActionForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('View Action Form'),
+        title: const Text('View Action Form'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -39,12 +39,12 @@ class ViewActionForm extends StatelessWidget {
             _buildInfoRow('Staff Id:', staffId),
             _buildInfoRow('IC/Passport:', icPassport),
             _buildInfoRow('Date:', date),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Back'),
+              child: const Text('Back'),
             ),
           ],
         ),
@@ -58,21 +58,21 @@ class ViewActionForm extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 16.0),
+          style: const TextStyle(fontSize: 16.0),
         ),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
         Container(
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(5.0),
           ),
           child: Text(
             content,
-            style: TextStyle(fontSize: 16.0),
+            style: const TextStyle(fontSize: 16.0),
           ),
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
       ],
     );
   }

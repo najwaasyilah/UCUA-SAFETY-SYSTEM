@@ -4,7 +4,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/navbar.da
 
 
 class SafetyDeptHomePage extends StatefulWidget {
-  const SafetyDeptHomePage({Key? key}) : super(key: key);
+  const SafetyDeptHomePage({super.key});
 
   @override
   State<SafetyDeptHomePage> createState() => _SafetyDeptHomePageState();
@@ -24,20 +24,20 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             color: Colors.blue,
-            child: Text(
+            child: const Text(
               "Welcome to Safety Department Homepage",
               style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               children: [
                 _buildBox(context, "UCUA Form", () => _navigateToUCUAForm()),
                 _buildBox(context, "View Profile", () => _navigateToViewProfile()),
@@ -61,7 +61,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
       ),

@@ -7,7 +7,7 @@ class ActionStatusPage extends StatelessWidget {
   final String status;
   final String remarks;
 
-  ActionStatusPage({
+  const ActionStatusPage({super.key, 
     required this.name,
     required this.designation,
     this.date,
@@ -34,20 +34,20 @@ class ActionStatusPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Action Status'),
+        title: const Text('Action Status'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildInfoRow('Name:', name),
             _buildInfoRow('Designation:', designation),
             _buildInfoRow('Date:', date?.toString() ?? ''),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               children: [
-                Text(
+                const Text(
                   'Status: ',
                   style: TextStyle(fontSize: 16.0),
                 ),
@@ -57,7 +57,7 @@ class ActionStatusPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             _buildInfoRow('Remarks:', remarks),
           ],
         ),
@@ -71,21 +71,21 @@ class ActionStatusPage extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 16.0),
+          style: const TextStyle(fontSize: 16.0),
         ),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
         Container(
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(5.0),
           ),
           child: Text(
             content,
-            style: TextStyle(fontSize: 16.0),
+            style: const TextStyle(fontSize: 16.0),
           ),
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
       ],
     );
   }

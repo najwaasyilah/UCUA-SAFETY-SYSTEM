@@ -4,7 +4,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/navbar.dart';
 
 
 class AdminHomePage extends StatefulWidget {
-  const AdminHomePage({Key? key}) : super(key: key);
+  const AdminHomePage({super.key});
 
   @override
   State<AdminHomePage> createState() => _AdminHomePageState();

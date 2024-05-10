@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ListConditionPage extends StatefulWidget {
+  const ListConditionPage({super.key});
+
   @override
   _ListConditionPageState createState() => _ListConditionPageState();
 }
@@ -12,7 +14,7 @@ class _ListConditionPageState extends State<ListConditionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Unsafe Condition Form'), // Updated title
+        title: const Text('Unsafe Condition Form'), // Updated title
       ),
       body: ListView.builder(
         itemCount: submittedForms.length,
@@ -42,7 +44,7 @@ class _ListConditionPageState extends State<ListConditionPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.remove_red_eye),
+                  icon: const Icon(Icons.remove_red_eye),
                   onPressed: () {
                     // Implement functionality to view the form
                     // Navigate to the form details page or show a dialog with form details
@@ -50,7 +52,7 @@ class _ListConditionPageState extends State<ListConditionPage> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () {
                     // Implement functionality to delete form
                     setState(() {

@@ -4,12 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ViewActionForm extends StatelessWidget {
   final String documentId;
 
-  ViewActionForm({required this.documentId});
+  const ViewActionForm({super.key, required this.documentId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('View Action Form')),
+      appBar: AppBar(title: const Text('View Action Form')),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection('actions')
@@ -18,18 +18,18 @@ class ViewActionForm extends StatelessWidget {
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(child: Text('No data found for this document.'));
+            return const Center(child: Text('No data found for this document.'));
           }
 
           final data = snapshot.data!.data() as Map<String, dynamic>;
           return Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -39,10 +39,10 @@ class ViewActionForm extends StatelessWidget {
                 _buildInfoRow('Date:', data['date'] ?? 'N/A'),
                 _buildInfoRow('Status:', data['status'] ?? 'N/A'),
                 _buildInfoRow('Remarks:', data['remarks'] ?? 'N/A'),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Back'),
+                  child: const Text('Back'),
                 ),
               ],
             ),
@@ -56,17 +56,17 @@ class ViewActionForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 16.0)),
-        SizedBox(height: 5.0),
+        Text(title, style: const TextStyle(fontSize: 16.0)),
+        const SizedBox(height: 5.0),
         Container(
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          child: Text(content, style: TextStyle(fontSize: 16.0)),
+          child: Text(content, style: const TextStyle(fontSize: 16.0)),
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
       ],
     );
   }

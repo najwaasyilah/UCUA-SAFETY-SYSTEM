@@ -23,7 +23,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //must put this
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -50,9 +50,9 @@ class MyApp extends StatelessWidget {
 
         //forms
 
-        '/view_condition_form': (context) => ConditionFormPage(),
-        '/view_action_form': (context) => ActionForm(),
-        '/view_action_status': (context) => ActionStatusPage(
+        '/view_condition_form': (context) => const ConditionFormPage(),
+        '/view_action_form': (context) => const ActionForm(),
+        '/view_action_status': (context) => const ActionStatusPage(
               name: 'John Doe',
               status: 'Approved',
               remarks: 'Completed successfully',
@@ -65,13 +65,13 @@ class MyApp extends StatelessWidget {
               status: 'Pending',
               remarks: 'Awaiting further review',
             ),
-        '/view_action_form_list': (context) => ListActionPage(),
-        '/view_condition_form_list': (context) => ListConditionPage(),
-        '/update_action_form': (context) => UpdateActionForm(
+        '/view_action_form_list': (context) => const ListActionPage(),
+        '/view_condition_form_list': (context) => const ListConditionPage(),
+        '/update_action_form': (context) => const UpdateActionForm(
               name: '',
               designation: '',
             ),
-        '/update_condition_form': (context) => UpdateConditionForm(
+        '/update_condition_form': (context) => const UpdateConditionForm(
               name: '',
               designation: '',
             ),

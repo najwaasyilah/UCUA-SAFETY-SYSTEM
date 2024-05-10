@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ListActionPage extends StatefulWidget {
+  const ListActionPage({super.key});
+
   @override
   _ListActionPageState createState() => _ListActionPageState();
 }
@@ -12,7 +14,7 @@ class _ListActionPageState extends State<ListActionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('List Unsafe Action Form'), // Updated title
+        title: const Text('List Unsafe Action Form'), // Updated title
       ),
       body: ListView.builder(
         itemCount: submittedForms.length,
@@ -42,7 +44,7 @@ class _ListActionPageState extends State<ListActionPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.remove_red_eye),
+                  icon: const Icon(Icons.remove_red_eye),
                   onPressed: () {
                     // Implement functionality to view the form
                     // Navigate to the form details page or show a dialog with form details
@@ -50,7 +52,7 @@ class _ListActionPageState extends State<ListActionPage> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () {
                     // Implement functionality to delete form
                     setState(() {

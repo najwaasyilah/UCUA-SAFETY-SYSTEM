@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ActionForm extends StatefulWidget {
+  const ActionForm({super.key});
+
   @override
   _ActionFormState createState() => _ActionFormState();
 }
@@ -34,10 +36,8 @@ class _ActionFormState extends State<ActionForm> {
     print('Violater Name: $violaterName');
     print('Staff Id: $staffId');
     print('IC/Passport: $icPassport');
-    if (_selectedDate != null) {
-      print('Date: $_selectedDate');
-    }
-
+    print('Date: $_selectedDate');
+  
     // Reset form after submission
     _resetForm();
   }
@@ -75,38 +75,38 @@ class _ActionFormState extends State<ActionForm> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Action Form'),
+          title: const Text('Action Form'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Location:',
                 style: TextStyle(fontSize: 16.0),
               ),
               // Dropdown button for location
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Offence Code:', // Changed from 'Condition Details'
                 style: TextStyle(fontSize: 16.0),
               ),
               // Dropdown button for offence code
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Immediate Corrective Action:', // New dropdown button for immediate corrective action
                 style: TextStyle(fontSize: 16.0),
               ),
               // Dropdown button for immediate corrective action
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Violater Name:', // New text input for violater name
                 style: TextStyle(fontSize: 16.0),
               ),
@@ -114,8 +114,8 @@ class _ActionFormState extends State<ActionForm> {
               TextField(
                 controller: _violaterNameController,
               ),
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Staff Id:', // New text input for staff id
                 style: TextStyle(fontSize: 16.0),
               ),
@@ -123,8 +123,8 @@ class _ActionFormState extends State<ActionForm> {
               TextField(
                 controller: _staffIdController,
               ),
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'IC/Passport:', // New text input for IC/passport
                 style: TextStyle(fontSize: 16.0),
               ),
@@ -132,8 +132,8 @@ class _ActionFormState extends State<ActionForm> {
               TextField(
                 controller: _icPassportController,
               ),
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Date:', // New text input for date
                 style: TextStyle(fontSize: 16.0),
               ),
@@ -144,7 +144,7 @@ class _ActionFormState extends State<ActionForm> {
                   _selectedDate != null ? '$_selectedDate' : 'Select Date',
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -152,15 +152,15 @@ class _ActionFormState extends State<ActionForm> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('Back'),
+                    child: const Text('Back'),
                   ),
                   ElevatedButton(
                     onPressed: _submitForm,
-                    child: Text('Submit'),
+                    child: const Text('Submit'),
                   ),
                   ElevatedButton(
                     onPressed: _resetForm,
-                    child: Text('Reset'),
+                    child: const Text('Reset'),
                   ),
                 ],
               ),
@@ -173,7 +173,7 @@ class _ActionFormState extends State<ActionForm> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ActionForm(),
   ));
 }

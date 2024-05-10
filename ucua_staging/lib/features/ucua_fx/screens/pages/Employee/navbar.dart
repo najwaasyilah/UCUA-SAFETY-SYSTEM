@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({Key? key}) : super(key: key);
+  const NavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class NavBar extends StatelessWidget {
 
   Widget _buildActionDropdown(BuildContext context) {
     return ExpansionTile(
-      leading: Icon(Icons.description),
-      title: Text('Actions'),
+      leading: const Icon(Icons.description),
+      title: const Text('Actions'),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -59,8 +59,8 @@ class NavBar extends StatelessWidget {
 
   Widget _buildConditionDropdown(BuildContext context) {
     return ExpansionTile(
-      leading: Icon(Icons.description),
-      title: Text('Conditions'),
+      leading: const Icon(Icons.description),
+      title: const Text('Conditions'),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

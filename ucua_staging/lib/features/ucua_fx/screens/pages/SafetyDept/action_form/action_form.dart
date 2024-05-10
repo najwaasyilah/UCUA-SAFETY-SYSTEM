@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActionFormPage extends StatefulWidget {
+  const ActionFormPage({super.key});
+
   @override
   _ActionFormPageState createState() => _ActionFormPageState();
 }
@@ -38,7 +40,7 @@ class _ActionFormPageState extends State<ActionFormPage> {
 
         // Display success message
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Action Form Saved Successfully!')),
+          const SnackBar(content: Text('Action Form Saved Successfully!')),
         );
 
         // Clear form data
@@ -49,7 +51,7 @@ class _ActionFormPageState extends State<ActionFormPage> {
         // Display error message
         print('Error saving data: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save the Action Form.')),
+          const SnackBar(content: Text('Failed to save the Action Form.')),
         );
       }
     }
@@ -75,7 +77,7 @@ class _ActionFormPageState extends State<ActionFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Action Form')),
+      appBar: AppBar(title: const Text('Action Form')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -84,30 +86,30 @@ class _ActionFormPageState extends State<ActionFormPage> {
             children: [
               TextFormField(
                 controller: _violaterNameController,
-                decoration: InputDecoration(labelText: 'Violater Name'),
+                decoration: const InputDecoration(labelText: 'Violater Name'),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a name' : null,
               ),
               TextFormField(
                 controller: _staffIdController,
-                decoration: InputDecoration(labelText: 'Staff Id'),
+                decoration: const InputDecoration(labelText: 'Staff Id'),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter Staff Id' : null,
               ),
               TextFormField(
                 controller: _icPassportController,
-                decoration: InputDecoration(labelText: 'IC/Passport'),
+                decoration: const InputDecoration(labelText: 'IC/Passport'),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter IC/Passport' : null,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ListTile(
                 title: Text('Date: ${_selectedDate.toLocal()}'.split(' ')[0]),
-                trailing: Icon(Icons.calendar_today),
+                trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
               ),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Status'),
+                decoration: const InputDecoration(labelText: 'Status'),
                 value: _status,
                 onChanged: (value) {
                   setState(() {
@@ -116,19 +118,19 @@ class _ActionFormPageState extends State<ActionFormPage> {
                 },
                 items: ['Pending', 'Approved', 'Rejected']
                     .map((label) => DropdownMenuItem(
-                          child: Text(label),
                           value: label,
+                          child: Text(label),
                         ))
                     .toList(),
               ),
               TextFormField(
                 controller: _remarksController,
-                decoration: InputDecoration(labelText: 'Remarks'),
+                decoration: const InputDecoration(labelText: 'Remarks'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveActionForm,
-                child: Text('Save'),
+                child: const Text('Save'),
               ),
             ],
           ),
