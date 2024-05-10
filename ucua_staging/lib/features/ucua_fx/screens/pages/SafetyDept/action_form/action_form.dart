@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActionForm extends StatefulWidget {
   @override
@@ -6,7 +7,7 @@ class ActionForm extends StatefulWidget {
 }
 
 class _ActionFormState extends State<ActionForm> {
-  // Controller for text input fields
+  // Controllers
   final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _staffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
@@ -16,46 +17,37 @@ class _ActionFormState extends State<ActionForm> {
 
   @override
   void dispose() {
-    // Dispose text editing controllers when widget is disposed
     _violaterNameController.dispose();
     _staffIdController.dispose();
     _icPassportController.dispose();
     super.dispose();
   }
 
-  // Function to handle form submission
-  void _submitForm() {
-    // Get form data
-    String violaterName = _violaterNameController.text;
-    String staffId = _staffIdController.text;
-    String icPassport = _icPassportController.text;
-
-    // Handle form submission (e.g., print or send data)
-    print('Violater Name: $violaterName');
-    print('Staff Id: $staffId');
-    print('IC/Passport: $icPassport');
-    if (_selectedDate != null) {
-      print('Date: $_selectedDate');
+  // Submit form data to Firestore
+  Future<void> _submitForm() async {
+    try {
+      await FirebaseFirestore.instance.collection('actions').add({
+        'violaterName': _violaterNameController.text,
+        'staffId': _staffIdController.text,
+        'icPassport': _icPassportController.text,
+        'date': _selectedDate.toIso8601String(),
+      });
+      _resetForm();
+    } catch (e) {
+      print('Error saving data: $e');
     }
-
-    // Reset form after submission
-    _resetForm();
   }
 
-  // Function to handle form reset
+  // Reset form
   void _resetForm() {
-    // Clear text input fields
     _violaterNameController.clear();
     _staffIdController.clear();
     _icPassportController.clear();
-
-    // Reset selected date
     setState(() {
       _selectedDate = DateTime.now();
     });
   }
 
-  // Function to show date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -72,108 +64,40 @@ class _ActionFormState extends State<ActionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Action Form'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Location:',
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Dropdown button for location
-              SizedBox(height: 20.0),
-              Text(
-                'Offence Code:', // Changed from 'Condition Details'
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Dropdown button for offence code
-              SizedBox(height: 20.0),
-              Text(
-                'Immediate Corrective Action:', // New dropdown button for immediate corrective action
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Dropdown button for immediate corrective action
-              SizedBox(height: 20.0),
-              Text(
-                'Violater Name:', // New text input for violater name
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Text field for violater name
-              TextField(
-                controller: _violaterNameController,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Staff Id:', // New text input for staff id
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Text field for staff id
-              TextField(
-                controller: _staffIdController,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'IC/Passport:', // New text input for IC/passport
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Text field for IC/passport
-              TextField(
-                controller: _icPassportController,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Date:', // New text input for date
-                style: TextStyle(fontSize: 16.0),
-              ),
-              // Date picker for date
-              ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: Text(
-                  _selectedDate != null ? '$_selectedDate' : 'Select Date',
-                ),
-              ),
-              SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Back'),
-                  ),
-                  ElevatedButton(
-                    onPressed: _submitForm,
-                    child: Text('Submit'),
-                  ),
-                  ElevatedButton(
-                    onPressed: _resetForm,
-                    child: Text('Reset'),
-                  ),
-                ],
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Action Form'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Violater Name:'),
+            TextField(controller: _violaterNameController),
+            SizedBox(height: 20.0),
+            Text('Staff Id:'),
+            TextField(controller: _staffIdController),
+            SizedBox(height: 20.0),
+            Text('IC/Passport:'),
+            TextField(controller: _icPassportController),
+            SizedBox(height: 20.0),
+            Text('Date:'),
+            ElevatedButton(
+              onPressed: () => _selectDate(context),
+              child: Text('$_selectedDate'),
+            ),
+            SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(onPressed: _submitForm, child: Text('Submit')),
+                ElevatedButton(onPressed: _resetForm, child: Text('Reset')),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ActionForm(),
-  ));
 }

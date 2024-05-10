@@ -1,66 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActionStatusPage extends StatelessWidget {
-  final String name;
-  final String designation;
-  final DateTime? date;
-  final String status;
-  final String remarks;
+  final String documentId;
 
-  ActionStatusPage({
-    required this.name,
-    required this.designation,
-    this.date,
-    required this.status,
-    required this.remarks,
-  });
+  ActionStatusPage({required this.documentId});
 
   @override
   Widget build(BuildContext context) {
-    Color statusColor;
-    switch (status) {
-      case 'Approve':
-        statusColor = Colors.green;
-        break;
-      case 'Pending':
-        statusColor = Colors.yellow;
-        break;
-      case 'Reject':
-        statusColor = Colors.red;
-        break;
-      default:
-        statusColor = Colors.black;
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Action Status'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow('Name:', name),
-            _buildInfoRow('Designation:', designation),
-            _buildInfoRow('Date:', date?.toString() ?? ''),
-            SizedBox(height: 20.0),
-            Row(
+      appBar: AppBar(title: Text('Action Status')),
+      body: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('actions')
+            .doc(documentId)
+            .get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text('No data found for this document.'));
+          }
+
+          final data = snapshot.data!.data() as Map<String, dynamic>;
+          return Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Status: ',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-                Text(
-                  status,
-                  style: TextStyle(fontSize: 16.0, color: statusColor),
+                _buildInfoRow('Violater Name:', data['violaterName'] ?? 'N/A'),
+                _buildInfoRow('Staff Id:', data['staffId'] ?? 'N/A'),
+                _buildInfoRow('IC/Passport:', data['icPassport'] ?? 'N/A'),
+                _buildInfoRow('Date:', data['date'] ?? 'N/A'),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Back'),
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
-            _buildInfoRow('Remarks:', remarks),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -69,10 +54,7 @@ class ActionStatusPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 16.0),
-        ),
+        Text(title, style: TextStyle(fontSize: 16.0)),
         SizedBox(height: 5.0),
         Container(
           padding: EdgeInsets.all(10.0),
@@ -80,10 +62,7 @@ class ActionStatusPage extends StatelessWidget {
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          child: Text(
-            content,
-            style: TextStyle(fontSize: 16.0),
-          ),
+          child: Text(content, style: TextStyle(fontSize: 16.0)),
         ),
         SizedBox(height: 10.0),
       ],
