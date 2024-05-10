@@ -3,40 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/navbar.dart';
 
 
-class adminHomePage extends StatefulWidget {
-  const adminHomePage({super.key});
+class AdminHomePage extends StatefulWidget {
+  const AdminHomePage({Key? key}) : super(key: key);
 
   @override
-  State<adminHomePage> createState() => _adminHomePageState();
+  State<AdminHomePage> createState() => _AdminHomePageState();
 }
 
-class _adminHomePageState extends State<adminHomePage> {
+class _AdminHomePageState extends State<AdminHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const NavBar(),
-      appBar: AppBar(
+      /*appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text("Admin Homepage"),
-        backgroundColor: const Color.fromARGB(255, 33, 82, 243),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Center(
-              child: Text(
-                "Welcome to Admin Homepage",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
-              ),
+        backgroundColor: Colors.blue,
+      ),*/
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            color: Colors.blue,
+            child: const Text(
+              "Welcome to Admin Homepage",
+              style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _signOut,
-              child: const Text("Sign Out"),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: _signOut,
+            child: const Text("Sign Out"),
+          ),
+        ],
       ),
     );
   }
@@ -50,5 +50,4 @@ class _adminHomePageState extends State<adminHomePage> {
       // Handle the error as needed, e.g., show a snackbar or toast with the error message.
     }
   }
-
 }

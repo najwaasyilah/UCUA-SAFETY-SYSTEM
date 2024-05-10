@@ -1,68 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({super.key});
-
-  Future<Map<String, dynamic>> getUserData() async {
-    // Assuming you have a 'users' collection in Firestore
-    DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('users').doc('userID').get();
-    return snapshot.data() ?? {};
-  }
+  const NavBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUserData(),
-      builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        final userData = snapshot.data ?? {};
-        return Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            accountName: const Text('Aiman Haiqal'),
+            accountEmail: const Text('aiman020404@gmail.com'),
+            currentAccountPicture: CircleAvatar(
+              child: ClipOval(
+                child: Image.asset('assets/pfp.png'),
+              ),
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.blue,
+            ),
+          ),
+          _buildActionDropdown(context),
+          _buildConditionDropdown(context),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              Navigator.pushNamed(context, "/login");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionDropdown(BuildContext context) {
+    return ExpansionTile(
+      leading: Icon(Icons.description),
+      title: Text('Actions'),
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              UserAccountsDrawerHeader(
-                accountName: Text(userData['name'] ?? 'No Name'),
-                accountEmail: Text(userData['email'] ?? 'No Email'),
-                currentAccountPicture: CircleAvatar(
-                  child: ClipOval(
-                    child: Image.asset('assets/pfp.png'),
-                  ),
-                ),
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.account_circle),
-                title: const Text('User Profile'),
-                onTap: () {
-                  Navigator.pushNamed(context, "/adminProfile");
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.description),
-                title: const Text('Unsafe Condition'),
-                onTap: () => print('Unsafe Condition Form tapped'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.description),
-                title: const Text('Unsafe Action'),
-                onTap: () => print('Unsafe Action Form tapped'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Logout'),
-                onTap: () {
-                  Navigator.pushNamed(context, "/login");
-                },
-              ),
+              _buildDropdownItem(context, 'Action Form', '/view_action_form'),
+              _buildDropdownItem(context, 'View Action Status', '/view_action_status'),
+              _buildDropdownItem(context, 'View Action List', '/view_action_form_list'),
+              _buildDropdownItem(context, 'Update Action', '/update_action_form'),
+
             ],
           ),
-        );
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConditionDropdown(BuildContext context) {
+    return ExpansionTile(
+      leading: Icon(Icons.description),
+      title: Text('Conditions'),
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildDropdownItem(context, 'Condition Form', '/view_condition_form'),
+              _buildDropdownItem(context, 'View Condition Status', '/view_condition_status'),
+              _buildDropdownItem(context, 'View Condition List', '/view_condition_form_list'),
+              _buildDropdownItem(context, 'Update Condition', '/update_condition_form'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownItem(BuildContext context, String title, String route) {
+    return ListTile(
+      title: Text(title),
+      onTap: () {
+        Navigator.pushNamed(context, route);
       },
     );
   }
