@@ -1,90 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ListActionPage extends StatefulWidget {
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
   @override
-  _ListActionPageState createState() => _ListActionPageState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Actions List',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ActionsListPage(),
+    );
+  }
 }
 
-class _ListActionPageState extends State<ListActionPage> {
-  List<SubmittedForm> submittedForms = []; // List to hold submitted form data
-
+class ActionsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('List Unsafe action Form'), // Updated title
+        title: Text('List of Actions'),
       ),
-      body: ListView.builder(
-        itemCount: submittedForms.length,
-        itemBuilder: (context, index) {
-          // Determine the status color based on the approval status of the form
-          Color statusColor;
-          switch (submittedForms[index].status) {
-            case FormStatus.approved:
-              statusColor = Colors.green;
-              break;
-            case FormStatus.pending:
-              statusColor = Colors.yellow;
-              break;
-            case FormStatus.rejected:
-              statusColor = Colors.red;
-              break;
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('actions').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
           }
 
-          return ListTile(
-            leading: Container(
-              width: 10, // Width of the status indicator
-              color: statusColor, // Color representing the approval status
-            ),
-            title: Text(submittedForms[index].title),
-            subtitle: Text(
-                'ID: ${submittedForms[index].id} - ${submittedForms[index].dateCreated}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.remove_red_eye),
-                  onPressed: () {
-                    // Implement functionality to view the form
-                    // Navigate to the form details page or show a dialog with form details
-                    // You can use submittedForms[index] to access the form data
-                  },
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          return ListView(
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              return Card(
+                margin: EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text(data['location'] ?? 'No Location'),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                            'Offence: ${data['offence'] ?? 'No Offence Code'}'),
+                        Text(
+                            'Action: ${data['action'] ?? 'No Immediate Corrective Action'}'),
+                        Text(
+                            'Violater: ${data['violater'] ?? 'No Violater Name'}'),
+                        Text('Staff ID: ${data['staffId'] ?? 'No Staff ID'}'),
+                        Text('IC/Passport: ${data['ic'] ?? 'No IC/Passport'}'),
+                        Text('Date: ${data['date'] ?? 'No Date'}'),
+                      ],
+                    ),
+                  ),
+                  isThreeLine: true,
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    // Implement functionality to delete form
-                    setState(() {
-                      submittedForms.removeAt(index);
-                    });
-                  },
-                ),
-              ],
-            ),
+              );
+            }).toList(),
           );
         },
       ),
     );
   }
-}
-
-// Enum for form approval status
-enum FormStatus {
-  approved,
-  pending,
-  rejected,
-}
-
-class SubmittedForm {
-  final String title;
-  final String id;
-  final String dateCreated;
-  final FormStatus status; // Status of the form
-
-  SubmittedForm({
-    required this.title,
-    required this.id,
-    required this.dateCreated,
-    required this.status,
-  });
 }
