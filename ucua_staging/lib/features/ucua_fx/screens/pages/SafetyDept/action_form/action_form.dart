@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 
 class ActionForm extends StatefulWidget {
   const ActionForm({Key? key}) : super(key: key);
+=======
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Action Form',
+      home: ActionForm(),
+    );
+  }
+}
+
+class ActionForm extends StatefulWidget {
+  const ActionForm({super.key});
+>>>>>>> Stashed changes
 
   @override
   _ActionFormState createState() => _ActionFormState();
 }
 
 class _ActionFormState extends State<ActionForm> {
+<<<<<<< Updated upstream
   final TextEditingController _violatorNameController = TextEditingController();
   final TextEditingController _staffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
@@ -329,8 +351,78 @@ class _ActionFormState extends State<ActionForm> {
               ),
             ),
           ),
+=======
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController offenceController = TextEditingController();
+  TextEditingController actionController = TextEditingController();
+  TextEditingController violaterController = TextEditingController();
+  TextEditingController staffIdController = TextEditingController();
+  TextEditingController icController = TextEditingController();
+  TextEditingController dateController = TextEditingController()
+    ..text = DateTime.now().toString();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Action Form')),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(8.0),
+          children: <Widget>[
+            TextFormField(
+                decoration: const InputDecoration(labelText: 'Location:'),
+                controller: locationController),
+            TextFormField(
+                decoration: const InputDecoration(labelText: 'Offence Code:'),
+                controller: offenceController),
+            TextFormField(
+                decoration:
+                    const InputDecoration(labelText: 'Immediate Corrective Action:'),
+                controller: actionController),
+            TextFormField(
+                decoration: const InputDecoration(labelText: 'Violater Name:'),
+                controller: violaterController),
+            TextFormField(
+                decoration: const InputDecoration(labelText: 'Staff Id:'),
+                controller: staffIdController),
+            TextFormField(
+                decoration: const InputDecoration(labelText: 'IC/Passport:'),
+                controller: icController),
+            TextFormField(
+                decoration: const InputDecoration(labelText: 'Date:'),
+                controller: dateController),
+            const SizedBox(height: 20),
+            ElevatedButton(onPressed: _submitData, child: const Text('Submit')),
+            ElevatedButton(
+                onPressed: () => _formKey.currentState?.reset(),
+                child: const Text('Reset')),
+          ],
+>>>>>>> Stashed changes
         ),
       ),
     );
   }
+<<<<<<< Updated upstream
+=======
+
+  void _submitData() {
+    if (_formKey.currentState!.validate()) {
+      FirebaseFirestore.instance.collection('actions').add({
+        'location': locationController.text,
+        'offence': offenceController.text,
+        'action': actionController.text,
+        'violater': violaterController.text,
+        'staffId': staffIdController.text,
+        'ic': icController.text,
+        'date': dateController.text,
+      });
+      // Optionally clear the form or give feedback to the user
+      _formKey.currentState?.reset();
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data submitted successfully!')));
+    }
+  }
+>>>>>>> Stashed changes
 }
