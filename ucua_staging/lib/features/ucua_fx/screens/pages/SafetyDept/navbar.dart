@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({super.key});
+  final String accountName;
+  final String accountEmail;
+
+  const NavBar({
+    super.key,
+    required this.accountName,
+    required this.accountEmail,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -10,8 +17,8 @@ class NavBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('Musab Ahmed'),
-            accountEmail: const Text('Safety Department'),
+            accountName: Text(accountName),
+            accountEmail: Text(accountEmail),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.asset('assets/pfp.png'),
@@ -25,7 +32,7 @@ class NavBar extends StatelessWidget {
                 Icons.shield,
                 color: Colors.white,
                 size: 30.0,
-              )
+              ),
             ],
           ),
           _buildSafetyActionDropdown(context),
@@ -57,12 +64,9 @@ class NavBar extends StatelessWidget {
               _buildDropdownItem(context, 'Action Plan', '/view_action_plan'),
               _buildDropdownItem(
                   context, 'Safety Procedures', '/safety_procedures'),
-
               _buildDropdownItem(context, 'Action Form', '/view_action_form'),
-              //_buildDropdownItem(context, 'View Action Status', '/view_action_status'),
               _buildDropdownItem(
                   context, 'View Action List', '/view_action_form_list'),
-              //_buildDropdownItem(context, 'Update Action', '/update_action_form'),
             ],
           ),
         ),
