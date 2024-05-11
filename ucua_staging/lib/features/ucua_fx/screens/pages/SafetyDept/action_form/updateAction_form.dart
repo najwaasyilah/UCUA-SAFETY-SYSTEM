@@ -1,87 +1,128 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UpdateActionPage extends StatefulWidget {
-  final String docId;
-  final Map<String, dynamic> action;
+class UpdateActionForm extends StatefulWidget {
+  final String name;
+  final String designation;
+  final DateTime? date;
 
-  const UpdateActionPage({Key? key, required this.docId, required this.action})
-      : super(key: key);
+  const UpdateActionForm({
+    super.key,
+    required this.name,
+    required this.designation,
+    this.date,
+  });
 
   @override
-  _UpdateActionPageState createState() => _UpdateActionPageState();
+  _UpdateActionFormState createState() => _UpdateActionFormState();
 }
 
-class _UpdateActionPageState extends State<UpdateActionPage> {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _locationController;
-  late TextEditingController _offenceController;
-
-  @override
-  void initState() {
-    super.initState();
-    _locationController =
-        TextEditingController(text: widget.action['location']);
-    _offenceController = TextEditingController(text: widget.action['offence']);
-  }
-
-  @override
-  void dispose() {
-    _locationController.dispose();
-    _offenceController.dispose();
-    super.dispose();
-  }
+class _UpdateActionFormState extends State<UpdateActionForm> {
+  String _selectedStatus = 'Pending'; // Default status
+  String _remarks = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Action'),
+        title: const Text('Status of Action Form'),
       ),
-      body: Form(
-        key: _formKey,
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          children: <Widget>[
-            TextFormField(
-              controller: _locationController,
-              decoration: InputDecoration(labelText: 'Location'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a location';
-                }
-                return null;
-              },
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow('Name:', widget.name),
+            _buildInfoRow('Designation:', widget.designation),
+            _buildInfoRow('Date:', widget.date?.toString() ?? ''),
+            const SizedBox(height: 20.0),
+            Row(
+              children: [
+                const Text(
+                  'Status: ',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                DropdownButton<String>(
+                  value: _selectedStatus,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedStatus = newValue!;
+                    });
+                  },
+                  items: <String>['Approve', 'Pending', 'Reject']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
-            TextFormField(
-              controller: _offenceController,
-              decoration: InputDecoration(labelText: 'Offence'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter an offence';
-                }
-                return null;
-              },
+            const SizedBox(height: 20.0),
+            const Text(
+              'Remarks:',
+              style: TextStyle(fontSize: 16.0),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  FirebaseFirestore.instance
-                      .collection('actions')
-                      .doc(widget.docId)
-                      .update({
-                        'location': _locationController.text,
-                        'offence': _offenceController.text,
-                      })
-                      .then((value) => Navigator.pop(context))
-                      .catchError(
-                          (error) => print("Failed to update action: $error"));
-                }
+            const SizedBox(height: 5.0),
+            TextFormField(
+              maxLines: 5, // Increase box size
+              onChanged: (value) {
+                setState(() {
+                  _remarks = value;
+                });
               },
-              child: Text('Update Action'),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter Remarks',
+              ),
+            ),
+            const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Back'),
+                ),
+                const SizedBox(width: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle form submission
+                  },
+                  child: const Text('Submit'),
+                ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInfoRow(String title, String content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 16.0),
+        ),
+        const SizedBox(height: 5.0),
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          child: Text(
+            content,
+            style: const TextStyle(fontSize: 16.0),
+          ),
+        ),
+        const SizedBox(height: 10.0),
+      ],
     );
   }
 }

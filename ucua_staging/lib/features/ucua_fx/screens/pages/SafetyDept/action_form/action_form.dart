@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 
 class ActionForm extends StatefulWidget {
@@ -11,7 +13,9 @@ class ActionForm extends StatefulWidget {
 }
 
 class _ActionFormState extends State<ActionForm> {
-  final TextEditingController _violatorNameController = TextEditingController();
+  //final TextEditingController _locationController = TextEditingController();
+  //final TextEditingController _offenceCodeController = TextEditingController();
+  final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _staffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
@@ -21,80 +25,82 @@ class _ActionFormState extends State<ActionForm> {
     'ICT Department',
     'HR Department',
     'Train Track',
-    'Safety Department',
+    'Safety Department'
   ];
 
-  String _selectedOffenseCode = 'Not Fasting';
-  List<String> offenseCodes = [
+  String _selectedOffenceCode = 'Not Fasting';
+  List<String> offenceCode = [
     'Not Fasting',
-    'Sleeping During Work',
-    'Eating During Work',
-    'Not Wearing Safety Vest',
+    'Sleep During Work',
+    'Eat During Work',
+    'Not Wearing Safety Ves'
   ];
 
   String _selectedICA = 'Stop Work';
   List<String> icActions = ['Stop Work', 'Verbal Warning'];
 
+  List<XFile> _imageFiles = [];
+
   @override
   void dispose() {
-    _violatorNameController.dispose();
+    //_locationController.dispose();
+    //_offenceCodeController.dispose();
+    _violaterNameController.dispose();
     _staffIdController.dispose();
     _icPassportController.dispose();
     super.dispose();
-  }
-
-  // Function to initialize Firebase
-  Future<void> _initializeFirebase() async {
-    await Firebase.initializeApp();
   }
 
   // Function to handle form submission
   void _submitForm() async {
     // Get form data
     String location = _selectedLocation;
-    String offenseCode = _selectedOffenseCode;
+    String offenceCode = _selectedOffenceCode;
     String ica = _selectedICA;
-    String violatorName = _violatorNameController.text;
+    String violaterName = _violaterNameController.text;
     String staffId = _staffIdController.text;
     String icPassport = _icPassportController.text;
     String date = _selectedDate.toString();
 
-    // Validate input
-    if (violatorName.isEmpty || staffId.isEmpty || icPassport.isEmpty) {
-      showToast(message: "Please fill out all fields.");
-      return;
-    }
-
-    // Initialize Firebase
-    await _initializeFirebase();
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    //String imageUrl = await uploadImageToStorage(_imageFile!);
+
+    /*List<XFile> _imageFiles = [];
+    for (XFile imageFile in _imageFiles) {
+      String imageUrl = await uploadImageToStorage(imageFile);
+      imageUrls.add(imageUrl);
+    }*/
 
     try {
-      await firestore.collection('actions').add({
+      await firestore.collection('uaform').add({
         'location': location,
-        'offenseCode': offenseCode,
+        'offenceCode': offenceCode,
         'ica': ica,
-        'violatorName': violatorName,
+        'violaterName': violaterName,
         'staffId': staffId,
         'icPassport': icPassport,
         'date': date,
+        //'imageUrls': imageUrls,
       });
-      showToast(message: "Form data saved successfully!");
+      print('Form data saved successfully!');
+      //showToast("Form data saved successfully!");
     } catch (e) {
       print('Error saving form data: $e');
-      showToast(message: "Error saving form data.");
     }
 
     _resetForm();
   }
 
   void _resetForm() {
-    _violatorNameController.clear();
+    //_selectedLocation.clear();
+    //_offenceCodeController.clear();
+    _violaterNameController.clear();
     _staffIdController.clear();
     _icPassportController.clear();
 
+    // Reset selected date
     setState(() {
-      _selectedDate = DateTime.now();
+      _selectedDate = DateTime.timestamp();
     });
   }
 
@@ -108,6 +114,16 @@ class _ActionFormState extends State<ActionForm> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
+      });
+    }
+  }
+
+  Future<void> _getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _imageFiles.add(image);
       });
     }
   }
@@ -126,7 +142,7 @@ class _ActionFormState extends State<ActionForm> {
           ),
         ),
         body: Container(
-          color: Colors.grey.withOpacity(0.35),
+          color: Colors.grey.withOpacity(.35),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -139,7 +155,7 @@ class _ActionFormState extends State<ActionForm> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 5,
                       blurRadius: 7,
-                      offset: const Offset(0, 3),
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
@@ -150,12 +166,11 @@ class _ActionFormState extends State<ActionForm> {
                     children: [
                       Center(
                         child: Text(
-                          'Action Form',
+                          '1. U-SEE',
                           style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 151, 46, 170),
-                          ),
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 151, 46, 170)),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -177,20 +192,20 @@ class _ActionFormState extends State<ActionForm> {
                             _selectedLocation = newValue!;
                           });
                         },
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Select Location',
                         ),
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
-                        'Offense Code:',
+                        'Offence Code:',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
                       DropdownButtonFormField<String>(
-                        value: _selectedOffenseCode,
-                        items: offenseCodes.map((String code) {
+                        value: _selectedOffenceCode,
+                        items: offenceCode.map((String code) {
                           return DropdownMenuItem<String>(
                             value: code,
                             child: Text(code),
@@ -198,12 +213,50 @@ class _ActionFormState extends State<ActionForm> {
                         }).toList(),
                         onChanged: (newValue) {
                           setState(() {
-                            _selectedOffenseCode = newValue!;
+                            _selectedOffenceCode = newValue!;
                           });
                         },
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Select Offense Code',
+                          hintText: 'Select Offence Code',
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Upload Action Picture:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      FormContainerWidget(
+                        //controller: _offenceCodeController,
+                        hintText: "Upload Evidence",
+                        isPasswordField: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            //return 'Choose your location';
+                            showToast(message: "Upload Your Evidence");
+                          }
+                          return null;
+                        },
+                      ),
+                      /*Row(
+                        children: [
+                          ElevatedButton(
+                            //onPressed: _getImage,
+                            child: const Text('Upload Picture'),
+                          ),
+                          if (_imageFile != null)
+                            Image.file(File(_imageFile!.path)),
+                        ],
+                      ),*/
+                      const SizedBox(height: 30),
+                      Center(
+                        child: Text(
+                          '2. U-ACT',
+                          style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 151, 46, 170)),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -214,10 +267,10 @@ class _ActionFormState extends State<ActionForm> {
                       const SizedBox(height: 4),
                       DropdownButtonFormField<String>(
                         value: _selectedICA,
-                        items: icActions.map((String ica) {
+                        items: icActions.map((String icas) {
                           return DropdownMenuItem<String>(
-                            value: ica,
-                            child: Text(ica),
+                            value: icas,
+                            child: Text(icas),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
@@ -225,7 +278,7 @@ class _ActionFormState extends State<ActionForm> {
                             _selectedICA = newValue!;
                           });
                         },
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Select Immediate Corrective Action',
                         ),
@@ -241,15 +294,13 @@ class _ActionFormState extends State<ActionForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      TextFormField(
-                        controller: _violatorNameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Violator Name',
-                        ),
+                      FormContainerWidget(
+                        controller: _violaterNameController,
+                        hintText: "Violator Name",
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            showToast(message: 'Fill in the Violator\'s Name');
+                            //return 'Choose your location';
+                            showToast(message: "Fill in Your Name");
                           }
                           return null;
                         },
@@ -260,15 +311,13 @@ class _ActionFormState extends State<ActionForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      TextFormField(
+                      FormContainerWidget(
                         controller: _staffIdController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Staff ID',
-                        ),
+                        hintText: "Staff ID",
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            showToast(message: 'Fill in the Staff ID');
+                            //return 'Choose your location';
+                            showToast(message: "Choose your location");
                           }
                           return null;
                         },
@@ -279,15 +328,13 @@ class _ActionFormState extends State<ActionForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      TextFormField(
+                      FormContainerWidget(
                         controller: _icPassportController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'IC/Passport',
-                        ),
+                        hintText: "IC/Passport",
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            showToast(message: 'Fill in the IC/Passport');
+                            //return 'Choose your location';
+                            showToast(message: "Fill in your IC/Passport");
                           }
                           return null;
                         },
@@ -300,7 +347,9 @@ class _ActionFormState extends State<ActionForm> {
                       ElevatedButton(
                         onPressed: () => _selectDate(context),
                         child: Text(
-                          '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}',
+                          _selectedDate != null
+                              ? '$_selectedDate'
+                              : 'Select Date',
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -333,4 +382,12 @@ class _ActionFormState extends State<ActionForm> {
       ),
     );
   }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MaterialApp(
+    home: ActionForm(),
+  ));
 }
