@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,36 +29,54 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
     super.dispose();
   }
 
-  // Function to handle form submission
-  void _submitForm() async {
-    // Get form data
+  void _submitForm(String staffID) async {
     String location = _selectedLocation;
     String conditionDetails = _conditionDetailsController.text;
     String date = _selectedDate.toString();
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    //String imageUrl = await uploadImageToStorage(_imageFile!);
 
-    /*List<XFile> _imageFiles = [];
-    for (XFile imageFile in _imageFiles) {
-      String imageUrl = await uploadImageToStorage(imageFile);
-      imageUrls.add(imageUrl);
-    }*/
+    // Get the current user's UID
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    String staffID = await getStaffIDFromUID(uid); 
 
     try {
       await firestore.collection('ucform').add({
         'location': location,
         'conditionDetails': conditionDetails,
-        //'imageUrls': imageUrls,
+        'date': date,
+        'staffID': staffID, 
       });
       print('UC Form data saved successfully!');
-      //showToast("Form data saved successfully!");
+      showToast(message: "Form data saved successfully!");
     } catch (e) {
       print('Error saving form data: $e');
     }
 
     _resetForm();
   }
+
+  Future<String> getStaffIDFromUID(String uid) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      
+      if (userSnapshot.exists) {
+        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+
+        if (userData != null) {
+          return userData['staffID'] ?? ''; 
+        } else {
+          return '';
+        }
+      } else {
+        return ''; 
+      }
+    } catch (e) {
+      print('Error getting staffID: $e');
+      return '';
+    }
+  }
+
 
   void _resetForm() {
     _conditionDetailsController.clear();
@@ -198,7 +217,10 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
                             child: const Text('Back'),
                           ),
                           ElevatedButton(
-                            onPressed: _submitForm,
+                            onPressed: () {
+                              String staffID = FirebaseAuth.instance.currentUser?.uid ?? '';
+                              _submitForm(staffID);
+                            },
                             child: const Text('Submit'),
                           ),
                           ElevatedButton(

@@ -14,15 +14,13 @@ class ActionForm extends StatefulWidget {
 
 class _ActionFormState extends State<ActionForm> {
 
-  //final TextEditingController _locationController = TextEditingController();
-  //final TextEditingController _offenceCodeController = TextEditingController();
   final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _staffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
   String _selectedLocation = 'ICT Department';
-  List<String> locations = ['ICT Department', 'HR Department', 'Train Track','Safety Department'];
+  List<String> locations = ['ICT Department','OASIS','Advisor Office','Break Bulk Terminal', 'HR Department', 'Train Track','Safety Department'];
 
   String _selectedOffenceCode = 'Not Fasting';
   List<String> offenceCode = ['Not Fasting', 'Sleep During Work', 'Eat During Work','Not Wearing Safety Ves'];
@@ -35,17 +33,13 @@ class _ActionFormState extends State<ActionForm> {
 
   @override
   void dispose() {
-    //_locationController.dispose();
-    //_offenceCodeController.dispose();
     _violaterNameController.dispose();
     _staffIdController.dispose();
     _icPassportController.dispose();
     super.dispose();
   }
 
-  // Function to handle form submission
   void _submitForm() async {
-    // Get form data
     String location = _selectedLocation;
     String offenceCode = _selectedOffenceCode;
     String ica = _selectedICA;
