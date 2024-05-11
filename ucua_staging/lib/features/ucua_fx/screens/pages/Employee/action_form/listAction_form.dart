@@ -30,6 +30,10 @@ class _ListActionPageState extends State<ListActionPage> {
       setState(() {
         currentUserStaffID = staffID;
       });
+    } else {
+      setState(() {
+        currentUserStaffID = null;
+      });
     }
   }
 
@@ -95,57 +99,69 @@ class _ListActionPageState extends State<ListActionPage> {
                             return CircularProgressIndicator();
                           }
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (DocumentSnapshot document in snapshot.data!.docs)
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10),
+                          if (snapshot.data!.docs.isEmpty) {
+                            return Center(
+                              child: Text('No unsafe action forms found.'),
+                            );
+                          }
+
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              // Force refresh data from Firestore
+                              await snapshot.data!.docs.first.reference.get();
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                for (DocumentSnapshot document in snapshot.data!.docs)
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          //'Title: ${document['title']}',
+                                          'Unsafe Action Form',
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          'Date Created: ${document['date']}',
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ViewActionForm(docId: document.id),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text('View'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                deleteActionForm(document.id);
+                                              },
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        //'Title: ${document['title']}',
-                                        'Unsafe Action Form',
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'Date Created: ${document['date']}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => ViewActionForm(docId: document.id),
-                                                ),
-                                              );
-                                            },
-                                            child: Text('View'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              deleteActionForm(document.id);
-                                            },
-                                            child: Text('Delete'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       ),
