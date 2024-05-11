@@ -1,10 +1,8 @@
 // ignore_for_file: avoid_print, prefer_const_constructors
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 
@@ -31,7 +29,7 @@ class _ActionFormState extends State<ActionForm> {
   String _selectedICA = 'Stop Work'; 
   List<String> icActions = ['Stop Work', 'Verbal Warning'];
 
-  List<XFile> _imageFiles = [];
+  //List<XFile> _imageFiles = [];
   
 
   @override
@@ -52,13 +50,6 @@ class _ActionFormState extends State<ActionForm> {
     String date = _selectedDate.toString();
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    //String imageUrl = await uploadImageToStorage(_imageFile!);
-
-    /*List<XFile> _imageFiles = [];
-    for (XFile imageFile in _imageFiles) {
-      String imageUrl = await uploadImageToStorage(imageFile);
-      imageUrls.add(imageUrl);
-    }*/
 
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     String staffID = await getStaffIDFromUID(uid); 
@@ -104,16 +95,6 @@ class _ActionFormState extends State<ActionForm> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
-      });
-    }
-  }
-
-  Future<void> _getImage() async {
-    final ImagePicker _picker = ImagePicker();
-    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _imageFiles.add(image);
       });
     }
   }
@@ -230,7 +211,7 @@ class _ActionFormState extends State<ActionForm> {
                           hintText: 'Select Offence Code',
                         ),
                       ),
-                      const SizedBox(height: 20.0),
+                      /*const SizedBox(height: 20.0),
                       const Text(
                         'Upload Action Picture:',
                         style: TextStyle(fontSize: 16.0),
@@ -248,7 +229,7 @@ class _ActionFormState extends State<ActionForm> {
                           return null;
                         },
                       ),
-                      /*Row(
+                      Row(
                         children: [
                           ElevatedButton(
                             //onPressed: _getImage,

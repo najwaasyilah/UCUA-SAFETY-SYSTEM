@@ -1,9 +1,10 @@
+// ignore_for_file: prefer_const_constructors, use_super_parameters
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
+//import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 
 class ConditionFormPage extends StatefulWidget {
@@ -19,9 +20,6 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
 
   String _selectedLocation = 'ICT Department';
   List<String> locations = ['ICT Department', 'HR Department', 'Train Track','Safety Department'];
-
-  List<XFile> _imageFiles = [];
-  
 
   @override
   void dispose() {
@@ -100,21 +98,10 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
     }
   }
 
-  Future<void> _getImage() async {
-    final ImagePicker _picker = ImagePicker();
-    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _imageFiles.add(image);
-      });
-    }
-  }
-
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Unsafe Condition Form'),
@@ -184,12 +171,15 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      FormContainerWidget(
+                      TextFormField(
                         controller: _conditionDetailsController,
-                        hintText: "Condition Details",
+                        maxLines: null, // Allow multiline input
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter Condition Details',
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            //return 'Choose your location';
                             showToast(message: "Fill in your condition details");
                           }
                           return null;

@@ -1,91 +1,162 @@
+// ignore_for_file: prefer_const_constructors, use_super_parameters
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/viewCondition_form.dart';
 
 class ListConditionPage extends StatefulWidget {
-  const ListConditionPage({super.key});
+  const ListConditionPage({Key? key}) : super(key: key);
 
   @override
-  _ListConditionPageState createState() => _ListConditionPageState();
+  State<ListConditionPage> createState() => _ListConditionPageState();
 }
 
 class _ListConditionPageState extends State<ListConditionPage> {
-  List<SubmittedForm> submittedForms = []; // List to hold submitted form data
+  String? currentUserStaffID;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserStaffID();
+  }
+
+  Future<void> getCurrentUserStaffID() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final uid = currentUser.uid;
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final staffID = userDoc.get('staffID');
+      setState(() {
+        currentUserStaffID = staffID;
+      });
+    }
+  }
+
+  void deleteConditionForm(String docId) async {
+    try {
+      await FirebaseFirestore.instance.collection('ucform').doc(docId).delete();
+    } catch (e) {
+      print('Error deleting form: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Unsafe Condition Form'), // Updated title
+        title: Text("List of Unsafe Condition Reports"),
       ),
-      body: ListView.builder(
-        itemCount: submittedForms.length,
-        itemBuilder: (context, index) {
-          // Determine the status color based on the approval status of the form
-          Color statusColor;
-          switch (submittedForms[index].status) {
-            case FormStatus.approved:
-              statusColor = Colors.green;
-              break;
-            case FormStatus.pending:
-              statusColor = Colors.yellow;
-              break;
-            case FormStatus.rejected:
-              statusColor = Colors.red;
-              break;
-          }
+      body: Container(
+        color: Colors.grey.withOpacity(.35),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'LIST OF UNSAFE CONDITION REPORT',
+                        style: TextStyle(
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.w900,
+                          color: Color.fromARGB(255, 199, 26, 230),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('ucform')
+                            .where('staffID', isEqualTo: currentUserStaffID)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
 
-          return ListTile(
-            leading: Container(
-              width: 10, // Width of the status indicator
-              color: statusColor, // Color representing the approval status
-            ),
-            title: Text(submittedForms[index].title),
-            subtitle: Text('ID: ${submittedForms[index].id} - ${submittedForms[index].dateCreated}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove_red_eye),
-                  onPressed: () {
-                    // Implement functionality to view the form
-                    // Navigate to the form details page or show a dialog with form details
-                    // You can use submittedForms[index] to access the form data
-                  },
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (DocumentSnapshot document in snapshot.data!.docs)
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        //'Title: ${document['title']}',
+                                        'Unsafe Condition Report',
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        'Date Created: ${document['date']}',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => ViewConditionForm(docId: document.id),
+                                                ),
+                                              );
+                                            },
+                                            child: Text('View'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              deleteConditionForm(document.id);
+                                            },
+                                            child: Text('Delete'),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    // Implement functionality to delete form
-                    setState(() {
-                      submittedForms.removeAt(index);
-                    });
-                  },
-                ),
-              ],
+              ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
-}
-
-// Enum for form approval status
-enum FormStatus {
-  approved,
-  pending,
-  rejected,
-}
-
-class SubmittedForm {
-  final String title;
-  final String id;
-  final String dateCreated;
-  final FormStatus status; // Status of the form
-
-  SubmittedForm({
-    required this.title,
-    required this.id,
-    required this.dateCreated,
-    required this.status,
-  });
 }
