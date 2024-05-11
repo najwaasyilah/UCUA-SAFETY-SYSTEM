@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/navbar.dart';
 
-
 class SafetyDeptHomePage extends StatefulWidget {
   const SafetyDeptHomePage({super.key});
 
@@ -11,15 +10,30 @@ class SafetyDeptHomePage extends StatefulWidget {
 }
 
 class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
+  String accountName = 'Default Name';
+  String accountEmail = 'default@example.com';
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserDetails();
+  }
+
+  void _initializeUserDetails() {
+    final user = FirebaseAuth.instance.currentUser;
+    setState(() {
+      accountName = user?.displayName ?? 'Default Name';
+      accountEmail = user?.email ?? 'default@example.com';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const NavBar(),
-      /*appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text("Safety Department Homepage"),
-        backgroundColor: Colors.blue,
-      ),*/
+      drawer: NavBar(
+        accountName: accountName,
+        accountEmail: accountEmail,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -28,7 +42,10 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             color: Colors.blue,
             child: const Text(
               "Welcome to Safety Department Homepage",
-              style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                  fontSize: 27,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
           ),
           const SizedBox(height: 20),
@@ -39,9 +56,9 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               mainAxisSpacing: 10,
               padding: const EdgeInsets.all(20),
               children: [
-                _buildBox(context, "UCUA Form", () => _navigateToUCUAForm()),
-                _buildBox(context, "View Profile", () => _navigateToViewProfile()),
-                _buildBox(context, "Sign Out", () => _signOut()),
+                _buildBox(context, "UCUA Form", _navigateToUCUAForm),
+                _buildBox(context, "View Profile", _navigateToViewProfile),
+                _buildBox(context, "Sign Out", _signOut),
               ],
             ),
           ),

@@ -8,11 +8,11 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/up
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/statusCondition_form.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/updateCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/homeEmp.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/view_profile_page.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/action_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
 
         '/view_condition_form': (context) => const ConditionFormPage(),
         '/view_action_form': (context) => const ActionForm(),
+        '/view_action_formSD': (context) => const ActionFormSD(),
         '/view_action_status': (context) => const ActionStatusPage(
               name: 'John Doe',
               status: 'Approved',
@@ -71,10 +72,10 @@ class MyApp extends StatelessWidget {
               name: '',
               designation: '',
             ),
-        '/update_condition_form': (context) => const UpdateConditionForm(
-              name: '',
-              designation: '',
-            ),
+        // '/update_condition_form': (context) => const UpdateConditionForm(
+        // name: '',
+        // designation: '',
+        // ),
       },
     );
   }
