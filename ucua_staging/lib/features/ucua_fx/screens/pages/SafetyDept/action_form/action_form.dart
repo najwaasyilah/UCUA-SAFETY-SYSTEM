@@ -1,3 +1,6 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,52 +16,38 @@ class ActionForm extends StatefulWidget {
 }
 
 class _ActionFormState extends State<ActionForm> {
-  //final TextEditingController _locationController = TextEditingController();
-  //final TextEditingController _offenceCodeController = TextEditingController();
+
   final TextEditingController _violaterNameController = TextEditingController();
-  final TextEditingController _staffIdController = TextEditingController();
+  final TextEditingController _violatorStaffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
   String _selectedLocation = 'ICT Department';
-  List<String> locations = [
-    'ICT Department',
-    'HR Department',
-    'Train Track',
-    'Safety Department'
-  ];
+  List<String> locations = ['ICT Department','OASIS','Advisor Office','Break Bulk Terminal', 'HR Department', 'Train Track','Safety Department'];
 
   String _selectedOffenceCode = 'Not Fasting';
-  List<String> offenceCode = [
-    'Not Fasting',
-    'Sleep During Work',
-    'Eat During Work',
-    'Not Wearing Safety Ves'
-  ];
+  List<String> offenceCode = ['Not Fasting', 'Sleep During Work', 'Eat During Work','Not Wearing Safety Ves'];
 
-  String _selectedICA = 'Stop Work';
+  String _selectedICA = 'Stop Work'; 
   List<String> icActions = ['Stop Work', 'Verbal Warning'];
 
   List<XFile> _imageFiles = [];
+  
 
   @override
   void dispose() {
-    //_locationController.dispose();
-    //_offenceCodeController.dispose();
     _violaterNameController.dispose();
-    _staffIdController.dispose();
+    _violatorStaffIdController.dispose();
     _icPassportController.dispose();
     super.dispose();
   }
 
-  // Function to handle form submission
-  void _submitForm() async {
-    // Get form data
+  void _submitForm(String staffID) async {
     String location = _selectedLocation;
     String offenceCode = _selectedOffenceCode;
     String ica = _selectedICA;
     String violaterName = _violaterNameController.text;
-    String staffId = _staffIdController.text;
+    String violatorStaffId = _violatorStaffIdController.text;
     String icPassport = _icPassportController.text;
     String date = _selectedDate.toString();
 
@@ -71,19 +60,23 @@ class _ActionFormState extends State<ActionForm> {
       imageUrls.add(imageUrl);
     }*/
 
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    String staffID = await getStaffIDFromUID(uid); 
+
+
     try {
       await firestore.collection('uaform').add({
         'location': location,
         'offenceCode': offenceCode,
         'ica': ica,
         'violaterName': violaterName,
-        'staffId': staffId,
+        'violatorStaffId': violatorStaffId,
         'icPassport': icPassport,
         'date': date,
+        'staffID': staffID, 
         //'imageUrls': imageUrls,
       });
-      print('Form data saved successfully!');
-      //showToast("Form data saved successfully!");
+      showToast(message: "Unsafe Action Form Submitted Successfully!");
     } catch (e) {
       print('Error saving form data: $e');
     }
@@ -92,13 +85,10 @@ class _ActionFormState extends State<ActionForm> {
   }
 
   void _resetForm() {
-    //_selectedLocation.clear();
-    //_offenceCodeController.clear();
     _violaterNameController.clear();
-    _staffIdController.clear();
+    _violatorStaffIdController.clear();
     _icPassportController.clear();
 
-    // Reset selected date
     setState(() {
       _selectedDate = DateTime.timestamp();
     });
@@ -128,12 +118,34 @@ class _ActionFormState extends State<ActionForm> {
     }
   }
 
+  Future<String> getStaffIDFromUID(String uid) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      
+      if (userSnapshot.exists) {
+        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+
+        if (userData != null) {
+          return userData['staffID'] ?? ''; 
+        } else {
+          return 'User Not Exist';
+        }
+      } else {
+        return 'User not exist'; 
+      }
+    } catch (e) {
+      print('Error getting staffID: $e');
+      return 'No user with staff ID';
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Action Form'),
+          title: const Text('Unsafe Action Form'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -148,14 +160,14 @@ class _ActionFormState extends State<ActionForm> {
               padding: const EdgeInsets.all(20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(10.0), 
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
+                      color: Colors.grey.withOpacity(0.5), 
+                      spreadRadius: 5, 
+                      blurRadius: 7, 
+                      offset: Offset(0,3), 
                     ),
                   ],
                 ),
@@ -167,10 +179,7 @@ class _ActionFormState extends State<ActionForm> {
                       Center(
                         child: Text(
                           '1. U-SEE',
-                          style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 151, 46, 170)),
+                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 151, 46, 170)),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -253,10 +262,7 @@ class _ActionFormState extends State<ActionForm> {
                       Center(
                         child: Text(
                           '2. U-ACT',
-                          style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 151, 46, 170)),
+                          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 151, 46, 170)),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -312,7 +318,7 @@ class _ActionFormState extends State<ActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        controller: _staffIdController,
+                        controller: _violatorStaffIdController,
                         hintText: "Staff ID",
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -341,15 +347,13 @@ class _ActionFormState extends State<ActionForm> {
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
-                        'Date:',
+                        'Date:', 
                         style: TextStyle(fontSize: 16.0),
                       ),
                       ElevatedButton(
                         onPressed: () => _selectDate(context),
                         child: Text(
-                          _selectedDate != null
-                              ? '$_selectedDate'
-                              : 'Select Date',
+                          _selectedDate != null ? '$_selectedDate' : 'Select Date',
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -363,7 +367,11 @@ class _ActionFormState extends State<ActionForm> {
                             child: const Text('Back'),
                           ),
                           ElevatedButton(
-                            onPressed: _submitForm,
+                            onPressed: () {
+                              String staffID = FirebaseAuth.instance.currentUser?.uid ?? '';
+                              _submitForm(staffID);
+                            },
+
                             child: const Text('Submit'),
                           ),
                           ElevatedButton(
