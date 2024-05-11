@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/UCUA-SAFETY-SYSTEM.iml" filepath="$PROJECT_DIR$/.idea/UCUA-SAFETY-SYSTEM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ucua_staging.iml" filepath="$PROJECT_DIR$/ucua_staging.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/ucua_staging_android.iml" filepath="$PROJECT_DIR$/android/ucua_staging_android.iml" />
     </modules>
   </component>
 </project>
