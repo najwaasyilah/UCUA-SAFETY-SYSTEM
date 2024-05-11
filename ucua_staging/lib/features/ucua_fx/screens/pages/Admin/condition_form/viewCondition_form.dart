@@ -7,7 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_wid
 class ViewConditionForm extends StatefulWidget {
   final String docId;
 
-  const ViewConditionForm({Key? key, required this.docId}) : super(key: key);
+  const ViewConditionForm({super.key, required this.docId});
 
   @override
   State<ViewConditionForm> createState() => _ViewConditionFormState();
@@ -86,7 +86,7 @@ class _ViewConditionFormState extends State<ViewConditionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_selectedLocation}',
+                        hintText: _selectedLocation,
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -95,14 +95,14 @@ class _ViewConditionFormState extends State<ViewConditionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_conditionDetailsController.text}',
+                        hintText: _conditionDetailsController.text,
                       ),
                       const Text(
                         'Date:', 
                         style: TextStyle(fontSize: 16.0),
                       ),
                       FormContainerWidget(
-                        hintText: '${_selectedDate}',
+                        hintText: '$_selectedDate',
                       ),
                       const SizedBox(height: 30.0),
                       Center(

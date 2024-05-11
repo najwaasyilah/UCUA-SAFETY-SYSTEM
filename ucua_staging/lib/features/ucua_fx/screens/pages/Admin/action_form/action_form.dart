@@ -7,7 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_wid
 import 'package:ucua_staging/global_common/toast.dart';
 
 class ActionForm extends StatefulWidget {
-  const ActionForm({Key? key}) : super(key: key);
+  const ActionForm({super.key});
 
   @override
   _ActionFormState createState() => _ActionFormState();

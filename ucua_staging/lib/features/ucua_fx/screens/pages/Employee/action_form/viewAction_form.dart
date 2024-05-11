@@ -7,7 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_wid
 class ViewActionForm extends StatefulWidget {
   final String docId;
 
-  const ViewActionForm({Key? key, required this.docId}) : super(key: key);
+  const ViewActionForm({super.key, required this.docId});
 
   @override
   State<ViewActionForm> createState() => _ViewActionFormState();
@@ -121,7 +121,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_selectedLocation}',
+                        hintText: _selectedLocation,
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -130,7 +130,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_selectedOffenceCode}',
+                        hintText: _selectedOffenceCode,
                       ),
                       const SizedBox(height: 30.0),
                       Center(
@@ -146,7 +146,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_selectedICA}',
+                        hintText: _selectedICA,
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -160,7 +160,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_violaterNameController.text}',
+                        hintText: _violaterNameController.text,
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -169,7 +169,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_violatorStaffIdController.text}',
+                        hintText: _violatorStaffIdController.text,
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -178,7 +178,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: '${_icPassportController.text}',
+                        hintText: _icPassportController.text,
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -186,7 +186,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       FormContainerWidget(
-                        hintText: '${_selectedDate}',
+                        hintText: '$_selectedDate',
                       ),
                       const SizedBox(height: 20.0),
                       const SizedBox(height: 30.0),

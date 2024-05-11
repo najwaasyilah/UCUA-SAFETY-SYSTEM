@@ -10,8 +10,8 @@ class NavBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('Aiman Haiqal'),
-            accountEmail: const Text('aiman020404@gmail.com'),
+            accountName: const Text('Musab Ahmed'),
+            accountEmail: const Text('Safety Department'),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.asset('assets/pfp.png'),
@@ -20,9 +20,16 @@ class NavBar extends StatelessWidget {
             decoration: const BoxDecoration(
               color: Colors.blue,
             ),
+            otherAccountsPictures: const [
+              Icon(
+                Icons.shield,
+                color: Colors.white,
+                size: 30.0,
+              )
+            ],
           ),
-          _buildActionDropdown(context),
-          _buildConditionDropdown(context),
+          _buildSafetyActionDropdown(context),
+          _buildSafetyConditionDropdown(context),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
@@ -35,23 +42,27 @@ class NavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildActionDropdown(BuildContext context) {
+  Widget _buildSafetyActionDropdown(BuildContext context) {
     return ExpansionTile(
-      leading: const Icon(Icons.description),
-      title: const Text('Actions'),
+      leading: const Icon(Icons.security),
+      title: const Text('Safety Actions'),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildDropdownItem(context, 'Action Form', '/view_action_form'),
               _buildDropdownItem(
-                  context, 'View Action Status', '/view_action_status'),
+                  context, 'Report Incident', '/view_action_formSD'),
+              _buildDropdownItem(context, 'Action Plan', '/view_action_plan'),
+              _buildDropdownItem(
+                  context, 'Safety Procedures', '/safety_procedures'),
+
+              _buildDropdownItem(context, 'Action Form', '/view_action_form'),
+              //_buildDropdownItem(context, 'View Action Status', '/view_action_status'),
               _buildDropdownItem(
                   context, 'View Action List', '/view_action_form_list'),
-              _buildDropdownItem(
-                  context, 'Update Action', '/update_action_form'),
+              //_buildDropdownItem(context, 'Update Action', '/update_action_form'),
             ],
           ),
         ),
@@ -59,10 +70,10 @@ class NavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildConditionDropdown(BuildContext context) {
+  Widget _buildSafetyConditionDropdown(BuildContext context) {
     return ExpansionTile(
-      leading: const Icon(Icons.description),
-      title: const Text('Conditions'),
+      leading: const Icon(Icons.warning),
+      title: const Text('Safety Conditions'),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -72,9 +83,9 @@ class NavBar extends StatelessWidget {
               _buildDropdownItem(
                   context, 'Condition Form', '/view_condition_form'),
               _buildDropdownItem(
-                  context, 'View Condition Status', '/view_condition_status'),
+                  context, 'View Safety Status', '/view_safety_status'),
               _buildDropdownItem(
-                  context, 'View Condition List', '/view_condition_form_list'),
+                  context, 'Safety Guidelines', '/safety_guidelines'),
               _buildDropdownItem(
                   context, 'Update Condition', '/update_condition_form'),
             ],
@@ -86,6 +97,7 @@ class NavBar extends StatelessWidget {
 
   Widget _buildDropdownItem(BuildContext context, String title, String route) {
     return ListTile(
+      leading: const Icon(Icons.arrow_right),
       title: Text(title),
       onTap: () {
         Navigator.pushNamed(context, route);
