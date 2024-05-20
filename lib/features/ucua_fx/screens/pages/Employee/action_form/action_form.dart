@@ -1,10 +1,13 @@
 // ignore_for_file: avoid_print, prefer_const_constructors
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class ActionForm extends StatefulWidget {
   const ActionForm({Key? key}) : super(key: key);
@@ -14,6 +17,9 @@ class ActionForm extends StatefulWidget {
 }
 
 class _ActionFormState extends State<ActionForm> {
+
+  List<File?> _images = [null,null,null];
+  final picker = ImagePicker();
 
   final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _violatorStaffIdController = TextEditingController();
@@ -54,8 +60,20 @@ class _ActionFormState extends State<ActionForm> {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     String staffID = await getStaffIDFromUID(uid); 
 
+    List<String> imageUrls = [];
 
     try {
+
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final taskSnapshot = await firebase_storage.FirebaseStorage.instance
+              .ref('uaform/$staffID/$date/image$i.jpg')
+              .putFile(_images[i]!);
+          final url = await taskSnapshot.ref.getDownloadURL();
+          imageUrls.add(url);
+        }
+      }
+
       await firestore.collection('uaform').add({
         'location': location,
         'offenceCode': offenceCode,
@@ -65,7 +83,7 @@ class _ActionFormState extends State<ActionForm> {
         'icPassport': icPassport,
         'date': date,
         'staffID': staffID, 
-        //'imageUrls': imageUrls,
+        'imageUrls': imageUrls,
       });
       showToast(message: "Unsafe Action Form Submitted Successfully!");
     } catch (e) {
@@ -75,6 +93,26 @@ class _ActionFormState extends State<ActionForm> {
     _resetForm();
   }
 
+  
+  Future getImageGallery(int index) async {
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    setState(() {
+      if (pickedFile != null) {
+        if (index < _images.length) {
+          _images[index] = File(pickedFile.path);
+        } else {
+          _images.add(File(pickedFile.path));
+        }
+      } else {
+        print("No Image Picked!");
+      }
+    });
+  }
+
   void _resetForm() {
     _violaterNameController.clear();
     _violatorStaffIdController.clear();
@@ -82,6 +120,9 @@ class _ActionFormState extends State<ActionForm> {
 
     setState(() {
       _selectedDate = DateTime.timestamp();
+      /*for (int i = 0; i < _images.length; i++) {
+        _images[i] = null; // Clear each image in the list
+      }*/
     });
   }
 
@@ -124,6 +165,7 @@ class _ActionFormState extends State<ActionForm> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Unsafe Action Form'),
@@ -211,34 +253,52 @@ class _ActionFormState extends State<ActionForm> {
                           hintText: 'Select Offence Code',
                         ),
                       ),
-                      /*const SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       const Text(
                         'Upload Action Picture:',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      FormContainerWidget(
-                        //controller: _offenceCodeController,
-                        hintText: "Upload Evidence",
-                        isPasswordField: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            //return 'Choose your location';
-                            showToast(message: "Upload Your Evidence");
-                          }
-                          return null;
-                        },
-                      ),
                       Row(
                         children: [
-                          ElevatedButton(
-                            //onPressed: _getImage,
-                            child: const Text('Upload Picture'),
+                          GestureDetector(
+                            onTap: () => getImageGallery(0),
+                            child: Container(
+                              width: 150, // Adjusted width here
+                              height: 150,
+                              margin: EdgeInsets.only(right: 8.0), // Added margin here
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _images.length > 0 && _images[0] != null // Modified condition here
+                                ? Image.file(_images[0]!, fit: BoxFit.cover)
+                                : Center(
+                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                  ),
+                            ),
                           ),
-                          if (_imageFile != null)
-                            Image.file(File(_imageFile!.path)),
+                          GestureDetector(
+                            onTap: () => getImageGallery(1),
+                            child: Container(
+                              width: 150, // Adjusted width here
+                              height: 150,
+                              margin: EdgeInsets.only(left: 8.0), // Added margin here
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _images.length > 1 && _images[1] != null // Modified condition here
+                                ? Image.file(_images[1]!, fit: BoxFit.cover)
+                                : Center(
+                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                  ),
+                            ),
+                          ),
                         ],
-                      ),*/
+                      ),
                       const SizedBox(height: 30),
                       Center(
                         child: Text(
@@ -304,7 +364,7 @@ class _ActionFormState extends State<ActionForm> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             //return 'Choose your location';
-                            showToast(message: "Choose your location");
+                            showToast(message: "Fill in Staff ID");
                           }
                           return null;
                         },
@@ -321,7 +381,7 @@ class _ActionFormState extends State<ActionForm> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             //return 'Choose your location';
-                            showToast(message: "Fill in your IC/Passport");
+                            showToast(message: "Fill in IC/Passport");
                           }
                           return null;
                         },
@@ -336,6 +396,34 @@ class _ActionFormState extends State<ActionForm> {
                         child: Text(
                           _selectedDate != null ? '$_selectedDate' : 'Select Date',
                         ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Violator Work Card:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => getImageGallery(2),
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              margin: EdgeInsets.only(right: 8.0), 
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: _images.length > 2 && _images[2] != null 
+                                ? Image.file(_images[2]!, fit: BoxFit.cover)
+                                : Center(
+                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20.0),
                       Row(
