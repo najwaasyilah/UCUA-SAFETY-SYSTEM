@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/viewAction_form.dart';
 
-class ListActionPage extends StatefulWidget {
-  const ListActionPage({Key? key}) : super(key: key);
+class empListUAForm extends StatefulWidget {
+  const empListUAForm({super.key});
 
   @override
-  State<ListActionPage> createState() => _ListActionPageState();
+  State<empListUAForm> createState() => _empListUAFormState();
 }
 
-class _ListActionPageState extends State<ListActionPage> {
-  String? currentUserStaffID;
+class _empListUAFormState extends State<empListUAForm> {
+String? currentUserStaffID;
 
   @override
   void initState() {
@@ -143,7 +143,7 @@ class _ListActionPageState extends State<ListActionPage> {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) => ViewActionForm(docId: document.id),
+                                                    builder: (context) => empViewUAForm(docId: document.id),
                                                   ),
                                                 );
                                               },

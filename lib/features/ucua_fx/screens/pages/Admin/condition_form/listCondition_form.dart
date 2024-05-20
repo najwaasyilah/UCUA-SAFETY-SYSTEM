@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/viewCondition_form.dart';
 
-class ListConditionPage extends StatefulWidget {
-  const ListConditionPage({Key? key}) : super(key: key);
+class adminListUCForm extends StatefulWidget {
+  const adminListUCForm({super.key});
 
   @override
-  State<ListConditionPage> createState() => _ListConditionPageState();
+  State<adminListUCForm> createState() => _adminListUCFormState();
 }
 
-class _ListConditionPageState extends State<ListConditionPage> {
-  String? currentUserStaffID;
+class _adminListUCFormState extends State<adminListUCForm> {
+String? currentUserStaffID;
 
   @override
   void initState() {
@@ -128,7 +128,7 @@ class _ListConditionPageState extends State<ListConditionPage> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => ViewConditionForm(docId: document.id),
+                                                  builder: (context) => adminViewUCForm(docId: document.id),
                                                 ),
                                               );
                                             },

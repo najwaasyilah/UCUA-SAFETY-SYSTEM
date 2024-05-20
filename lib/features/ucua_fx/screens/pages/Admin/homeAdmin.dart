@@ -117,15 +117,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildSquareRoundedBox("UCUA Action"),
+            _buildSquareRoundedBox("Unsafe Action"),
             SizedBox(width: 20),
-            _buildSquareRoundedBox("UCUA Condition"),
+            _buildSquareRoundedBox("Unsafe Condition"),
           ],
         ),
         SizedBox(height: 20),
-        _buildRectangleRoundedBox("List of Reporting Action"),
+        _buildRectangleRoundedBox("Unsafe Action Report List"),
         SizedBox(height: 20),
-        _buildRectangleRoundedBox("List of Reporting Condition"),
+        _buildRectangleRoundedBox("Unsafe Condition Report List"),
       ],
     );
   }
@@ -133,10 +133,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget _buildSquareRoundedBox(String description) {
     return GestureDetector(
       onTap: () {
-        if (description == "UCUA Action") {
-          Navigator.pushNamed(context, "/view_action_form");
-        } else if (description == "UCUA Condition") {
-          Navigator.pushNamed(context, "/view_condition_form");
+        if (description == "Unsafe Action") {
+          Navigator.pushNamed(context, "/adminUAForm");
+        } else if (description == "Unsafe Condition") {
+          Navigator.pushNamed(context, "/adminUCForm");
         }
       },
       child: Container(
@@ -173,10 +173,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget _buildRectangleRoundedBox(String text) {
     return GestureDetector(
       onTap: () {
-        if (text == "List of Reporting Action") {
-          Navigator.pushNamed(context, "/view_action_form_list");
-        } else if (text == "List of Reporting Condition") {
-          Navigator.pushNamed(context, "/view_condition_form_list");
+        if (text == "Unsafe Action Report List") {
+          Navigator.pushNamed(context, "/adminUAFormList");
+        } else if (text == "Unsafe Condition Report List") {
+          Navigator.pushNamed(context, "/adminUCFormList");
         }
       },
       child: Container(

@@ -3,16 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
-class ViewActionForm extends StatefulWidget {
+class safeDeptViewUAForm extends StatefulWidget {
   final String docId;
 
-  const ViewActionForm({Key? key, required this.docId}) : super(key: key);
+  const safeDeptViewUAForm({Key? key, required this.docId}) : super(key: key);
 
   @override
-  State<ViewActionForm> createState() => _ViewActionFormState();
+  State<safeDeptViewUAForm> createState() => _safeDeptViewUAFormState();
 }
 
-class _ViewActionFormState extends State<ViewActionForm> {
+class _safeDeptViewUAFormState extends State<safeDeptViewUAForm> {
   final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _violatorStaffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
@@ -56,7 +56,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Unsafe Action Form'),
+          title: const Text('Unsafese Action Form'),
         ),
         body: Container(
           color: Colors.grey.withOpacity(.35),
@@ -219,6 +219,12 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       Text('\t\tDESIGNATION  : '),
                       Text('\t\tDATE         : '),
                       Text('\t\tSTATUS       : '),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Condition Details:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
                       const SizedBox(height: 20.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

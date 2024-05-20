@@ -9,15 +9,14 @@ import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_wid
 import 'package:ucua_staging/global_common/toast.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class ActionForm extends StatefulWidget {
-  const ActionForm({Key? key}) : super(key: key);
+class adminUAForm extends StatefulWidget {
+  const adminUAForm({super.key});
 
   @override
-  _ActionFormState createState() => _ActionFormState();
+  State<adminUAForm> createState() => _adminUAFormState();
 }
 
-class _ActionFormState extends State<ActionForm> {
-
+class _adminUAFormState extends State<adminUAForm> {
   List<File?> _images = [null,null,null];
   final picker = ImagePicker();
 
@@ -460,12 +459,13 @@ class _ActionFormState extends State<ActionForm> {
       ),
     );
   }
+
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MaterialApp(
-    home: ActionForm(),
+    home: adminUAForm(),
   ));
 }

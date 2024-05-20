@@ -1,20 +1,19 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
-class ViewConditionForm extends StatefulWidget {
+class adminViewUCForm extends StatefulWidget {
   final String docId;
 
-  const ViewConditionForm({Key? key, required this.docId}) : super(key: key);
+  const adminViewUCForm({Key? key, required this.docId}) : super(key: key);
 
   @override
-  State<ViewConditionForm> createState() => _ViewConditionFormState();
+  State<adminViewUCForm> createState() => _adminViewUCFormState();
 }
 
-class _ViewConditionFormState extends State<ViewConditionForm> {
+class _adminViewUCFormState extends State<adminViewUCForm> {
   final TextEditingController _conditionDetailsController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 

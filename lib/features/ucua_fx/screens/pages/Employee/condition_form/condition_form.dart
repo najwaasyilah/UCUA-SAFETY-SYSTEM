@@ -9,15 +9,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class ConditionFormPage extends StatefulWidget {
-  const ConditionFormPage({super.key});
+class empUCForm extends StatefulWidget {
+  const empUCForm({super.key});
 
   @override
-  State<ConditionFormPage> createState() => _ConditionFormPageState();
+  State<empUCForm> createState() => _empUCFormState();
 }
 
-class _ConditionFormPageState extends State<ConditionFormPage> {
-
+class _empUCFormState extends State<empUCForm> {
   List<File?> _images = [null, null, null];
   final picker = ImagePicker();
   

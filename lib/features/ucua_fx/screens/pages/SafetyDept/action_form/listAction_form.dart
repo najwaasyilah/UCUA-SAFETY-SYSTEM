@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/viewAction_form.dart';
 
-class ListActionPage extends StatefulWidget {
-  const ListActionPage({Key? key}) : super(key: key);
+class safeDeptListUAForm extends StatefulWidget {
+  const safeDeptListUAForm({super.key});
 
   @override
-  State<ListActionPage> createState() => _ListActionPageState();
+  State<safeDeptListUAForm> createState() => _safeDeptListUAFormState();
 }
 
-class _ListActionPageState extends State<ListActionPage> {
+class _safeDeptListUAFormState extends State<safeDeptListUAForm> {
   String? currentUserStaffID;
 
   @override
@@ -128,7 +128,7 @@ class _ListActionPageState extends State<ListActionPage> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => ViewActionForm(docId: document.id),
+                                                  builder: (context) => safeDeptViewUAForm(docId: document.id),
                                                 ),
                                               );
                                             },

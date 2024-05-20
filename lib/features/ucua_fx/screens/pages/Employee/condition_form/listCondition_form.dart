@@ -1,18 +1,17 @@
 // ignore_for_file: prefer_const_constructors, use_super_parameters
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/viewCondition_form.dart';
 
-class ListConditionPage extends StatefulWidget {
-  const ListConditionPage({Key? key}) : super(key: key);
+class empListUCForm extends StatefulWidget {
+  const empListUCForm({super.key});
 
   @override
-  State<ListConditionPage> createState() => _ListConditionPageState();
+  State<empListUCForm> createState() => _empListUCFormState();
 }
 
-class _ListConditionPageState extends State<ListConditionPage> {
+class _empListUCFormState extends State<empListUCForm> {
   String? currentUserStaffID;
 
   @override
@@ -128,7 +127,7 @@ class _ListConditionPageState extends State<ListConditionPage> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => ViewConditionForm(docId: document.id),
+                                                  builder: (context) => empViewUCForm(docId: document.id),
                                                 ),
                                               );
                                             },

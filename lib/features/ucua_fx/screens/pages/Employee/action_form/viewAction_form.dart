@@ -3,16 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
-class ViewActionForm extends StatefulWidget {
+class empViewUAForm extends StatefulWidget {
   final String docId;
 
-  const ViewActionForm({Key? key, required this.docId}) : super(key: key);
+  const empViewUAForm({Key? key, required this.docId}) : super(key: key);
+
 
   @override
-  State<ViewActionForm> createState() => _ViewActionFormState();
+  State<empViewUAForm> createState() => _empViewUAFormState();
 }
 
-class _ViewActionFormState extends State<ViewActionForm> {
+class _empViewUAFormState extends State<empViewUAForm> {
   final TextEditingController _violaterNameController = TextEditingController();
   final TextEditingController _violatorStaffIdController = TextEditingController();
   final TextEditingController _icPassportController = TextEditingController();
