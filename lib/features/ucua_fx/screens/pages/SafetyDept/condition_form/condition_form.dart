@@ -1,11 +1,13 @@
 // ignore_for_file: prefer_const_constructors, use_super_parameters
-
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 //import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class ConditionFormPage extends StatefulWidget {
   const ConditionFormPage({super.key});
@@ -15,6 +17,10 @@ class ConditionFormPage extends StatefulWidget {
 }
 
 class _ConditionFormPageState extends State<ConditionFormPage> {
+
+  List<File?> _images = [null, null, null];
+  final picker = ImagePicker();
+  
   final TextEditingController _conditionDetailsController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
@@ -38,12 +44,26 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     String staffID = await getStaffIDFromUID(uid); 
 
+    List<String> imageUrls = [];
+
     try {
+
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final taskSnapshot = await firebase_storage.FirebaseStorage.instance
+              .ref('ucform/$staffID/$date/image$i.jpg')
+              .putFile(_images[i]!);
+          final url = await taskSnapshot.ref.getDownloadURL();
+          imageUrls.add(url);
+        }
+      }
+
       await firestore.collection('ucform').add({
         'location': location,
         'conditionDetails': conditionDetails,
         'date': date,
         'staffID': staffID, 
+        'imageUrls': imageUrls,
       });
       print('UC Form data saved successfully!');
       showToast(message: "Form data saved successfully!");
@@ -75,6 +95,24 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
     }
   }
 
+  Future getImageGallery(int index) async {
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    setState(() {
+      if (pickedFile != null) {
+        if (index < _images.length) {
+          _images[index] = File(pickedFile.path);
+        } else {
+          _images.add(File(pickedFile.path));
+        }
+      } else {
+        print("No Image Picked!");
+      }
+    });
+  }
 
   void _resetForm() {
     _conditionDetailsController.clear();
@@ -184,6 +222,52 @@ class _ConditionFormPageState extends State<ConditionFormPage> {
                           }
                           return null;
                         },
+                      ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Upload Condition Picture:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => getImageGallery(0),
+                            child: Container(
+                              width: 150, // Adjusted width here
+                              height: 150,
+                              margin: EdgeInsets.only(right: 8.0), // Added margin here
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _images.length > 0 && _images[0] != null // Modified condition here
+                                ? Image.file(_images[0]!, fit: BoxFit.cover)
+                                : Center(
+                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                  ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => getImageGallery(1),
+                            child: Container(
+                              width: 150, // Adjusted width here
+                              height: 150,
+                              margin: EdgeInsets.only(left: 8.0), // Added margin here
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _images.length > 1 && _images[1] != null // Modified condition here
+                                ? Image.file(_images[1]!, fit: BoxFit.cover)
+                                : Center(
+                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
