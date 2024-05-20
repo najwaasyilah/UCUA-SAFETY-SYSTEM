@@ -1,5 +1,4 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
@@ -19,14 +18,16 @@ class _ViewActionFormState extends State<ViewActionForm> {
   final TextEditingController _icPassportController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
-  String _selectedLocation = 'ICT Department';
-  List<String> locations = ['ICT Department','OASIS','Advisor Office','Break Bulk Terminal', 'HR Department', 'Train Track','Safety Department'];
+  String _selectedLocation = 'Select Location';
+  List<String> locations = ['Select Location','ICT Department','OASIS','Advisor Office','Break Bulk Terminal', 'HR Department', 'Train Track','Safety Department'];
 
   String _selectedOffenceCode = 'Not Fasting';
   List<String> offenceCode = ['Not Fasting', 'Sleep During Work', 'Eat During Work','Not Wearing Safety Ves'];
 
   String _selectedICA = 'Stop Work'; 
   List<String> icActions = ['Stop Work', 'Verbal Warning'];
+
+  List<String> _imageUrls = [];
 
   @override
   void initState() {
@@ -45,30 +46,9 @@ class _ViewActionFormState extends State<ViewActionForm> {
       _selectedLocation = formDoc['location'];
       _selectedICA = formDoc['ica'];
       _selectedOffenceCode = formDoc['offenceCode'];
+      _imageUrls = List<String>.from(formDoc['imageUrls'] ?? []);
     });
   }
-
-  /*@override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('View Action Form'),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Violater Name: ${_violaterNameController.text}'),
-            Text('Violator Staff ID: ${_violatorStaffIdController.text}'),
-            Text('IC/Passport: ${_icPassportController.text}'),
-            Text('Date: $_selectedDate'),
-            // Display other fetched data fields here
-          ],
-        ),
-      ),
-    );
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +56,7 @@ class _ViewActionFormState extends State<ViewActionForm> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          
           title: const Text('Unsafe Action Form'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
         ),
         body: Container(
           color: Colors.grey.withOpacity(.35),
@@ -132,6 +105,31 @@ class _ViewActionFormState extends State<ViewActionForm> {
                       FormContainerWidget(
                         hintText: '${_selectedOffenceCode}',
                       ),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Action Pictures:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      _imageUrls.isNotEmpty
+                        ? CarouselSlider(
+                            options: CarouselOptions(
+                              height: 200.0,
+                              enlargeCenterPage: true,
+                              enableInfiniteScroll: false,
+                              viewportFraction: 0.8,
+                            ),
+                            items: _imageUrls.sublist(0, _imageUrls.length < 3 ? _imageUrls.length : 2).map((url) {
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  child: Image.network(url, fit: BoxFit.cover, width: 1000.0),
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        : Text('No images available'),
                       const SizedBox(height: 30.0),
                       Center(
                         child: Text(
@@ -186,9 +184,24 @@ class _ViewActionFormState extends State<ViewActionForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       FormContainerWidget(
-                        hintText: '${_selectedDate}',
+                        hintText: '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}',
                       ),
                       const SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
+                      const Text(
+                        'Violator Work Card:',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 4),
+                      _imageUrls.length >= 3
+                        ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              child: Image.network(_imageUrls[2], fit: BoxFit.cover, width: 1000.0),
+                            ),
+                          )
+                        : Text('No images available or not enough images'),
                       const SizedBox(height: 30.0),
                       Center(
                         child: Text(

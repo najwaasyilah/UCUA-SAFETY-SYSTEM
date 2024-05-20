@@ -112,7 +112,6 @@ class _ActionFormState extends State<ActionForm> {
       }
     });
 
-    _resetForm();
   }
 
   void _resetForm() {
