@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'action_form/listAction_form.dart';
+import 'condition_form/listCondition_form.dart';
 import 'user_profile/admin_management_tools.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -165,9 +167,19 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ],
         ),
         SizedBox(height: 20),
-        _buildRectangleRoundedBox("Unsafe Action Report List"),
+        _buildRectangleRoundedBox("Unsafe Action Report List", onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => adminListUAForm()),
+          );
+        }),
         SizedBox(height: 20),
-        _buildRectangleRoundedBox("Unsafe Condition Report List"),
+        _buildRectangleRoundedBox("Unsafe Condition Report List", onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => adminListUCForm()),
+          );
+        }),
         SizedBox(height: 20),
         _buildRectangleRoundedBox("Manage Users", onTap: () {
           Navigator.push(
