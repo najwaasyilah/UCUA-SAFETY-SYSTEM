@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminUserManagementScreen extends StatefulWidget {
   @override
@@ -44,12 +43,21 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
               Map<String, dynamic> user = doc.data() as Map<String, dynamic>;
               String firstName = user['firstName'] ?? 'No Name';
               String staffID = user['staffID'] ?? 'No ID';
+              String email = user['email'] ?? 'No Email';
+              String role = user['role'] ?? 'No Role';
 
               return Card(
                 margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: ListTile(
                   title: Text(firstName),
-                  subtitle: Text(staffID),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Staff ID: $staffID'),
+                      Text('Email: $email'),
+                      Text('Role: $role'),
+                    ],
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
