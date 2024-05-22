@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user_profile/admin_management_tools.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -11,6 +12,33 @@ class AdminHomePage extends StatefulWidget {
 
 class _AdminHomePageState extends State<AdminHomePage> {
   int _selectedIndex = 0;
+  String? adminName;
+  String? staffID;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAdminData();
+  }
+
+  Future<void> _fetchAdminData() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        setState(() {
+          adminName = doc['firstName'] ?? 'No Name';
+          staffID = doc['staffID'] ?? 'No ID';
+        });
+      }
+    } catch (e) {
+      print('Error fetching admin data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +69,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
             ),
           ),
           const SizedBox(height: 60),
-          _buildAdminCard("Admin"), // Inserting the Admin Card
+          if (adminName != null && staffID != null)
+            _buildAdminCard(adminName!, staffID!), // Inserting the Admin Card
+          if (adminName == null || staffID == null) CircularProgressIndicator(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -64,7 +94,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
-  Widget _buildAdminCard(String adminName) {
+  Widget _buildAdminCard(String adminName, String staffID) {
     return Column(
       children: [
         Container(
@@ -90,7 +120,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    adminName,
+                    "Admin",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -98,7 +128,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "Aiman Haiqal",
+                    adminName,
                     style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -106,7 +136,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "010203",
+                    staffID,
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
