@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/navbar.dart';
-
+import 'user_profile/admin_management_tools.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -34,7 +33,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
             child: const Center(
               child: Text(
                 "UCUA",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: Colors.black),
+                style: TextStyle(
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
             ),
           ),
@@ -45,7 +47,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Color.fromARGB(255, 33, 82, 243), // Change the selected item color
+        selectedItemColor:
+            Color.fromARGB(255, 33, 82, 243), // Change the selected item color
         unselectedItemColor: Colors.grey, // Change the unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -88,17 +91,26 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 children: [
                   Text(
                     adminName,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                   SizedBox(height: 10),
                   Text(
                     "Aiman Haiqal",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                   SizedBox(height: 5),
                   Text(
                     "010203",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ],
               ),
@@ -126,6 +138,14 @@ class _AdminHomePageState extends State<AdminHomePage> {
         _buildRectangleRoundedBox("Unsafe Action Report List"),
         SizedBox(height: 20),
         _buildRectangleRoundedBox("Unsafe Condition Report List"),
+        SizedBox(height: 20),
+        _buildRectangleRoundedBox("Manage Users", onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AdminUserManagementScreen()),
+          );
+        }),
       ],
     );
   }
@@ -162,7 +182,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
             Text(
               description,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
             ),
           ],
         ),
@@ -170,15 +193,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
-  Widget _buildRectangleRoundedBox(String text) {
+  Widget _buildRectangleRoundedBox(String text, {VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: () {
-        if (text == "Unsafe Action Report List") {
-          Navigator.pushNamed(context, "/adminUAFormList");
-        } else if (text == "Unsafe Condition Report List") {
-          Navigator.pushNamed(context, "/adminUCFormList");
-        }
-      },
+      onTap: onTap,
       child: Container(
         width: 300,
         padding: EdgeInsets.all(15),
@@ -197,7 +214,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
     );
@@ -217,7 +235,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamedAndRemoveUntil(context, "/adminHome", (route) => false); // Navigate without back button
+          Navigator.pushNamedAndRemoveUntil(context, "/adminHome",
+              (route) => false); // Navigate without back button
           break;
         case 1:
           Navigator.pushNamed(context, "/adminProfile");
