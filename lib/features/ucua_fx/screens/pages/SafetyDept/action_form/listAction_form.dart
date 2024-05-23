@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_super_parameters
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/viewAction_form.dart';
@@ -21,6 +21,7 @@ class _safeDeptListUAFormState extends State<safeDeptListUAForm> {
     getCurrentUserStaffID();
   }
 
+
   Future<void> getCurrentUserStaffID() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -33,9 +34,51 @@ class _safeDeptListUAFormState extends State<safeDeptListUAForm> {
     }
   }
 
+  Future<void> deleteImages(String docId) async {
+    try {
+      final documentSnapshot = await FirebaseFirestore.instance.collection('uaform').doc(docId).get();
+      if (documentSnapshot.exists) {
+        if (documentSnapshot.data()!.containsKey('imageURLs')) {
+          final imageURLs = List<String>.from(documentSnapshot.get('imageURLs') ?? []);
+          final storage = FirebaseStorage.instance;
+
+          for (final url in imageURLs) {
+            try {
+              print('Attempting to delete image from URL: $url');
+              await storage.refFromURL(url).delete();
+              print('Successfully deleted image: $url');
+            } catch (e) {
+              print('Error deleting image at $url: $e');
+            }
+          }
+        } else {
+          print('No imageURLs field found in document with ID: $docId');
+        }
+      } else {
+        print('Document with ID $docId does not exist');
+      }
+    } catch (e) {
+      print('Error fetching document for deletion with ID $docId: $e');
+    }
+  }
+
   void deleteActionForm(String docId) async {
     try {
+      await deleteImages(docId); 
+
+      final followupCollectionRef = FirebaseFirestore.instance.collection('uaform').doc(docId).collection('uafollowup');
+      final followupDocs = await followupCollectionRef.get();
+      for (final followupDoc in followupDocs.docs) {
+        try {
+          await followupDoc.reference.delete();
+          print('Deleted follow-up document: ${followupDoc.id}');
+        } catch (e) {
+          print('Error deleting follow-up document: ${followupDoc.id} - $e');
+        }
+      }
+
       await FirebaseFirestore.instance.collection('uaform').doc(docId).delete();
+      print('Successfully deleted main document: $docId');
     } catch (e) {
       print('Error deleting form: $e');
     }

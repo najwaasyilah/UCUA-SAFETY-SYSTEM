@@ -1,28 +1,27 @@
 // ignore_for_file: prefer_const_constructors, use_super_parameters, camel_case_types, avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/viewCondition_form.dart';
 
-class safeDeptListUCForm extends StatefulWidget {
-  const safeDeptListUCForm({super.key});
+class safeDeptListAllUCForm extends StatefulWidget {
+  const safeDeptListAllUCForm({super.key});
 
   @override
-  State<safeDeptListUCForm> createState() => _safeDeptListUCFormState();
+  State<safeDeptListAllUCForm> createState() => _safeDeptListAllUCFormState();
 }
 
-class _safeDeptListUCFormState extends State<safeDeptListUCForm> {
+class _safeDeptListAllUCFormState extends State<safeDeptListAllUCForm> {
   String? currentUserStaffID;
 
   @override
   void initState() {
     super.initState();
-    getCurrentUserStaffID();
+    //getCurrentUserStaffID();
   }
 
-  Future<void> getCurrentUserStaffID() async {
+  /*Future<void> getCurrentUserStaffID() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       final uid = currentUser.uid;
@@ -32,7 +31,7 @@ class _safeDeptListUCFormState extends State<safeDeptListUCForm> {
         currentUserStaffID = staffID;
       });
     }
-  }
+  }*/
 
   Future<void> deleteImages(String docId) async {
     try {
@@ -126,7 +125,6 @@ class _safeDeptListUCFormState extends State<safeDeptListUCForm> {
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('ucform')
-                            .where('staffID', isEqualTo: currentUserStaffID)
                             .orderBy('date', descending: true)
                             .snapshots(),
                         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
