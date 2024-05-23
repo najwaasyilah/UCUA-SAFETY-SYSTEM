@@ -1,28 +1,29 @@
-// ignore_for_file: prefer_const_constructors, use_super_parameters
+// ignore_for_file: avoid_print, prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/viewCondition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/viewAction_form.dart';
 
-class adminListUCForm extends StatefulWidget {
-  const adminListUCForm({super.key});
+class adminListAllUAForm extends StatefulWidget {
+  const adminListAllUAForm({super.key});
 
   @override
-  State<adminListUCForm> createState() => _adminListUCFormState();
+  State<adminListAllUAForm> createState() => _adminListAllUAFormState();
 }
 
-class _adminListUCFormState extends State<adminListUCForm> {
+class _adminListAllUAFormState extends State<adminListAllUAForm> {
   String? currentUserStaffID;
 
   @override
   void initState() {
     super.initState();
-    getCurrentUserStaffID();
+    //getCurrentUserStaffID();
   }
 
-  Future<void> getCurrentUserStaffID() async {
+
+  /*Future<void> getCurrentUserStaffID() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       final uid = currentUser.uid;
@@ -32,11 +33,11 @@ class _adminListUCFormState extends State<adminListUCForm> {
         currentUserStaffID = staffID;
       });
     }
-  }
+  }*/
 
   Future<void> deleteImages(String docId) async {
     try {
-      final documentSnapshot = await FirebaseFirestore.instance.collection('ucform').doc(docId).get();
+      final documentSnapshot = await FirebaseFirestore.instance.collection('uaform').doc(docId).get();
       if (documentSnapshot.exists) {
         if (documentSnapshot.data()!.containsKey('imageURLs')) {
           final imageURLs = List<String>.from(documentSnapshot.get('imageURLs') ?? []);
@@ -62,11 +63,11 @@ class _adminListUCFormState extends State<adminListUCForm> {
     }
   }
 
-  void deleteConditionForm(String docId) async {
+  void deleteActionForm(String docId) async {
     try {
       await deleteImages(docId); 
 
-      final followupCollectionRef = FirebaseFirestore.instance.collection('ucform').doc(docId).collection('ucfollowup');
+      final followupCollectionRef = FirebaseFirestore.instance.collection('uaform').doc(docId).collection('uafollowup');
       final followupDocs = await followupCollectionRef.get();
       for (final followupDoc in followupDocs.docs) {
         try {
@@ -77,7 +78,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
         }
       }
 
-      await FirebaseFirestore.instance.collection('ucform').doc(docId).delete();
+      await FirebaseFirestore.instance.collection('uaform').doc(docId).delete();
       print('Successfully deleted main document: $docId');
     } catch (e) {
       print('Error deleting form: $e');
@@ -88,7 +89,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("List of Unsafe Condition Forms"),
+        title: Text("List of Unsafe Action Forms"),
       ),
       body: Container(
         color: Colors.grey.withOpacity(.35),
@@ -115,7 +116,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'LIST OF UNSAFE CONDITION REPORT',
+                        'LIST OF UNSAFE ACTION REPORT',
                         style: TextStyle(
                           fontSize: 23.0,
                           fontWeight: FontWeight.w900,
@@ -125,10 +126,9 @@ class _adminListUCFormState extends State<adminListUCForm> {
                       SizedBox(height: 20),
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
-                            .collection('ucform')
-                            .where('staffID', isEqualTo: currentUserStaffID)
-                            .orderBy('date', descending: true)
-                            .snapshots(),
+                          .collection('uaform')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
                         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
@@ -153,7 +153,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Unsafe Condition Form',
+                                        'Unsafe Action Form',
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 5),
@@ -170,7 +170,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => adminViewUCForm(docId: document.id),
+                                                  builder: (context) => adminViewUAForm(docId: document.id),
                                                 ),
                                               );
                                             },
@@ -178,7 +178,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
                                           ),
                                           ElevatedButton(
                                             onPressed: () {
-                                              deleteConditionForm(document.id);
+                                              deleteActionForm(document.id);
                                             },
                                             child: Text('Delete'),
                                           ),

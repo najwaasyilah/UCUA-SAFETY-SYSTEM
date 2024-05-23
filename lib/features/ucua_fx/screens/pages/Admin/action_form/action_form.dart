@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -17,6 +16,7 @@ class adminUAForm extends StatefulWidget {
 }
 
 class _adminUAFormState extends State<adminUAForm> {
+
   List<File?> _images = [null,null,null];
   final picker = ImagePicker();
 
@@ -33,8 +33,6 @@ class _adminUAFormState extends State<adminUAForm> {
 
   String _selectedICA = 'Stop Work'; 
   List<String> icActions = ['Stop Work', 'Verbal Warning'];
-
-  //List<XFile> _imageFiles = [];
   
 
   @override
@@ -43,6 +41,21 @@ class _adminUAFormState extends State<adminUAForm> {
     _violatorStaffIdController.dispose();
     _icPassportController.dispose();
     super.dispose();
+  }
+
+  Future<Map<String, dynamic>> getReporterInfo(String uid) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot.data() as Map<String, dynamic>;
+      } else {
+        return {};
+      }
+    } catch (e) {
+      print('Error getting user info: $e');
+      return {};
+    }
   }
 
   void _submitForm(String staffID) async {
@@ -56,13 +69,18 @@ class _adminUAFormState extends State<adminUAForm> {
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+    /*String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    String staffID = await getStaffIDFromUID(uid);*/
+
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    String staffID = await getStaffIDFromUID(uid); 
+    Map<String, dynamic> userInfo = await getReporterInfo(uid);
+    String staffID = userInfo['staffID'] ?? '';
+    String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
+    String reporterDesignation = userInfo['role'] ?? '';
 
     List<String> imageUrls = [];
 
     try {
-
       for (int i = 0; i < _images.length; i++) {
         if (_images[i] != null) {
           final taskSnapshot = await firebase_storage.FirebaseStorage.instance
@@ -81,7 +99,9 @@ class _adminUAFormState extends State<adminUAForm> {
         'violatorStaffId': violatorStaffId,
         'icPassport': icPassport,
         'date': date,
-        'staffID': staffID, 
+        'staffID': staffID,
+        'reporterName': reporterName,
+        'reporterDesignation': reporterDesignation,
         'imageUrls': imageUrls,
       });
       showToast(message: "Unsafe Action Form Submitted Successfully!");
@@ -110,7 +130,6 @@ class _adminUAFormState extends State<adminUAForm> {
         print("No Image Picked!");
       }
     });
-
   }
 
   void _resetForm() {
@@ -119,10 +138,8 @@ class _adminUAFormState extends State<adminUAForm> {
     _icPassportController.clear();
 
     setState(() {
-      _selectedDate = DateTime.timestamp();
-      /*for (int i = 0; i < _images.length; i++) {
-        _images[i] = null; // Clear each image in the list
-      }*/
+      _images = [null, null,null];
+      //_actionTakenImageUrls.clear();
     });
   }
 
@@ -160,7 +177,6 @@ class _adminUAFormState extends State<adminUAForm> {
       return 'No user with staff ID';
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -341,13 +357,15 @@ class _adminUAFormState extends State<adminUAForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      FormContainerWidget(
+                      TextFormField(
                         controller: _violaterNameController,
-                        hintText: "Violator Name",
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Violator Name',
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            //return 'Choose your location';
-                            showToast(message: "Fill in Your Name");
+                            showToast(message: "Fill in violator name!");
                           }
                           return null;
                         },
@@ -358,13 +376,15 @@ class _adminUAFormState extends State<adminUAForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      FormContainerWidget(
+                      TextFormField(
                         controller: _violatorStaffIdController,
-                        hintText: "Staff ID",
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Staff ID',
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            //return 'Choose your location';
-                            showToast(message: "Fill in Staff ID");
+                            showToast(message: "Fill in Staff ID!");
                           }
                           return null;
                         },
@@ -375,13 +395,15 @@ class _adminUAFormState extends State<adminUAForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4),
-                      FormContainerWidget(
+                      TextFormField(
                         controller: _icPassportController,
-                        hintText: "IC/Passport",
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'IC/Passport',
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            //return 'Choose your location';
-                            showToast(message: "Fill in IC/Passport");
+                            showToast(message: "Fill in IC/Passport!");
                           }
                           return null;
                         },
@@ -391,10 +413,20 @@ class _adminUAFormState extends State<adminUAForm> {
                         'Date:', 
                         style: TextStyle(fontSize: 16.0),
                       ),
-                      ElevatedButton(
-                        onPressed: () => _selectDate(context),
-                        child: Text(
-                          _selectedDate != null ? '$_selectedDate' : 'Select Date',
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () => _selectDate(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(_selectedDate.toString().split(' ')[0]),
+                              Icon(Icons.calendar_today),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20.0),
@@ -459,7 +491,6 @@ class _adminUAFormState extends State<adminUAForm> {
       ),
     );
   }
-
 }
 
 void main() async {

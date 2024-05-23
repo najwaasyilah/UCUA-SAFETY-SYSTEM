@@ -17,6 +17,7 @@ class adminUCForm extends StatefulWidget {
 }
 
 class _adminUCFormState extends State<adminUCForm> {
+  
   List<File?> _images = [null, null, null];
   final picker = ImagePicker();
   
@@ -24,13 +25,29 @@ class _adminUCFormState extends State<adminUCForm> {
   DateTime _selectedDate = DateTime.now();
 
   String _selectedLocation = 'ICT Department';
-  List<String> locations = ['ICT Department', 'HR Department', 'Train Track','Safety Department'];
+  List<String> locations = ['ICT Department','OASIS','Advisor Office','Break Bulk Terminal', 'HR Department', 'Train Track','Safety Department'];
 
   @override
   void dispose() {
     _conditionDetailsController.dispose();
     super.dispose();
   }
+
+  Future<Map<String, dynamic>> getReporterInfo(String uid) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot.data() as Map<String, dynamic>;
+      } else {
+        return {};
+      }
+    } catch (e) {
+      print('Error getting user info: $e');
+      return {};
+    }
+  }
+
 
   void _submitForm(String staffID) async {
     String location = _selectedLocation;
@@ -39,9 +56,15 @@ class _adminUCFormState extends State<adminUCForm> {
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    // Get the current user's UID
+    /*String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    String staffID = await getStaffIDFromUID(uid);*/
+
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    String staffID = await getStaffIDFromUID(uid); 
+    Map<String, dynamic> userInfo = await getReporterInfo(uid);
+    String staffID = userInfo['staffID'] ?? '';
+    String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
+    String reporterDesignation = userInfo['role'] ?? '';
+
 
     List<String> imageUrls = [];
 
@@ -62,6 +85,8 @@ class _adminUCFormState extends State<adminUCForm> {
         'conditionDetails': conditionDetails,
         'date': date,
         'staffID': staffID, 
+        'reporterName':reporterName,
+        'reporterDesignation':reporterDesignation,
         'imageUrls': imageUrls,
       });
       print('UC Form data saved successfully!');
@@ -118,6 +143,7 @@ class _adminUCFormState extends State<adminUCForm> {
 
     setState(() {
       _selectedDate = DateTime.timestamp();
+      _images = [null, null];
     });
   }
 
@@ -273,10 +299,20 @@ class _adminUCFormState extends State<adminUCForm> {
                         'Date:', 
                         style: TextStyle(fontSize: 16.0),
                       ),
-                      ElevatedButton(
-                        onPressed: () => _selectDate(context),
-                        child: Text(
-                          _selectedDate != null ? '$_selectedDate' : 'Select Date',
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () => _selectDate(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(_selectedDate.toString().split(' ')[0]),
+                              Icon(Icons.calendar_today),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20.0),

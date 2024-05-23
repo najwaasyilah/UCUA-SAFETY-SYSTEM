@@ -1,28 +1,25 @@
-// ignore_for_file: prefer_const_constructors, use_super_parameters
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/viewCondition_form.dart';
 
-class adminListUCForm extends StatefulWidget {
-  const adminListUCForm({super.key});
+class adminListAllUCForm extends StatefulWidget {
+  const adminListAllUCForm({super.key});
 
   @override
-  State<adminListUCForm> createState() => _adminListUCFormState();
+  State<adminListAllUCForm> createState() => _adminListAllUCFormState();
 }
 
-class _adminListUCFormState extends State<adminListUCForm> {
+class _adminListAllUCFormState extends State<adminListAllUCForm> {
   String? currentUserStaffID;
 
   @override
   void initState() {
     super.initState();
-    getCurrentUserStaffID();
+    //getCurrentUserStaffID();
   }
 
-  Future<void> getCurrentUserStaffID() async {
+  /*Future<void> getCurrentUserStaffID() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       final uid = currentUser.uid;
@@ -32,7 +29,7 @@ class _adminListUCFormState extends State<adminListUCForm> {
         currentUserStaffID = staffID;
       });
     }
-  }
+  }*/
 
   Future<void> deleteImages(String docId) async {
     try {
@@ -126,7 +123,6 @@ class _adminListUCFormState extends State<adminListUCForm> {
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('ucform')
-                            .where('staffID', isEqualTo: currentUserStaffID)
                             .orderBy('date', descending: true)
                             .snapshots(),
                         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
