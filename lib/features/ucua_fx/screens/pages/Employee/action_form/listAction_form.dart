@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_super_parameters
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/viewAction_form.dart';
@@ -21,6 +22,7 @@ String? currentUserStaffID;
     getCurrentUserStaffID();
   }
 
+
   Future<void> getCurrentUserStaffID() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -30,16 +32,54 @@ String? currentUserStaffID;
       setState(() {
         currentUserStaffID = staffID;
       });
-    } else {
-      setState(() {
-        currentUserStaffID = null;
-      });
+    }
+  }
+
+  Future<void> deleteImages(String docId) async {
+    try {
+      final documentSnapshot = await FirebaseFirestore.instance.collection('uaform').doc(docId).get();
+      if (documentSnapshot.exists) {
+        if (documentSnapshot.data()!.containsKey('imageURLs')) {
+          final imageURLs = List<String>.from(documentSnapshot.get('imageURLs') ?? []);
+          final storage = FirebaseStorage.instance;
+
+          for (final url in imageURLs) {
+            try {
+              print('Attempting to delete image from URL: $url');
+              await storage.refFromURL(url).delete();
+              print('Successfully deleted image: $url');
+            } catch (e) {
+              print('Error deleting image at $url: $e');
+            }
+          }
+        } else {
+          print('No imageURLs field found in document with ID: $docId');
+        }
+      } else {
+        print('Document with ID $docId does not exist');
+      }
+    } catch (e) {
+      print('Error fetching document for deletion with ID $docId: $e');
     }
   }
 
   void deleteActionForm(String docId) async {
     try {
+      await deleteImages(docId); 
+
+      final followupCollectionRef = FirebaseFirestore.instance.collection('uaform').doc(docId).collection('uafollowup');
+      final followupDocs = await followupCollectionRef.get();
+      for (final followupDoc in followupDocs.docs) {
+        try {
+          await followupDoc.reference.delete();
+          print('Deleted follow-up document: ${followupDoc.id}');
+        } catch (e) {
+          print('Error deleting follow-up document: ${followupDoc.id} - $e');
+        }
+      }
+
       await FirebaseFirestore.instance.collection('uaform').doc(docId).delete();
+      print('Successfully deleted main document: $docId');
     } catch (e) {
       print('Error deleting form: $e');
     }
@@ -99,69 +139,57 @@ String? currentUserStaffID;
                             return CircularProgressIndicator();
                           }
 
-                          if (snapshot.data!.docs.isEmpty) {
-                            return Center(
-                              child: Text('No unsafe action forms found.'),
-                            );
-                          }
-
-                          return RefreshIndicator(
-                            onRefresh: () async {
-                              // Force refresh data from Firestore
-                              await snapshot.data!.docs.first.reference.get();
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                for (DocumentSnapshot document in snapshot.data!.docs)
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          //'Title: ${document['title']}',
-                                          'Unsafe Action Form',
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          'Date Created: ${document['date']}',
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => empViewUAForm(docId: document.id),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text('View'),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                deleteActionForm(document.id);
-                                              },
-                                              child: Text('Delete'),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (DocumentSnapshot document in snapshot.data!.docs)
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                              ],
-                            ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        //'Title: ${document['title']}',
+                                        'Unsafe Action Form',
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        'Date Created: ${document['date']}',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => empViewUAForm(docId: document.id),
+                                                ),
+                                              );
+                                            },
+                                            child: Text('View'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              deleteActionForm(document.id);
+                                            },
+                                            child: Text('Delete'),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           );
                         },
                       ),

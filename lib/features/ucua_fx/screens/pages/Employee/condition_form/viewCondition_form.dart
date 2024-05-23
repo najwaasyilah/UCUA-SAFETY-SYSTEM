@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,49 +14,148 @@ class empViewUCForm extends StatefulWidget {
 }
 
 class _empViewUCFormState extends State<empViewUCForm> {
-  final TextEditingController _conditionDetailsController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
 
-  String _selectedLocation = 'ICT Department';
-  List<String> locations = [
-    'ICT Department',
-    'OASIS',
-    'Advisor Office',
-    'Break Bulk Terminal',
-    'HR Department',
-    'Train Track',
-    'Safety Department'
-  ];
-
+  Map<String, dynamic>? formData;
+  List<String> conditionImages = [];
+  List<Map<String, dynamic>> followUps = [];
   List<String> _imageUrls = [];
+
+  String _status = 'Pending';
+  String? approvalName;
+  String? approvalDesignation;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchFormData();
   }
 
-  @override
-  void dispose() {
-    _conditionDetailsController.dispose();
-    super.dispose();
-  }
-
-  void fetchData() async {
+  Future<void> fetchFormData() async {
     try {
-      DocumentSnapshot formDoc = await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).get();
-      setState(() {
-        _selectedDate = DateTime.parse(formDoc['date']);
-        _selectedLocation = formDoc['location'];
-        _conditionDetailsController.text = formDoc['conditionDetails'];
-        _imageUrls = List<String>.from(formDoc['imageUrls'] ?? []);
-      });
+      DocumentSnapshot doc = await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).get();
+      if (doc.exists) {
+        setState(() {
+          formData = doc.data() as Map<String, dynamic>;
+          _status = formData!['status'] ?? 'Pending'; // Fetch and update status
+        });
+        if (formData!['imageUrls'] != null) {
+          _imageUrls = List<String>.from(formData!['imageUrls'] ?? []);
+        }
+        fetchFollowUps();
+      }
     } catch (e) {
-      // Handle error gracefully
-      print('Error fetching data: $e');
+      print('Error fetching form data: $e');
     }
   }
 
+  Future<void> fetchFollowUps() async {
+    try {
+      QuerySnapshot query = await FirebaseFirestore.instance
+          .collection('ucform')
+          .doc(widget.docId)
+          .collection('ucfollowup')
+          .get();
+      setState(() {
+        followUps = query.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      });
+    } catch (e) {
+      print('Error fetching follow-up data: $e');
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Approved':
+        return Colors.green;
+      case 'Rejected':
+        return Colors.red;
+      case 'Pending':
+      default:
+        return Color.fromARGB(255, 216, 195, 7);
+    }
+  }
+
+  Widget _buildFollowUpUpdate() {
+    followUps.sort((a, b) {
+      Timestamp timestampA = a['timestamp'];
+      Timestamp timestampB = b['timestamp'];
+      return timestampB.compareTo(timestampA);
+    });
+
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Follow-Up Update',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+          ),
+          SizedBox(height: 10),
+          ...followUps.map((update) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey.shade300),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
+                      SizedBox(width: 8),
+                      Text(
+                        update['userRole'] ?? 'Unknown Role', // Display the role
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Text(
+                        (update['timestamp'] as Timestamp).toDate().toString(),
+                        style: TextStyle(color: const Color.fromARGB(255, 107, 107, 107), fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(update['remark']),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      if (update['imageUrls'] != null && update['imageUrls'].length > 0)
+                        ...update['imageUrls'].map<Widget>((url) {
+                          return Expanded(
+                            child: Image.network(
+                              url,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }).toList(),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -108,7 +206,7 @@ class _empViewUCFormState extends State<empViewUCForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: _selectedLocation,
+                        hintText: formData != null ? formData!['location'] : '',
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -117,7 +215,7 @@ class _empViewUCFormState extends State<empViewUCForm> {
                       ),
                       const SizedBox(height: 4),
                       FormContainerWidget(
-                        hintText: _conditionDetailsController.text,
+                        hintText: formData != null ? formData!['conditionDetails'] : '',
                       ),
                       const SizedBox(height: 20.0),
                       const Text(
@@ -137,7 +235,7 @@ class _empViewUCFormState extends State<empViewUCForm> {
                                 return Container(
                                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                     child: Image.network(url, fit: BoxFit.cover, width: 1000.0),
                                   ),
                                 );
@@ -150,7 +248,7 @@ class _empViewUCFormState extends State<empViewUCForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                       FormContainerWidget(
-                        hintText: '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}',
+                        hintText: formData != null ? formData!['date'] : '',
                       ),
                       const SizedBox(height: 30.0),
                       Center(
@@ -160,27 +258,41 @@ class _empViewUCFormState extends State<empViewUCForm> {
                         ),
                       ),
                       const SizedBox(height: 20.0),
+                      const Text('REPORTER INFORMATION', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w900)),
+                      const SizedBox(height: 4.0),
+                      Text('\t\tNAME         : ${formData != null ? formData!['reporterName'] : ''}'),
+                      Text('\t\tDESIGNATION  : ${formData != null ? formData!['reporterDesignation'] : ''}'),
+                      Text('\t\tDATE         : ${formData != null ? formData!['date'] : ''}'),
+                      const SizedBox(height: 20.0),
                       const Text(
-                        'APPROVED BY (SAFETY DEPARTMENT OFFICER)',
+                        'CHECKED BY (SAFETY DEPARTMENT OFFICER)',
                         style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 4.0),
-                      Text('\t\tNAME         : '),
-                      Text('\t\tDESIGNATION  : '),
-                      Text('\t\tDATE         : '),
-                      Text('\t\tSTATUS       : '),
+                      if (_status != 'Pending') ...[
+                        Text('\t\tNAME         : ${formData!['approvalName']}'),
+                        Text('\t\tDESIGNATION  : ${formData!['approvalDesignation']}'),
+                        Text('\t\tDATE         : ${DateTime.now().toString().substring(0, 10)}'),
+                      ],
                       const SizedBox(height: 20.0),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back'),
+                          Text('\t\tSTATUS       : '),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(_status),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              _status,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 30),
+                      _buildFollowUpUpdate(), 
                     ],
                   ),
                 ),
