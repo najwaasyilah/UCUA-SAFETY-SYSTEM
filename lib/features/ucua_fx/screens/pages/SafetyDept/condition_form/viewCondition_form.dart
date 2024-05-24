@@ -391,11 +391,11 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
                         style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 4.0),
-                      if (_status != 'Pending') ...[
+                      if (_status != 'Pending') ...{
                         Text('\t\tNAME         : ${approvalName ?? ''}'),
                         Text('\t\tDESIGNATION  : ${approvalDesignation ?? ''}'),
                         Text('\t\tDATE         : ${DateTime.now().toString().substring(0, 10)}'),
-                      ],
+                      },
                       const SizedBox(height: 20.0),
                       Row(
                         children: [
