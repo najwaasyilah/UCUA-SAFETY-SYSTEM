@@ -6,12 +6,14 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/li
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/action_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/listAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/homeEmp.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/action_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/listAction_form.dart';
@@ -19,9 +21,11 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/signUpPage.dart';
 //import 'package:ucua_staging/features/user_profile/view_profile_page.dart';
+
 import 'firebase_options.dart';
 
 void main() async {
@@ -53,22 +57,27 @@ class MyApp extends StatelessWidget {
         '/safetyHome': (context) => const SafetyDeptHomePage(),
 
         //admin
-        '/adminUCForm':(context) => const adminUCForm(),
-        '/adminUCFormList':(context) => const adminListUCForm(),
-        '/adminUAForm':(context) => const adminUAForm(),
-        '/adminUAFormList':(context) => const adminListUAForm(),
+        '/adminUCForm': (context) => const adminUCForm(),
+        '/adminUCFormList': (context) => const adminListUCForm(),
+        '/adminUAForm': (context) => const adminUAForm(),
+        '/adminUAFormList': (context) => const adminListUAForm(),
 
         //safetyDept
-        '/sdUCForm':(context) => const safeDeptUCForm(),
-        '/sdUCFormList':(context) => const safeDeptListUCForm(),
-        '/sdUAForm':(context) => const safeDeptUAForm(),
-        '/sdUAFormList':(context) => const safeDeptListUAForm(),
+        '/sdUCForm': (context) => const safeDeptUCForm(),
+        '/sdUCFormList': (context) => const safeDeptListUCForm(),
+        '/sdUAForm': (context) => const safeDeptUAForm(),
+        '/sdUAFormList': (context) => const safeDeptListUAForm(),
 
         //employee
-        '/empUCForm':(context) => const empUCForm(),
-        '/empUCFormList':(context) => const empListUCForm(),
-        '/empUAForm':(context) => const empUAForm(),
-        '/empUAFormList':(context) => const empListUAForm(),
+        '/empUCForm': (context) => const empUCForm(),
+        '/empUCFormList': (context) => const empListUCForm(),
+        '/empUAForm': (context) => const empUAForm(),
+        '/empUAFormList': (context) => const empListUAForm(),
+
+        //View notification page
+        '/empNoty': (context) => const empNotyPage(),
+        '/adminNoty': (context) => const adminNotyPage(),
+        '/safeDeptNoty': (context) => const SafeDeptNotyPage(),
       },
     );
   }
