@@ -36,7 +36,7 @@ class ChangePasswordPage extends StatelessWidget {
               },
               style: ButtonStyle(
                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set text color to white
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), // Set button background color to blue
+                backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 33, 82, 243)), // Set button background color to blue
               ),
               child: const Text('Change Password'),
             ),
