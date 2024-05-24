@@ -3,9 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:ucua_staging/features/app/splash_screen.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/action_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/listAction_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/listAllUAForm.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/condition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listAllUCForm.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/action_form.dart';
@@ -20,6 +23,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_fo
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
@@ -61,12 +65,18 @@ class MyApp extends StatelessWidget {
         '/adminUCFormList': (context) => const adminListUCForm(),
         '/adminUAForm': (context) => const adminUAForm(),
         '/adminUAFormList': (context) => const adminListUAForm(),
+        '/adminListtAllUAForms': (context) => const adminListAllUAForm(),
+        '/adminListtAllUForms': (context) => const adminListAllUCForm(),
+        '/adminListReports': (context) => const adminListOfReports(),
 
         //safetyDept
         '/sdUCForm': (context) => const safeDeptUCForm(),
         '/sdUCFormList': (context) => const safeDeptListUCForm(),
         '/sdUAForm': (context) => const safeDeptUAForm(),
         '/sdUAFormList': (context) => const safeDeptListUAForm(),
+        '/safeDeptListtAllUAForms': (context) => const adminListAllUAForm(),
+        '/safeDeptListtAllUForms': (context) => const adminListAllUCForm(),
+        '/safeDeptListReports': (context) => const safeDeptListOfReports(),
 
         //employee
         '/empUCForm': (context) => const empUCForm(),
