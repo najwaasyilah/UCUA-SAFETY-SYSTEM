@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/profile.dart';
 import '../../../widgets/form_container_widget.dart';
 import 'change_password_page.dart';
 
@@ -12,95 +13,7 @@ class AdminProfile extends StatefulWidget {
 }
 
 class _AdminProfileState extends State<AdminProfile> {
-  int _selectedIndex = 0;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  late User? currentUser;
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneNoController = TextEditingController();
-  final TextEditingController _staffIDController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchUserData();
-  }
-
-  Future<void> fetchUserData() async {
-    currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      DocumentSnapshot userSnapshot =
-          await _firestore.collection('users').doc(currentUser!.uid).get();
-
-      if (userSnapshot.exists) {
-        Map<String, dynamic> userData =
-            userSnapshot.data() as Map<String, dynamic>;
-
-        setState(() {
-          _firstNameController.text = userData['firstName'] ?? '';
-          _lastNameController.text = userData['lastName'] ?? '';
-          _phoneNoController.text = userData['phoneNo'] ?? '';
-          _staffIDController.text = userData['staffID'] ?? '';
-          _emailController.text = userData['email'] ?? '';
-        });
-      }
-    }
-  }
-
-  Future<void> _updateProfile() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Add validation checks here
-      if (_firstNameController.text.isEmpty ||
-          _lastNameController.text.isEmpty ||
-          _phoneNoController.text.isEmpty ||
-          _staffIDController.text.isEmpty ||
-          _emailController.text.isEmpty) {
-        throw 'Please fill in all fields.';
-      }
-
-      if (currentUser != null) {
-        // Get updated data from text controllers
-        String firstName = _firstNameController.text;
-        String lastName = _lastNameController.text;
-        String phoneNo = _phoneNoController.text;
-        String staffID = _staffIDController.text;
-        String email = _emailController.text;
-
-        // Update user details in Firestore
-        await _firestore.collection('users').doc(currentUser!.uid).update({
-          'firstName': firstName,
-          'lastName': lastName,
-          'phoneNo': phoneNo,
-          'staffID': staffID,
-          'email': email,
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully')),
-        );
-      }
-    } catch (e) {
-      print('Error updating profile: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error updating profile. Please try again later.')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+   int _selectedIndex = 1; // Set the initial index to 1 to have Profile as the selected item
 
   @override
   Widget build(BuildContext context) {
@@ -114,88 +27,187 @@ class _AdminProfileState extends State<AdminProfile> {
         automaticallyImplyLeading: false, // Remove back icon
       ),
       body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                radius: 50,
-                child: Icon(Icons.account_circle, size: 100, color: Colors.blue),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 60,
+              backgroundImage: AssetImage('assets/profile_picture.png'), // Add your image asset path
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Aiman Haiqal',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 20),
-              FormContainerWidget(
-                controller: _firstNameController,
-                hintText: "First Name",
+            ),
+            Text(
+              'mnqarlz04@gmail.com',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
               ),
-              const SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _lastNameController,
-                hintText: "Last Name",
-              ),
-              const SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _phoneNoController,
-                hintText: "Phone Number",
-              ),
-              const SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _staffIDController,
-                hintText: "Staff ID",
-              ),
-              const SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _emailController,
-                hintText: "Email",
-              ),
-              const SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _passwordController,
-                hintText: "Password",
-                isPasswordField: true,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _updateProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+            ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const adminViewProfile()),
+                );
+              },
+              child: Container(
+                width: 150, // Set the desired width here
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 10), // Adjust the vertical padding here
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 33, 82, 243),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        'Update Profile',
-                        style: TextStyle(color: Colors.white),
-                      ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                ),
-                child: const Text(
-                  'Change Password',
-                  style: TextStyle(color: Colors.white),
+                child: Text(
+                  'Edit Profile',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 30), // Add some space between the buttons
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+                );
+              },
+              child: Container(
+                width: 300, // Set the desired width here
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 81, 76, 76),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.lock, color: Colors.white),
+                        SizedBox(width: 10), // Add some space between the icon and text
+                        Text(
+                          'Change Password',
+                          style: TextStyle(
+                            color: Colors.white,
+                            //fontWeight: FontWeight.bold,
+                            fontSize: 18, // Increase the text size
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20), // Add some space between the buttons
+            GestureDetector(
+              onTap: () {
+                // Add the functionality to handle logout
+                Navigator.pushNamed(context, '/adminViewProfile');
+              },
+              child: Container(
+                width: 300, // Set the desired width here
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 81, 76, 76),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.settings, color: Colors.white),
+                        SizedBox(width: 10), // Add some space between the icon and text
+                        Text(
+                          'Settings',
+                          style: TextStyle(
+                            color: Colors.white,
+                            //fontWeight: FontWeight.bold,
+                            fontSize: 18, // Increase the text size
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20), // Add some space between the buttons
+            GestureDetector(
+              onTap: () {
+                // Add the functionality to handle logout
+                Navigator.pushNamed(context, '/login');
+              },
+              child: Container(
+                width: 300, // Set the desired width here
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 81, 76, 76),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.logout, color: Colors.white),
+                        SizedBox(width: 10), // Add some space between the icon and text
+                        Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.white,
+                            //fontWeight: FontWeight.bold,
+                            fontSize: 18, // Increase the text size
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, // Align FAB to center
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/adminHome"); // Add your FAB functionality here
+        },
+        backgroundColor: Color.fromARGB(255, 33, 82, 243),
+        child: Icon(
+          Icons.home,
+          size: 30, // Change the size of the FAB icon
+          color: Colors.white,
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.grey, // Change the selected item color
-        unselectedItemColor: Color.fromARGB(255, 33, 82, 243), // Change the unselected item color
+        selectedItemColor: const Color.fromARGB(255, 33, 82, 243), // Change the selected item color
+        unselectedItemColor: Colors.grey, // Change the unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -206,28 +218,18 @@ class _AdminProfileState extends State<AdminProfile> {
     );
   }
 
-  @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneNoController.dispose();
-    _staffIDController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamedAndRemoveUntil(context, "/adminHome", (route) => false); // Navigate without back button
+          Navigator.pushNamed(context, "/adminNoty");// Navigate without back button
           break;
         case 1:
           Navigator.pushNamed(context, "/adminProfile");
           break;
       }
+   
     });
   }
 }
