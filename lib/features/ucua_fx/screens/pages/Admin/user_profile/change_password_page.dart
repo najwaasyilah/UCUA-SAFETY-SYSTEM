@@ -98,7 +98,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               onPressed: isChangingPassword ? null : _changePassword,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
+                backgroundColor: Color.fromARGB(255, 33, 82, 243),
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
               child: Text(isChangingPassword
