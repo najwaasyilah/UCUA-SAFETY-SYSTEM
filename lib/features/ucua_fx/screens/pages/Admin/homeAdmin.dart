@@ -49,7 +49,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Padding(
-          padding: EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
+          padding:
+              EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
           child: Text(
             "UCUA",
             style: TextStyle(
@@ -76,7 +77,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/adminHome"); // Add your FAB functionality here
+          Navigator.pushNamed(
+              context, "/adminHome"); // Add your FAB functionality here
         },
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
         child: const Icon(
@@ -88,8 +90,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
-        unselectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
+        selectedItemColor:
+            const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
+        unselectedItemColor:
+            const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -175,7 +179,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ),
         const SizedBox(height: 20),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -194,7 +199,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description_rounded,
-              iconColor: const Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
+              iconColor: const Color.fromARGB(
+                  255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
               text: '5',
               onTap: () {
@@ -247,7 +253,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ),
         const SizedBox(height: 30),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -266,7 +273,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+              iconColor: const Color.fromARGB(
+                  255, 194, 63, 216), // Set the icon color for "Unsafe Action"
               label: '',
               text: 'Unsafe Action',
               onTap: () {
@@ -279,7 +287,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
+              iconColor: const Color.fromARGB(255, 194, 63,
+                  216), // Set the icon color for "Unsafe Condition"
               label: '',
               text: 'Unsafe Condition',
               onTap: () {
@@ -293,7 +302,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ),
         const SizedBox(height: 5),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -315,7 +325,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
               context,
               MaterialPageRoute(builder: (context) => const adminListUAForm()),
             );
-            
           },
         ),
         const SizedBox(height: 10), // Added spacing
@@ -331,7 +340,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ),
         const SizedBox(height: 30), // Added spacing for the new text header
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -350,44 +360,47 @@ class _AdminHomePageState extends State<AdminHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.people,
-              iconColor: const Color.fromARGB(255, 90, 86, 86), // Set the icon color for "Users"
+              iconColor: const Color.fromARGB(
+                  255, 90, 86, 86), // Set the icon color for "Users"
               label: 'Users',
               text: '',
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AdminUserManagementScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AdminUserManagementScreen()),
                 );
               },
               width: 80,
-              height: 80,
+              height: 100,
             ),
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.photo_rounded,
-              iconColor: const Color.fromARGB(255, 29, 112, 180), // Set the icon color for "Gallery"
+              iconColor: const Color.fromARGB(
+                  255, 29, 112, 180), // Set the icon color for "Gallery"
               label: 'Gallery',
               text: '',
-              onTap: () {
-                 
-              },
+              onTap: () {},
               width: 80,
-              height: 80,
+              height: 100,
             ),
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.library_books,
-              iconColor: const Color.fromARGB(255, 22, 111, 22), // Set the icon color for "Reports"
+              iconColor: const Color.fromARGB(
+                  255, 22, 111, 22), // Set the icon color for "Reports"
               label: 'Reports',
               text: '',
               onTap: () {
-                 Navigator.push(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const adminListOfReports()),
+                  MaterialPageRoute(
+                      builder: (context) => const adminListOfReports()),
                 );
               },
               width: 80,
-              height: 80,
+              height: 100,
             ),
           ],
         ),
@@ -444,7 +457,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
       child: Container(
         width: width,
         height: height,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5), // Adjust padding to make space for text
+        padding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 5), // Adjust padding to make space for text
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -480,14 +495,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
-  Widget _buildRectangleRoundedBox(String text, {IconData? icon, VoidCallback? onTap}) {
+  Widget _buildRectangleRoundedBox(String text,
+      {IconData? icon, VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 370, // Increased width
         height: 70, // Added height to increase size
         padding: const EdgeInsets.all(20), // Increased padding for a larger box
-        decoration: BoxDecoration(  
+        decoration: BoxDecoration(
           color: const Color.fromARGB(255, 33, 82, 243),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -537,14 +553,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamed(context, "/adminNoty"); // Navigate to notifications
+          Navigator.pushNamed(
+              context, "/adminNoty"); // Navigate to notifications
           break;
         case 1:
           Navigator.pushNamed(context, "/adminProfile");
           break;
       }
-      
     });
-    
   }
 }
