@@ -177,6 +177,7 @@ class _listUAFormState extends State<adminListUAForm> {
                                         style: TextStyle(fontSize: 16),
                                       ),
                                       SizedBox(height: 5),
+                                      if ((document.data() as Map<String, dynamic>).containsKey('status'))
                                       Row(
                                         children: [
                                           Container(
