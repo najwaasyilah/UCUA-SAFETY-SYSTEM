@@ -20,7 +20,7 @@ class _empViewUAFormState extends State<empViewUAForm> {
   List<Map<String, dynamic>> followUps = [];
   List<String> _imageUrls = [];
 
-  final String _status = 'Pending';
+  String _status = 'Pending';
   String? approvalName;
   String? approvalDesignation;
 
@@ -36,6 +36,7 @@ class _empViewUAFormState extends State<empViewUAForm> {
       if (doc.exists) {
         setState(() {
           formData = doc.data() as Map<String, dynamic>;
+          _status = formData!['status'] ?? 'Pending'; 
         });
         if (formData!['imageUrls'] != null) {
           _imageUrls = List<String>.from(formData!['imageUrls'] ?? []);

@@ -36,7 +36,7 @@ class _empViewUCFormState extends State<empViewUCForm> {
       if (doc.exists) {
         setState(() {
           formData = doc.data() as Map<String, dynamic>;
-          _status = formData!['status'] ?? 'Pending'; // Fetch and update status
+          _status = formData!['status'] ?? 'Pending'; 
         });
         if (formData!['imageUrls'] != null) {
           _imageUrls = List<String>.from(formData!['imageUrls'] ?? []);
