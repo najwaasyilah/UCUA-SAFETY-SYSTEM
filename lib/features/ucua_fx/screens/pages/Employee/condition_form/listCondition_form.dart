@@ -40,6 +40,19 @@ class _empListUCFormState extends State<empListUCForm> {
     }
   }
 
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      case 'pending':
+        return Color.fromARGB(255, 212, 192, 6);
+      default:
+        return Colors.grey; 
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,6 +130,23 @@ class _empListUCFormState extends State<empListUCForm> {
                                       Text(
                                         'Date Created: ${document['date']}',
                                         style: TextStyle(fontSize: 16),
+                                      ),
+                                      SizedBox(height: 5),
+                                      if ((document.data() as Map<String, dynamic>).containsKey('status'))
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: getStatusColor(document['status']), 
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: Text(
+                                              'Status: ${document['status']}', 
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(height: 10),
                                       Row(
