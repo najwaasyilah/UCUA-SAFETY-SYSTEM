@@ -17,10 +17,16 @@ class _empHomePageState extends State<empHomePage> {
   String? staffID;
   String? profileImageUrl;
 
+  int reportedCount = 0;
+  int pendingCount = 0;
+  int approvedCount = 0;
+  int rejectedCount = 0;
+
   @override
   void initState() {
     super.initState();
     _fetchEmpData();
+    //_fetchFormStatistics();
   }
 
   Future<void> _fetchEmpData() async {
@@ -37,11 +43,62 @@ class _empHomePageState extends State<empHomePage> {
           staffID = doc['staffID'] ?? 'No ID';
           profileImageUrl = doc['profileImageUrl'];
         });
+
+        _fetchFormStatistics(doc['staffID']);
+
       }
     } catch (e) {
       print('Error fetching employee data: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching employee data: $e')),
+      );
+    }
+  }
+
+  Future<void> _fetchFormStatistics(String staffID) async {
+    try {
+      final ucformSnapshot = await FirebaseFirestore.instance
+          .collection('ucform')
+          .where('staffID', isEqualTo: staffID)
+          .get();
+      final uaformSnapshot = await FirebaseFirestore.instance
+          .collection('uaform')
+          .where('staffID', isEqualTo: staffID)
+          .get();
+
+      final allForms = ucformSnapshot.docs + uaformSnapshot.docs;
+
+      // Initialize counters
+      int totalReported = allForms.length;
+      int pending = 0;
+      int approved = 0;
+      int rejected = 0;
+
+      // Calculate statistics
+      for (var doc in allForms) {
+        if (doc.data().containsKey('status')) {
+          String status = doc['status'];
+          if (status == 'Pending') {
+            pending++;
+          } else if (status == 'Approved') {
+            approved++;
+          } else if (status == 'Rejected') {
+            rejected++;
+          }
+        }
+      }
+
+      // Update state with calculated values
+      setState(() {
+        this.reportedCount = totalReported;
+        this.pendingCount = pending;
+        this.approvedCount = approved;
+        this.rejectedCount = rejected;
+      });
+    } catch (e) {
+      print('Error fetching form statistics: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching form statistics: $e')),
       );
     }
   }
@@ -210,7 +267,7 @@ class _empHomePageState extends State<empHomePage> {
               iconColor: const Color.fromARGB(
                   255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
-              text: '5',
+              text: '$reportedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 1
               },
@@ -223,7 +280,7 @@ class _empHomePageState extends State<empHomePage> {
               icon: Icons.pending_actions_rounded,
               iconColor: Colors.orange, // Set the icon color for "Pending"
               label: 'Pending',
-              text: '2',
+              text: '$pendingCount',
               onTap: () {
                 // Add navigation or functionality for Chart 2
               },
@@ -236,7 +293,7 @@ class _empHomePageState extends State<empHomePage> {
               icon: Icons.check_circle_rounded,
               iconColor: Colors.green, // Set the icon color for "Approved"
               label: 'Approved',
-              text: '2',
+              text: '$approvedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 3
               },
@@ -249,7 +306,7 @@ class _empHomePageState extends State<empHomePage> {
               icon: Icons.cancel,
               iconColor: Colors.red, // Set the icon color for "Rejected"
               label: 'Rejected',
-              text: '1',
+              text: '$rejectedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 4
               },
