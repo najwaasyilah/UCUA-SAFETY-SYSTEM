@@ -47,10 +47,19 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
               String staffID = user['staffID'] ?? 'No ID';
               String email = user['email'] ?? 'No Email';
               String role = user['role'] ?? 'No Role';
+              String? profileImageUrl = user['profileImageUrl'];
 
               return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: profileImageUrl != null
+                        ? NetworkImage(profileImageUrl)
+                        : const AssetImage('assets/default_profile_picture.png')
+                            as ImageProvider,
+                  ),
                   title: Text(firstName),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,6 +113,8 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
         TextEditingController(text: user?['role']);
     final TextEditingController staffIDController =
         TextEditingController(text: user?['staffID']);
+    final TextEditingController profileImageUrlController =
+        TextEditingController(text: user?['profileImageUrl']);
 
     showDialog(
       context: context,
@@ -112,50 +123,63 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
           title: Text(user == null ? 'Add User' : 'Edit User'),
           content: Form(
             key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'First Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a first name';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an email';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: roleController,
-                  decoration: const InputDecoration(labelText: 'Role'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a role';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: staffIDController,
-                  decoration: const InputDecoration(labelText: 'Staff ID'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a staff ID';
-                    }
-                    return null;
-                  },
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'First Name'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a first name';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: roleController,
+                    decoration: const InputDecoration(labelText: 'Role'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a role';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: staffIDController,
+                    decoration: const InputDecoration(labelText: 'Staff ID'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a staff ID';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: profileImageUrlController,
+                    decoration:
+                        const InputDecoration(labelText: 'Profile Image URL'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a profile image URL';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -167,6 +191,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                     'email': emailController.text,
                     'role': roleController.text,
                     'staffID': staffIDController.text,
+                    'profileImageUrl': profileImageUrlController.text,
                   };
                   if (userId == null) {
                     _addUser(newUser);
