@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/listAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/navbar.dart';
 
@@ -354,7 +355,12 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               label: 'Gallery',
               text: '',
               onTap: () {
-                // Add navigation for "Gallery" here
+                Navigator.push(
+                   context,
+                    MaterialPageRoute(
+                   builder: (context) => const galleryPage(),
+               ),
+                  );// Add navigation for "Gallery" here
               },
               width: 80,
               height: 80,
@@ -366,10 +372,12 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               label: 'Reports',
               text: '',
               onTap: () {
-                Navigator.push(
+                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => safeDeptListOfReports()),
-                );
+                   MaterialPageRoute(
+                   builder: (context) => safeDeptListOfReports(), // Remove 'const' keyword here
+    ),
+  );
               },
               width: 80,
               height: 80,
