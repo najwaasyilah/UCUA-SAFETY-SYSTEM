@@ -259,7 +259,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
-              "Form statistics", // New text header
+              "Form statistics",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
