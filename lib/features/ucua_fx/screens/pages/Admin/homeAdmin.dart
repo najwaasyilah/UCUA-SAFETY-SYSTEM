@@ -276,7 +276,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               iconColor: const Color.fromARGB(
                   255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
-              text: '5',
+              text: '$reportedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 1
               },
@@ -289,7 +289,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               icon: Icons.pending_actions_rounded,
               iconColor: Colors.orange, // Set the icon color for "Pending"
               label: 'Pending',
-              text: '2',
+              text: '$pendingCount',
               onTap: () {
                 // Add navigation or functionality for Chart 2
               },
@@ -302,7 +302,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               icon: Icons.check_circle_rounded,
               iconColor: Colors.green, // Set the icon color for "Approved"
               label: 'Approved',
-              text: '2',
+              text: '$approvedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 3
               },
@@ -315,7 +315,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               icon: Icons.cancel,
               iconColor: Colors.red, // Set the icon color for "Rejected"
               label: 'Rejected',
-              text: '1',
+              text: '$rejectedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 4
               },
