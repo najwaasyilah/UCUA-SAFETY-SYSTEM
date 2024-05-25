@@ -277,7 +277,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               iconColor: const Color.fromARGB(
                   255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
-              text: '5',
+              text: '$reportedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 1
               },
@@ -290,7 +290,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               icon: Icons.pending_actions_rounded,
               iconColor: Colors.orange, // Set the icon color for "Pending"
               label: 'Pending',
-              text: '2',
+              text: '$pendingCount',
               onTap: () {
                 // Add navigation or functionality for Chart 2
               },
@@ -303,7 +303,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               icon: Icons.check_circle_rounded,
               iconColor: Colors.green, // Set the icon color for "Approved"
               label: 'Approved',
-              text: '2',
+              text: '$approvedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 3
               },
@@ -315,7 +315,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.cancel,
               iconColor: Colors.red, // Set the icon color for "Rejected"
-              label: 'Rejected',
+              label: '$rejectedCount',
               text: '1',
               onTap: () {
                 // Add navigation or functionality for Chart 4
