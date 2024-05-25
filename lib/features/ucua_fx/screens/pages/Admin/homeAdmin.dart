@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/listAllUAForm.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'action_form/listAction_form.dart';
 import 'condition_form/listCondition_form.dart';
 import 'user_profile/admin_management_tools.dart';
@@ -315,6 +317,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               context,
               MaterialPageRoute(builder: (context) => adminListUAForm()),
             );
+            
           },
         ),
         const SizedBox(height: 10), // Added spacing
@@ -334,7 +337,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
-              "Tools",
+              "Tools Management",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -368,7 +371,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               label: 'Gallery',
               text: '',
               onTap: () {
-                // Add navigation for "Gallery" here
+                 
               },
               width: 80,
               height: 80,
@@ -380,7 +383,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
               label: 'Reports',
               text: '',
               onTap: () {
-                // Add navigation for "All Forms" here
+                 Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => adminListOfReports()),
+                );
               },
               width: 80,
               height: 80,
@@ -539,6 +545,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
           Navigator.pushNamed(context, "/adminProfile");
           break;
       }
+      
     });
+    
   }
 }
