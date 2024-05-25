@@ -17,6 +17,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
   int _selectedIndex = 0;
   String? safeDeptName;
   String? staffID;
+  String? profileImageUrl;
 
   @override
   void initState() {
@@ -36,6 +37,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         setState(() {
           safeDeptName = doc['firstName'] ?? 'No Name';
           staffID = doc['staffID'] ?? 'No ID';
+          profileImageUrl =
+              doc['profileImageUrl']; // Assuming this field exists in Firestore
         });
       }
     } catch (e) {
@@ -49,7 +52,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Padding(
-          padding: EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
+          padding:
+              EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
           child: Text(
             "UCUA",
             style: TextStyle(
@@ -67,7 +71,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             const SizedBox(height: 10),
             if (safeDeptName != null && staffID != null)
-              _buildSafeDeptCard(safeDeptName!, staffID!), // Inserting the Safety Department Card
+              _buildSafeDeptCard(safeDeptName!, staffID!,
+                  profileImageUrl), // Inserting the Safety Department Card
             if (safeDeptName == null || staffID == null)
               const Center(child: CircularProgressIndicator()),
           ],
@@ -76,7 +81,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/safetyHome"); // Add your FAB functionality here
+          Navigator.pushNamed(
+              context, "/safetyHome"); // Add your FAB functionality here
         },
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
         child: const Icon(
@@ -88,8 +94,10 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
-        unselectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
+        selectedItemColor:
+            const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
+        unselectedItemColor:
+            const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -104,7 +112,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
     );
   }
 
-  Widget _buildSafeDeptCard(String safeDeptName, String staffID) {
+  Widget _buildSafeDeptCard(
+      String safeDeptName, String staffID, String? profileImageUrl) {
     return Column(
       children: [
         Container(
@@ -166,16 +175,20 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
                   ],
                 ),
               ),
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/profile_picture.png'),
+                backgroundImage: profileImageUrl != null
+                    ? NetworkImage(profileImageUrl)
+                    : const AssetImage('assets/profile_picture.png')
+                        as ImageProvider,
               ),
             ],
           ),
         ),
         const SizedBox(height: 20),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -194,7 +207,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description_rounded,
-              iconColor: const Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
+              iconColor: const Color.fromARGB(
+                  255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
               text: '5',
               onTap: () {
@@ -247,7 +261,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         ),
         const SizedBox(height: 30),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -266,7 +281,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+              iconColor: const Color.fromARGB(
+                  255, 194, 63, 216), // Set the icon color for "Unsafe Action"
               label: '',
               text: 'Unsafe Action',
               onTap: () {
@@ -279,7 +295,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
+              iconColor: const Color.fromARGB(255, 194, 63,
+                  216), // Set the icon color for "Unsafe Condition"
               label: '',
               text: 'Unsafe Condition',
               onTap: () {
@@ -293,7 +310,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         ),
         const SizedBox(height: 5),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -313,7 +331,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const safeDeptListUAForm()),
+              MaterialPageRoute(
+                  builder: (context) => const safeDeptListUAForm()),
             );
           },
         ),
@@ -324,13 +343,15 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const safeDeptListUCForm()),
+              MaterialPageRoute(
+                  builder: (context) => const safeDeptListUCForm()),
             );
           },
         ),
         const SizedBox(height: 30), // Added spacing for the new text header
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -350,36 +371,39 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.photo_rounded,
-              iconColor: const Color.fromARGB(255, 29, 112, 180), // Set the icon color for "Gallery"
+              iconColor: const Color.fromARGB(
+                  255, 29, 112, 180), // Set the icon color for "Gallery"
               label: 'Gallery',
               text: '',
               onTap: () {
                 Navigator.push(
-                   context,
-                    MaterialPageRoute(
-                   builder: (context) => const galleryPage(),
-               ),
-                  );// Add navigation for "Gallery" here
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const galleryPage(),
+                  ),
+                ); // Add navigation for "Gallery" here
               },
               width: 80,
-              height: 80,
+              height: 100,
             ),
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.library_books,
-              iconColor: const Color.fromARGB(255, 22, 111, 22), // Set the icon color for "Reports"
+              iconColor: const Color.fromARGB(
+                  255, 22, 111, 22), // Set the icon color for "Reports"
               label: 'Reports',
               text: '',
               onTap: () {
-                 Navigator.push(
+                Navigator.push(
                   context,
-                   MaterialPageRoute(
-                   builder: (context) => const safeDeptListOfReports(), // Remove 'const' keyword here
-    ),
-  );
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const safeDeptListOfReports(), // Remove 'const' keyword here
+                  ),
+                );
               },
               width: 80,
-              height: 80,
+              height: 100,
             ),
           ],
         ),
@@ -436,7 +460,9 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       child: Container(
         width: width,
         height: height,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5), // Adjust padding to make space for text
+        padding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 5), // Adjust padding to make space for text
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -472,7 +498,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
     );
   }
 
-  Widget _buildRectangleRoundedBox(String text, {IconData? icon, VoidCallback? onTap}) {
+  Widget _buildRectangleRoundedBox(String text,
+      {IconData? icon, VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -529,7 +556,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamed(context, "/safeDeptNoty"); // Navigate to notifications
+          Navigator.pushNamed(
+              context, "/safeDeptNoty"); // Navigate to notifications
           break;
         case 1:
           Navigator.pushNamed(context, "/safeDeptProfile");

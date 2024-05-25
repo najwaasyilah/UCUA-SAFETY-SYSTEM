@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/profile.dart';
 
@@ -15,6 +19,8 @@ class _empProfileState extends State<empProfile> {
   int _selectedIndex = 0;
   String? userName;
   String? userEmail;
+  String? profileImageUrl;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -37,7 +43,49 @@ class _empProfileState extends State<empProfile> {
         setState(() {
           userName = userData['firstName'] ?? 'No Name';
           userEmail = userData['email'] ?? 'No Email';
+          profileImageUrl = userData['profileImageUrl'];
         });
+      }
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      try {
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          // Upload image to Firebase Storage
+          String fileName = '${user.uid}.jpg';
+          Reference storageRef = FirebaseStorage.instance
+              .ref()
+              .child('profile_pictures/$fileName');
+          UploadTask uploadTask = storageRef.putFile(File(pickedFile.path));
+          TaskSnapshot snapshot = await uploadTask;
+          String downloadUrl = await snapshot.ref.getDownloadURL();
+
+          // Update user profile image URL in Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({'profileImageUrl': downloadUrl});
+
+          setState(() {
+            profileImageUrl = downloadUrl;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Profile picture updated successfully')),
+          );
+        }
+      } catch (e) {
+        print('Error uploading profile picture: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Error uploading profile picture. Please try again later.')),
+        );
       }
     }
   }
@@ -57,10 +105,16 @@ class _empProfileState extends State<empProfile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage(
-                  'assets/profile_picture.png'), // Add your image asset path
+              backgroundImage: profileImageUrl != null
+                  ? NetworkImage(profileImageUrl!)
+                  : const AssetImage('assets/profile_picture.png')
+                      as ImageProvider,
+              child: IconButton(
+                icon: const Icon(Icons.camera_alt, color: Colors.white),
+                onPressed: _pickImage,
+              ),
             ),
             const SizedBox(height: 10),
             Text(

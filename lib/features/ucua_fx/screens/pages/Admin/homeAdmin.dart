@@ -17,6 +17,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   int _selectedIndex = 0;
   String? adminName;
   String? staffID;
+  String? profileImageUrl;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
         setState(() {
           adminName = doc['firstName'] ?? 'No Name';
           staffID = doc['staffID'] ?? 'No ID';
+          profileImageUrl = doc['profileImageUrl']; // Add this line
         });
       }
     } catch (e) {
@@ -68,7 +70,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
           children: [
             const SizedBox(height: 10),
             if (adminName != null && staffID != null)
-              _buildAdminCard(adminName!, staffID!), // Inserting the Admin Card
+              _buildAdminCard(adminName!, staffID!,
+                  profileImageUrl), // Inserting the Admin Card
             if (adminName == null || staffID == null)
               const Center(child: CircularProgressIndicator()),
           ],
@@ -108,7 +111,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
-  Widget _buildAdminCard(String adminName, String staffID) {
+  Widget _buildAdminCard(
+      String adminName, String staffID, String? profileImageUrl) {
     return Column(
       children: [
         Container(
@@ -170,9 +174,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ],
                 ),
               ),
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/profile_picture.png'),
+                backgroundImage: profileImageUrl != null
+                    ? NetworkImage(profileImageUrl!)
+                    : const AssetImage('assets/profile_picture.png')
+                        as ImageProvider,
               ),
             ],
           ),

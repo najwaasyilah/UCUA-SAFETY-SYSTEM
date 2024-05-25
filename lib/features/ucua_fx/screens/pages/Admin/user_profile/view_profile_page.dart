@@ -1,6 +1,9 @@
+import 'dart:io'; // For File
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // For Firebase Storage
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart'; // For Image Picker
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/profile.dart';
 import 'change_password_page.dart';
 
@@ -16,6 +19,8 @@ class _AdminProfileState extends State<AdminProfile> {
       1; // Set the initial index to 1 to have Profile as the selected item
   String? adminName;
   String? adminEmail;
+  String? profileImageUrl;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -38,7 +43,42 @@ class _AdminProfileState extends State<AdminProfile> {
         setState(() {
           adminName = userData['firstName'] ?? 'No Name';
           adminEmail = userData['email'] ?? 'No Email';
+          profileImageUrl = userData['profileImageUrl']; // Add this line
         });
+      }
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      File image = File(pickedFile.path);
+      _uploadImage(image);
+    }
+  }
+
+  Future<void> _uploadImage(File image) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child('profile_pictures')
+            .child('${user.uid}.jpg');
+        UploadTask uploadTask = storageReference.putFile(image);
+        await uploadTask.whenComplete(() => null);
+
+        String downloadUrl = await storageReference.getDownloadURL();
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'profileImageUrl': downloadUrl});
+
+        setState(() {
+          profileImageUrl = downloadUrl;
+        });
+      } catch (e) {
+        print('Error uploading image: $e');
       }
     }
   }
@@ -58,10 +98,25 @@ class _AdminProfileState extends State<AdminProfile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(
-                  'assets/profile_picture.png'), // Add your image asset path
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!)
+                      : const AssetImage('assets/profile_picture.png')
+                          as ImageProvider,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(Icons.camera_alt),
+                    onPressed: _pickImage,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Text(

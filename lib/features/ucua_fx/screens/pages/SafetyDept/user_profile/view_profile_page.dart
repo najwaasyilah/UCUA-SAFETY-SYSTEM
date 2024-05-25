@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/profile.dart';
 
@@ -12,10 +15,10 @@ class SafeDeptProfile extends StatefulWidget {
 }
 
 class _SafeDeptProfileState extends State<SafeDeptProfile> {
-  int _selectedIndex =
-      1; // Set the initial index to 1 to have Profile as the selected item
+  int _selectedIndex = 1;
   String? userName;
   String? userEmail;
+  String? userProfileImageUrl;
 
   @override
   void initState() {
@@ -38,7 +41,52 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
         setState(() {
           userName = userData['firstName'] ?? 'No Name';
           userEmail = userData['email'] ?? 'No Email';
+          userProfileImageUrl = userData['profileImageUrl'];
         });
+      }
+    }
+  }
+
+  Future<void> _uploadProfileImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        try {
+          String fileName = '${user.uid}.jpg';
+          Reference storageRef = FirebaseStorage.instance
+              .ref()
+              .child('profile_images')
+              .child(fileName);
+          UploadTask uploadTask = storageRef.putFile(imageFile);
+
+          TaskSnapshot storageSnapshot = await uploadTask;
+          String downloadUrl = await storageSnapshot.ref.getDownloadURL();
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({
+            'profileImageUrl': downloadUrl,
+          });
+
+          setState(() {
+            userProfileImageUrl = downloadUrl;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile image updated successfully')),
+          );
+        } catch (e) {
+          print('Error uploading profile image: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error uploading profile image')),
+          );
+        }
       }
     }
   }
@@ -49,19 +97,33 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
       appBar: AppBar(
         title: const Text(
           'User Profile',
-          textAlign: TextAlign.center, // Center the text
+          textAlign: TextAlign.center,
         ),
-        centerTitle: true, // Center the title horizontally
-        automaticallyImplyLeading: false, // Remove back icon
+        centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(
-                  'assets/profile_picture.png'), // Add your image asset path
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: userProfileImageUrl != null
+                      ? NetworkImage(userProfileImageUrl!)
+                      : const AssetImage('assets/profile_picture.png')
+                          as ImageProvider,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(Icons.camera_alt, color: Colors.white),
+                    onPressed: _uploadProfileImage,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Text(
@@ -88,10 +150,9 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
                 );
               },
               child: Container(
-                width: 150, // Set the desired width here
+                width: 150,
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10), // Adjust the vertical padding here
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 33, 82, 243),
                   borderRadius: BorderRadius.circular(20),
@@ -105,7 +166,7 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
                 ),
               ),
             ),
-            const SizedBox(height: 30), // Add some space between the buttons
+            const SizedBox(height: 30),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -115,10 +176,10 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
                 );
               },
               child: Container(
-                width: 300, // Set the desired width here
+                width: 300,
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
@@ -129,34 +190,31 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
                     Row(
                       children: [
                         Icon(Icons.lock, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
+                        SizedBox(width: 10),
                         Text(
                           'Change Password',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18, // Increase the text size
+                            fontSize: 18,
                           ),
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
+                    Icon(Icons.arrow_forward_ios, color: Colors.white),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Add some space between the buttons
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/safeDeptViewProfile');
               },
               child: Container(
-                width: 300, // Set the desired width here
+                width: 300,
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
@@ -167,34 +225,31 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
                     Row(
                       children: [
                         Icon(Icons.settings, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
+                        SizedBox(width: 10),
                         Text(
                           'Settings',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18, // Increase the text size
+                            fontSize: 18,
                           ),
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
+                    Icon(Icons.arrow_forward_ios, color: Colors.white),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Add some space between the buttons
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/login');
               },
               child: Container(
-                width: 300, // Set the desired width here
+                width: 300,
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
@@ -205,20 +260,17 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
                     Row(
                       children: [
                         Icon(Icons.logout, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
+                        SizedBox(width: 10),
                         Text(
                           'Logout',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18, // Increase the text size
+                            fontSize: 18,
                           ),
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
+                    Icon(Icons.arrow_forward_ios, color: Colors.white),
                   ],
                 ),
               ),
@@ -226,26 +278,23 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
           ],
         ),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked, // Align FAB to center
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(
-              context, "/safetyHome"); // Add your FAB functionality here
+          Navigator.pushNamed(context, "/safetyHome");
         },
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
         child: const Icon(
           Icons.home,
-          size: 30, // Change the size of the FAB icon
+          size: 30,
           color: Colors.white,
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color.fromARGB(
-            255, 33, 82, 243), // Change the selected item color
-        unselectedItemColor: Colors.grey, // Change the unselected item color
+        selectedItemColor: const Color.fromARGB(255, 33, 82, 243),
+        unselectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -265,8 +314,7 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamed(
-              context, "/safeDeptNoty"); // Navigate without back button
+          Navigator.pushNamed(context, "/safeDeptNoty");
           break;
         case 1:
           Navigator.pushNamed(context, "/safeDeptProfile");

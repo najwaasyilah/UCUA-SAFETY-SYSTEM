@@ -5,7 +5,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/listCondition_form.dart';
 
 class empHomePage extends StatefulWidget {
-  const empHomePage({super.key, Key});
+  const empHomePage({super.key});
 
   @override
   State<empHomePage> createState() => _empHomePageState();
@@ -15,6 +15,7 @@ class _empHomePageState extends State<empHomePage> {
   int _selectedIndex = 0;
   String? employeeName;
   String? staffID;
+  String? profileImageUrl;
 
   @override
   void initState() {
@@ -34,11 +35,11 @@ class _empHomePageState extends State<empHomePage> {
         setState(() {
           employeeName = doc['firstName'] ?? 'No Name';
           staffID = doc['staffID'] ?? 'No ID';
+          profileImageUrl = doc['profileImageUrl'];
         });
       }
     } catch (e) {
       print('Error fetching employee data: $e');
-      // Show a snackbar or dialog to inform the user of the error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching employee data: $e')),
       );
@@ -70,8 +71,8 @@ class _empHomePageState extends State<empHomePage> {
           children: [
             const SizedBox(height: 10),
             if (employeeName != null && staffID != null)
-              _buildEmpCard(
-                  employeeName!, staffID!), // Inserting the Employee Card
+              _buildEmpCard(employeeName!, staffID!,
+                  profileImageUrl), // Inserting the Employee Card
             if (employeeName == null || staffID == null)
               const Center(child: CircularProgressIndicator()),
           ],
@@ -111,7 +112,8 @@ class _empHomePageState extends State<empHomePage> {
     );
   }
 
-  Widget _buildEmpCard(String employeeName, String staffID) {
+  Widget _buildEmpCard(
+      String employeeName, String staffID, String? profileImageUrl) {
     return Column(
       children: [
         Container(
@@ -173,9 +175,12 @@ class _empHomePageState extends State<empHomePage> {
                   ],
                 ),
               ),
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/profile_picture.png'),
+                backgroundImage: profileImageUrl != null
+                    ? NetworkImage(profileImageUrl!)
+                    : const AssetImage('assets/profile_picture.png')
+                        as ImageProvider,
               ),
             ],
           ),
@@ -341,7 +346,6 @@ class _empHomePageState extends State<empHomePage> {
             );
           },
         ),
-
         const SizedBox(height: 40.0),
       ],
     );
