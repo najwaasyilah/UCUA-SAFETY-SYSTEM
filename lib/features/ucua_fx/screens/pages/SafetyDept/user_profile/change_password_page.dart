@@ -35,8 +35,8 @@ class ChangePasswordPage extends StatelessWidget {
                 Navigator.pushNamed(context, "/safeDeptProfile");// Navigate back to View Profile page
               },
               style: ButtonStyle(
-                 foregroundColor: WidgetStateProperty.all<Color>(Colors.white), // Set text color to white
-                backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 33, 82, 243)), // Set button background color to blue
+                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set text color to white
+                backgroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 33, 82, 243)), // Set button background color to blue
               ),
               child: const Text('Change Password'),
             ),
