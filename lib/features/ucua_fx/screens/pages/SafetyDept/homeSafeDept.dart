@@ -19,10 +19,16 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
   String? staffID;
   String? profileImageUrl;
 
+  int reportedCount = 0;
+  int pendingCount = 0;
+  int approvedCount = 0;
+  int rejectedCount = 0;
+
   @override
   void initState() {
     super.initState();
     _fetchSafeDeptData();
+    _fetchFormStatistics();
   }
 
   Future<void> _fetchSafeDeptData() async {
@@ -38,11 +44,72 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           safeDeptName = doc['firstName'] ?? 'No Name';
           staffID = doc['staffID'] ?? 'No ID';
           profileImageUrl =
-              doc['profileImageUrl']; // Assuming this field exists in Firestore
+              doc['profileImageUrl']; 
         });
       }
     } catch (e) {
       print('Error fetching safety department data: $e');
+    }
+  }
+
+  Future<void> _fetchFormStatistics() async {
+    try {
+      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+
+      int totalForms = ucformSnapshot.size + uaformSnapshot.size;
+      int pending = 0;
+      int approved = 0;
+      int rejected = 0;
+
+      void processDocument(QueryDocumentSnapshot doc, String collectionName) {
+        var data = doc.data() as Map<String, dynamic>?;
+        if (data != null) {
+          //print('$collectionName document data: $data');  
+          if (data.containsKey('status')) {
+            switch (data['status']) {
+              case 'Pending':
+                pending++;
+                break;
+              case 'Approved':
+                approved++;
+                break;
+              case 'Rejected':
+                rejected++;
+                break;
+              default:
+                print('Unknown status in $collectionName: ${data['status']}');
+            }
+          } else {
+            print('No status field in $collectionName document: ${doc.id}');
+          }
+        } else {
+          print('Null data in $collectionName document: ${doc.id}');
+        }
+      }
+
+      // Count statuses in ucform collection
+      for (var doc in ucformSnapshot.docs) {
+        processDocument(doc, 'ucform');
+      }
+
+      for (var doc in uaformSnapshot.docs) {
+        processDocument(doc, 'uaform');
+      }
+
+      setState(() {
+        reportedCount = totalForms;
+        pendingCount = pending;
+        approvedCount = approved;
+        rejectedCount = rejected;
+      });
+
+      /*print('Total Forms: $totalForms');
+      print('Pending Count: $pendingCount');
+      print('Approved Count: $approvedCount');
+      print('Rejected Count: $rejectedCount');*/
+    } catch (e) {
+      print('Error fetching form statistics: $e');
     }
   }
 
