@@ -38,10 +38,14 @@ class _empHomePageState extends State<empHomePage> {
             .doc(user.uid)
             .get();
 
+        final data = doc.data() as Map<String, dynamic>?;
+
         setState(() {
-          employeeName = doc['firstName'] ?? 'No Name';
-          staffID = doc['staffID'] ?? 'No ID';
-          profileImageUrl = doc['profileImageUrl'];
+          employeeName = data?['firstName'] ?? 'No Name';
+          staffID = data?['staffID'] ?? 'No ID';
+          profileImageUrl = data != null && data.containsKey('profileImageUrl')
+              ? data['profileImageUrl']
+              : null;
         });
 
         _fetchFormStatistics(doc['staffID']);
