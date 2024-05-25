@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/profile.dart';
 
 class empProfile extends StatefulWidget {
-  const empProfile({super.key, Key});
+  const empProfile({super.key});
 
   @override
   State<empProfile> createState() => _empProfileState();
@@ -11,6 +13,34 @@ class empProfile extends StatefulWidget {
 
 class _empProfileState extends State<empProfile> {
   int _selectedIndex = 0;
+  String? userName;
+  String? userEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userSnapshot.exists) {
+        Map<String, dynamic> userData =
+            userSnapshot.data() as Map<String, dynamic>;
+
+        setState(() {
+          userName = userData['firstName'] ?? 'No Name';
+          userEmail = userData['email'] ?? 'No Email';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +63,16 @@ class _empProfileState extends State<empProfile> {
                   'assets/profile_picture.png'), // Add your image asset path
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Aiman Haiqal',
-              style: TextStyle(
+            Text(
+              userName ?? 'Loading...',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text(
-              'mnqarlz04@gmail.com',
-              style: TextStyle(
+            Text(
+              userEmail ?? 'Loading...',
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -105,7 +135,6 @@ class _empProfileState extends State<empProfile> {
                           'Change Password',
                           style: TextStyle(
                             color: Colors.white,
-                            //fontWeight: FontWeight.bold,
                             fontSize: 18, // Increase the text size
                           ),
                         ),
@@ -120,7 +149,6 @@ class _empProfileState extends State<empProfile> {
             const SizedBox(height: 20), // Add some space between the buttons
             GestureDetector(
               onTap: () {
-                // Add the functionality to handle logout
                 Navigator.pushNamed(context, '/empViewProfile');
               },
               child: Container(
@@ -145,7 +173,6 @@ class _empProfileState extends State<empProfile> {
                           'Settings',
                           style: TextStyle(
                             color: Colors.white,
-                            //fontWeight: FontWeight.bold,
                             fontSize: 18, // Increase the text size
                           ),
                         ),
@@ -160,7 +187,6 @@ class _empProfileState extends State<empProfile> {
             const SizedBox(height: 20), // Add some space between the buttons
             GestureDetector(
               onTap: () {
-                // Add the functionality to handle logout
                 Navigator.pushNamed(context, '/login');
               },
               child: Container(
@@ -185,7 +211,6 @@ class _empProfileState extends State<empProfile> {
                           'Logout',
                           style: TextStyle(
                             color: Colors.white,
-                            //fontWeight: FontWeight.bold,
                             fontSize: 18, // Increase the text size
                           ),
                         ),
