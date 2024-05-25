@@ -7,6 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/li
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listAllUCForm.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listCondition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
@@ -24,6 +25,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_fo
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listAllUCForm.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
@@ -70,6 +72,7 @@ class MyApp extends StatelessWidget {
         '/adminListtAllUAForms': (context) => const adminListAllUAForm(),
         '/adminListtAllUForms': (context) => const adminListAllUCForm(),
         '/adminListReports': (context) => const adminListOfReports(),
+        '/adminGallery': (context) => const adminGalleryPage(),
 
         //safetyDept
         '/sdUCForm': (context) => const safeDeptUCForm(),
@@ -79,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/sdListtAllUAForms': (context) => const safeDeptListAllUAForm(),
         '/sdListtAllUForms': (context) => const safeDeptListAllUCForm(),
         '/sdListReports': (context) => const safeDeptListOfReports(),
+        '/sdGallery': (context) => const galleryPage(),
 
         //employee
         '/empUCForm': (context) => const empUCForm(),
