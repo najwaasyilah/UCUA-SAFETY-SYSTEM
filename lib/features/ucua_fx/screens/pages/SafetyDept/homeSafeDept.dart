@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/listAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/navbar.dart';
 
 class SafetyDeptHomePage extends StatefulWidget {
@@ -365,7 +366,10 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               label: 'Reports',
               text: '',
               onTap: () {
-                // Add navigation for "All Forms" here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => safeDeptListOfReports()),
+                );
               },
               width: 80,
               height: 80,
