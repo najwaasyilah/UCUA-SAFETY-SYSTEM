@@ -2,11 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/listAction_form.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/listCondition_form.dart';
 
 class empHomePage extends StatefulWidget {
-  const empHomePage({Key? key});
+  const empHomePage({super.key, Key});
 
   @override
   State<empHomePage> createState() => _empHomePageState();
@@ -52,7 +51,8 @@ class _empHomePageState extends State<empHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Padding(
-          padding: EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
+          padding:
+              EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
           child: Text(
             "UCUA",
             style: TextStyle(
@@ -70,7 +70,8 @@ class _empHomePageState extends State<empHomePage> {
           children: [
             const SizedBox(height: 10),
             if (employeeName != null && staffID != null)
-              _buildEmpCard(employeeName!, staffID!), // Inserting the Employee Card
+              _buildEmpCard(
+                  employeeName!, staffID!), // Inserting the Employee Card
             if (employeeName == null || staffID == null)
               const Center(child: CircularProgressIndicator()),
           ],
@@ -79,7 +80,8 @@ class _empHomePageState extends State<empHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/empHome"); // Add your FAB functionality here
+          Navigator.pushNamed(
+              context, "/empHome"); // Add your FAB functionality here
         },
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
         child: const Icon(
@@ -91,8 +93,10 @@ class _empHomePageState extends State<empHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Color.fromRGBO(158, 158, 158, 1), // Set selected item color
-        unselectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
+        selectedItemColor:
+            const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
+        unselectedItemColor:
+            const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -178,7 +182,8 @@ class _empHomePageState extends State<empHomePage> {
         ),
         const SizedBox(height: 20),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -197,7 +202,8 @@ class _empHomePageState extends State<empHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description_rounded,
-              iconColor: Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
+              iconColor: const Color.fromARGB(
+                  255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
               text: '5',
               onTap: () {
@@ -250,7 +256,8 @@ class _empHomePageState extends State<empHomePage> {
         ),
         const SizedBox(height: 30),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -269,7 +276,8 @@ class _empHomePageState extends State<empHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+              iconColor: const Color.fromARGB(
+                  255, 194, 63, 216), // Set the icon color for "Unsafe Action"
               label: '',
               text: 'Unsafe Action',
               onTap: () {
@@ -282,7 +290,8 @@ class _empHomePageState extends State<empHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
+              iconColor: const Color.fromARGB(255, 194, 63,
+                  216), // Set the icon color for "Unsafe Condition"
               label: '',
               text: 'Unsafe Condition',
               onTap: () {
@@ -296,7 +305,8 @@ class _empHomePageState extends State<empHomePage> {
         ),
         const SizedBox(height: 5),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -316,7 +326,7 @@ class _empHomePageState extends State<empHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => empListUAForm()),
+              MaterialPageRoute(builder: (context) => const empListUAForm()),
             );
           },
         ),
@@ -327,12 +337,11 @@ class _empHomePageState extends State<empHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => empListUCForm()),
+              MaterialPageRoute(builder: (context) => const empListUCForm()),
             );
           },
         ),
-        
-        
+
         const SizedBox(height: 40.0),
       ],
     );
@@ -386,7 +395,9 @@ class _empHomePageState extends State<empHomePage> {
       child: Container(
         width: width,
         height: height,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5), // Adjust padding to make space for text
+        padding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 5), // Adjust padding to make space for text
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -422,7 +433,8 @@ class _empHomePageState extends State<empHomePage> {
     );
   }
 
-  Widget _buildRectangleRoundedBox(String text, {IconData? icon, VoidCallback? onTap}) {
+  Widget _buildRectangleRoundedBox(String text,
+      {IconData? icon, VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(

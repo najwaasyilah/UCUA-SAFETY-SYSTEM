@@ -12,7 +12,7 @@ import '../../../../../../global_common/toast.dart';
 
 class safeDeptViewUAForm extends StatefulWidget {
   final String docId;
-  const safeDeptViewUAForm({Key? key, required this.docId}) : super(key: key);
+  const safeDeptViewUAForm({super.key, required this.docId});
 
   @override
   State<safeDeptViewUAForm> createState() => _SafeDeptViewUAFormState();
@@ -264,7 +264,7 @@ class _SafeDeptViewUAFormState extends State<safeDeptViewUAForm> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -501,28 +501,28 @@ class _SafeDeptViewUAFormState extends State<safeDeptViewUAForm> {
                       children: [
                         ElevatedButton(
                           onPressed: () => _handleAction('Save'),
-                          child: const Text('Save'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Color.fromRGBO(255, 255, 255, 1), 
                             backgroundColor: Color.fromARGB(255, 63, 63, 62),
                           ),
+                          child: const Text('Save'),
 
                         ),
                         ElevatedButton(
                           onPressed: () => _handleAction('Approve'),
-                          child: const Text('Approve'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white, 
                             backgroundColor: Colors.green,
                           ),
+                          child: const Text('Approve'),
                         ),
                         ElevatedButton(
                           onPressed: () => _handleAction('Reject'),
-                          child: const Text('Reject'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white, 
                             backgroundColor: Colors.red,
                           ),
+                          child: const Text('Reject'),
                         ),
                       ],
                     ),

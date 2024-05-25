@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/profile.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
 class safeDeptProfile extends StatefulWidget {
   const safeDeptProfile({super.key});
@@ -30,19 +27,19 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 60,
               backgroundImage: AssetImage('assets/profile_picture.png'), // Add your image asset path
             ),
             const SizedBox(height: 10),
-            Text(
+            const Text(
               'Aiman Haiqal',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const Text(
               'mnqarlz04@gmail.com',
               style: TextStyle(
                 fontSize: 16,
@@ -60,12 +57,12 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
               child: Container(
                 width: 150, // Set the desired width here
                 alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 10), // Adjust the vertical padding here
+                padding: const EdgeInsets.symmetric(vertical: 10), // Adjust the vertical padding here
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 33, 82, 243),
+                  color: const Color.fromARGB(255, 33, 82, 243),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
+                child: const Text(
                   'Edit Profile',
                   style: TextStyle(
                     color: Colors.white,
@@ -85,12 +82,12 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
               child: Container(
                 width: 300, // Set the desired width here
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 81, 76, 76),
+                  color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
@@ -121,12 +118,12 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
               child: Container(
                 width: 300, // Set the desired width here
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
@@ -157,12 +154,12 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
               child: Container(
                 width: 300, // Set the desired width here
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
@@ -192,8 +189,8 @@ class _safeDeptProfileState extends State<safeDeptProfile> {
         onPressed: () {
           Navigator.pushNamed(context, "/safetyHome"); // Add your FAB functionality here
         },
-        backgroundColor: Color.fromARGB(255, 33, 82, 243),
-        child: Icon(
+        backgroundColor: const Color.fromARGB(255, 33, 82, 243),
+        child: const Icon(
           Icons.home,
           size: 30, // Change the size of the FAB icon
           color: Colors.white,

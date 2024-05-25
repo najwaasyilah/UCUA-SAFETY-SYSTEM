@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class empNotyPage extends StatefulWidget {
-  const empNotyPage({Key? key}) : super(key: key);
+  const empNotyPage({super.key});
 
   @override
   _empNotyPageState createState() => _empNotyPageState();

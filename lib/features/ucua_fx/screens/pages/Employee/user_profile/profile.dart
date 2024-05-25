@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
 class employeeViewProfile extends StatefulWidget {
-  const employeeViewProfile({Key? key});
+  const employeeViewProfile({super.key, Key});
 
   @override
   State<employeeViewProfile> createState() => _employeeViewProfileState();
@@ -32,8 +30,10 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
   Future<void> fetchUserData() async {
     currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      DocumentSnapshot userSnapshot =
-          await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .get();
 
       if (userSnapshot.exists) {
         Map<String, dynamic> userData =
@@ -74,7 +74,10 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
         String email = _emailController.text;
 
         // Update user details in Firestore
-        await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).update({
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser!.uid)
+            .update({
           'firstName': firstName,
           'lastName': lastName,
           'phoneNo': phoneNo,
@@ -92,7 +95,8 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
     } catch (e) {
       print('Error updating profile: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error updating profile. Please try again later.')),
+        const SnackBar(
+            content: Text('Error updating profile. Please try again later.')),
       );
     } finally {
       setState(() {
@@ -111,7 +115,7 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
         ),
         centerTitle: true, // Center the title horizontally
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -125,9 +129,10 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
             children: [
               Stack(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 50,
-                    child: Icon(Icons.account_circle, size: 100, color: Color.fromARGB(255, 33, 82, 243)),
+                    child: Icon(Icons.account_circle,
+                        size: 100, color: Color.fromARGB(255, 33, 82, 243)),
                   ),
                   Positioned(
                     bottom: 0,
@@ -136,7 +141,7 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
                       onPressed: () {
                         // Add your edit functionality here
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.camera_alt_rounded,
                         color: Color.fromARGB(255, 248, 244, 244),
                         size: 30,
@@ -170,12 +175,11 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
                 controller: _emailController,
                 hintText: "Email",
               ),
-              
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _isLoading ? null : _updateProfile,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                  backgroundColor: const Color.fromARGB(255, 33, 82, 243),
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)

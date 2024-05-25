@@ -11,7 +11,7 @@ import 'package:ucua_staging/global_common/toast.dart';
 class adminViewUAForm extends StatefulWidget {
   final String docId;
 
-  const adminViewUAForm({Key? key, required this.docId}) : super(key: key);
+  const adminViewUAForm({super.key, required this.docId});
 
   @override
   State<adminViewUAForm> createState() => _adminViewUAFormState();
@@ -168,7 +168,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
         return Colors.red;
       case 'Pending':
       default:
-        return Color.fromARGB(255, 216, 195, 7);
+        return const Color.fromARGB(255, 216, 195, 7);
     }
   }
 
@@ -196,7 +196,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
     });
 
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -205,21 +205,21 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Follow-Up Update',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           ...followUps.map((update) {
             return Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: Colors.grey.shade300),
@@ -230,22 +230,22 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
-                      SizedBox(width: 8),
+                      const Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
+                      const SizedBox(width: 8),
                       Text(
                         update['userRole'] ?? 'Unknown Role', // Display the role
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Text(
                         (update['timestamp'] as Timestamp).toDate().toString(),
-                        style: TextStyle(color: const Color.fromARGB(255, 107, 107, 107), fontSize: 12),
+                        style: const TextStyle(color: Color.fromARGB(255, 107, 107, 107), fontSize: 12),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(update['remark']),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       if (update['imageUrls'] != null && update['imageUrls'].length > 0)
@@ -263,7 +263,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -274,7 +274,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
     if (formData == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Unsafe Action Form')),
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -294,7 +294,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 5,
                     blurRadius: 7,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -303,13 +303,13 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
+                    const Center(
                       child: Text(
                         '1. U-SEE',
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 151, 46, 170),
+                          color: Color.fromARGB(255, 151, 46, 170),
                         ),
                       ),
                     ),
@@ -334,23 +334,23 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                             ),
                             items: _imageUrls.sublist(0, _imageUrls.length < 3 ? _imageUrls.length : 2).map((url) {
                               return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                margin: const EdgeInsets.symmetric(horizontal: 5.0),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                   child: Image.network(url, fit: BoxFit.cover, width: 1000.0),
                                 ),
                               );
                             }).toList(),
                           )
-                        : Text('No images available'),
+                        : const Text('No images available'),
                     const SizedBox(height: 30.0),
-                    Center(
+                    const Center(
                       child: Text(
                         '2. U-ACT',
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 151, 46, 170),
+                          color: Color.fromARGB(255, 151, 46, 170),
                         ),
                       ),
                     ),
@@ -378,21 +378,21 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                     const SizedBox(height: 4),
                     _imageUrls.length >= 3
                         ? Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                               child: Image.network(_imageUrls[2], fit: BoxFit.cover, width: 1000.0),
                             ),
                           )
-                        : Text('No images available or not enough images'),
+                        : const Text('No images available or not enough images'),
                     const SizedBox(height: 30.0),
-                    Center(
+                    const Center(
                       child: Text(
                         '3. FOLLOW-UP & STATUS',
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 151, 46, 170),
+                          color: Color.fromARGB(255, 151, 46, 170),
                         ),
                       ),
                     ),
@@ -412,16 +412,16 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                     ],
                     Row(
                       children: [
-                        Text('\t\tSTATUS       : '),
+                        const Text('\t\tSTATUS       : '),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getStatusColor(_status),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             _status,
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
                       ],
@@ -432,7 +432,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                     TextFormField(
                       controller: _remarkController,
                       maxLines: null,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Remark',
                       ),
@@ -447,7 +447,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                           child: Container(
                             width: 150,
                             height: 150,
-                            margin: EdgeInsets.only(right: 8.0),
+                            margin: const EdgeInsets.only(right: 8.0),
                             decoration: BoxDecoration(
                               color: Colors.grey[200],
                               border: Border.all(color: Colors.grey),
@@ -458,7 +458,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                                     _actionImages[0]!,
                                     fit: BoxFit.cover,
                                   )
-                                : Center(
+                                : const Center(
                                     child: Icon(
                                       Icons.add_a_photo,
                                       size: 40.0,
@@ -472,7 +472,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                           child: Container(
                             width: 150,
                             height: 150,
-                            margin: EdgeInsets.only(right: 8.0),
+                            margin: const EdgeInsets.only(right: 8.0),
                             decoration: BoxDecoration(
                               color: Colors.grey[200],
                               border: Border.all(color: Colors.grey),
@@ -483,7 +483,7 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                                     _actionImages[1]!,
                                     fit: BoxFit.cover,
                                   )
-                                : Center(
+                                : const Center(
                                     child: Icon(
                                       Icons.add_a_photo,
                                       size: 40.0,
@@ -500,28 +500,28 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                       children: [
                         ElevatedButton(
                           onPressed: () => _handleAction('Save'),
-                          child: const Text('Save'),
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Color.fromRGBO(255, 255, 255, 1), 
-                            backgroundColor: Color.fromARGB(255, 63, 63, 62),
+                            foregroundColor: const Color.fromRGBO(255, 255, 255, 1), 
+                            backgroundColor: const Color.fromARGB(255, 63, 63, 62),
                           ),
+                          child: const Text('Save'),
 
                         ),
                         ElevatedButton(
                           onPressed: () => _handleAction('Approve'),
-                          child: const Text('Approve'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white, 
                             backgroundColor: Colors.green,
                           ),
+                          child: const Text('Approve'),
                         ),
                         ElevatedButton(
                           onPressed: () => _handleAction('Reject'),
-                          child: const Text('Reject'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white, 
                             backgroundColor: Colors.red,
                           ),
+                          child: const Text('Reject'),
                         ),
                       ],
                     ),

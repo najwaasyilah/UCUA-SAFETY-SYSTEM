@@ -3,18 +3,18 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/li
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listAllUCForm.dart';
 
 class safeDeptListOfReports extends StatelessWidget {
-  const safeDeptListOfReports({Key? key});
+  const safeDeptListOfReports({super.key, Key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "List of Reports",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 33, 82, 243),
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 33, 82, 243),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: Padding(
@@ -30,19 +30,19 @@ class safeDeptListOfReports extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => adminListAllUAForm(),
+                        builder: (context) => const adminListAllUAForm(),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                    backgroundColor: const Color.fromARGB(255, 33, 82, 243),
                     foregroundColor: Colors.white,
                     elevation: 5, // Add elevation for shadow effect
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.list, size: 32),
@@ -59,7 +59,7 @@ class safeDeptListOfReports extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               SizedBox(
                 width: 450,
                 height: 100,
@@ -68,19 +68,19 @@ class safeDeptListOfReports extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => adminListAllUCForm(),
+                        builder: (context) => const adminListAllUCForm(),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                    backgroundColor: const Color.fromARGB(255, 33, 82, 243),
                     foregroundColor: Colors.white,
                     elevation: 5, // Add elevation for shadow effect
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.list, size: 32),

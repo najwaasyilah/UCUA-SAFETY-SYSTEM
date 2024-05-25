@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 
 class galleryPage extends StatelessWidget {
-  const galleryPage({Key? key}) : super(key: key);
+  const galleryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
-        title: Text(
+        title: const Text(
           'Gallery',
           style: TextStyle(
             color: Colors.white,
           ),
         ),
         automaticallyImplyLeading: true,
-        iconTheme: IconThemeData(color: Colors.white), // Make back button white
+        iconTheme: const IconThemeData(color: Colors.white), // Make back button white
       ),
       body: GridView.count(
         crossAxisCount: 2, // 2 columns in the grid
         children: List.generate(6, (index) {
           // Generate 6 template photos
           return Card(
-            margin: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8),
             child: Container(
               color: Colors.grey[200],
               child: Center(
                 child: Text(
                   'Photo ${index + 1}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

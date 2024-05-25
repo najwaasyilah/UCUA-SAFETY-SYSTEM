@@ -5,7 +5,6 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_fo
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/navbar.dart';
 
 class SafetyDeptHomePage extends StatefulWidget {
   const SafetyDeptHomePage({super.key});
@@ -89,7 +88,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Color.fromRGBO(158, 158, 158, 1), // Set selected item color
+        selectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
         unselectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -195,7 +194,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description_rounded,
-              iconColor: Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
+              iconColor: const Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
               text: '5',
               onTap: () {
@@ -267,7 +266,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
               label: '',
               text: 'Unsafe Action',
               onTap: () {
@@ -280,7 +279,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
+              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
               label: '',
               text: 'Unsafe Condition',
               onTap: () {
@@ -314,7 +313,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => safeDeptListUAForm()),
+              MaterialPageRoute(builder: (context) => const safeDeptListUAForm()),
             );
           },
         ),
@@ -325,7 +324,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => safeDeptListUCForm()),
+              MaterialPageRoute(builder: (context) => const safeDeptListUCForm()),
             );
           },
         ),
@@ -351,7 +350,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.photo_rounded,
-              iconColor: Color.fromARGB(255, 29, 112, 180), // Set the icon color for "Gallery"
+              iconColor: const Color.fromARGB(255, 29, 112, 180), // Set the icon color for "Gallery"
               label: 'Gallery',
               text: '',
               onTap: () {
@@ -368,14 +367,14 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.library_books,
-              iconColor: Color.fromARGB(255, 22, 111, 22), // Set the icon color for "Reports"
+              iconColor: const Color.fromARGB(255, 22, 111, 22), // Set the icon color for "Reports"
               label: 'Reports',
               text: '',
               onTap: () {
                  Navigator.push(
                   context,
                    MaterialPageRoute(
-                   builder: (context) => safeDeptListOfReports(), // Remove 'const' keyword here
+                   builder: (context) => const safeDeptListOfReports(), // Remove 'const' keyword here
     ),
   );
               },

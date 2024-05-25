@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class adminNotyPage extends StatefulWidget {
-  const adminNotyPage({Key? key}) : super(key: key);
+  const adminNotyPage({super.key});
 
   @override
   _adminNotyPageState createState() => _adminNotyPageState();
@@ -15,10 +15,10 @@ class _adminNotyPageState extends State<adminNotyPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // Remove the back button
-        title: Text('Notifications'),
+        title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'No Notifications for Admin',
           style: TextStyle(fontSize: 20),
@@ -29,8 +29,8 @@ class _adminNotyPageState extends State<adminNotyPage> {
         onPressed: () {
           Navigator.pushNamed(context, "/adminHome");
         },
-        backgroundColor: Color.fromARGB(255, 33, 82, 243),
-        child: Icon(
+        backgroundColor: const Color.fromARGB(255, 33, 82, 243),
+        child: const Icon(
           Icons.home,
           size: 30,
           color: Colors.white,

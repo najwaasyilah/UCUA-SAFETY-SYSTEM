@@ -288,7 +288,7 @@ class _empUAFormState extends State<empUAForm> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: _images.length > 0 && _images[0] != null // Modified condition here
+                              child: _images.isNotEmpty && _images[0] != null // Modified condition here
                                 ? Image.file(_images[0]!, fit: BoxFit.cover)
                                 : Center(
                                     child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),

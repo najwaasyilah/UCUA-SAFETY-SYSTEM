@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SafeDeptNotyPage extends StatefulWidget {
-  const SafeDeptNotyPage({Key? key}) : super(key: key);
+  const SafeDeptNotyPage({super.key});
 
   @override
   _SafeDeptNotyPageState createState() => _SafeDeptNotyPageState();

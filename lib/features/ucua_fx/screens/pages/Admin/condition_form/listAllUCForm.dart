@@ -85,7 +85,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("List of Unsafe Condition Forms"),
+        title: const Text("List of Unsafe Condition Forms"),
       ),
       body: Container(
         color: Colors.grey.withOpacity(.35),
@@ -101,7 +101,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 5,
                     blurRadius: 7,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -111,7 +111,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'LIST OF UNSAFE CONDITION REPORT',
                         style: TextStyle(
                           fontSize: 23.0,
@@ -119,7 +119,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                           color: Color.fromARGB(255, 199, 26, 230),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('ucform')
@@ -131,7 +131,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                           }
 
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           }
 
                           return Column(
@@ -139,8 +139,8 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                             children: [
                               for (DocumentSnapshot document in snapshot.data!.docs)
                                 Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  padding: EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(bottom: 20),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Colors.grey.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(10),
@@ -148,16 +148,16 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Unsafe Condition Form',
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       Text(
                                         'Date Created: ${document['date']}',
-                                        style: TextStyle(fontSize: 16),
+                                        style: const TextStyle(fontSize: 16),
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
@@ -170,13 +170,13 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                                                 ),
                                               );
                                             },
-                                            child: Text('View'),
+                                            child: const Text('View'),
                                           ),
                                           ElevatedButton(
                                             onPressed: () {
                                               deleteConditionForm(document.id);
                                             },
-                                            child: Text('Delete'),
+                                            child: const Text('Delete'),
                                           ),
                                         ],
                                       ),

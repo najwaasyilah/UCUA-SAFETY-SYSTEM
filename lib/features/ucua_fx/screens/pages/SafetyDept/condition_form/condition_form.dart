@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 //import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 import 'package:ucua_staging/global_common/toast.dart';
@@ -266,7 +265,7 @@ class _safeDeptUCFormState extends State<safeDeptUCForm> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: _images.length > 0 && _images[0] != null // Modified condition here
+                              child: _images.isNotEmpty && _images[0] != null // Modified condition here
                                 ? Image.file(_images[0]!, fit: BoxFit.cover)
                                 : Center(
                                     child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),

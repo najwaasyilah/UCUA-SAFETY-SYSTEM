@@ -1,12 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/profile.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
 class empProfile extends StatefulWidget {
-  const empProfile({Key? key});
+  const empProfile({super.key, Key});
 
   @override
   State<empProfile> createState() => _empProfileState();
@@ -14,9 +11,9 @@ class empProfile extends StatefulWidget {
 
 class _empProfileState extends State<empProfile> {
   int _selectedIndex = 0;
- 
- @override
- Widget build(BuildContext context) {
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -30,19 +27,20 @@ class _empProfileState extends State<empProfile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage('assets/profile_picture.png'), // Add your image asset path
+              backgroundImage: AssetImage(
+                  'assets/profile_picture.png'), // Add your image asset path
             ),
             const SizedBox(height: 10),
-            Text(
+            const Text(
               'Aiman Haiqal',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const Text(
               'mnqarlz04@gmail.com',
               style: TextStyle(
                 fontSize: 16,
@@ -54,18 +52,20 @@ class _empProfileState extends State<empProfile> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const employeeViewProfile()),
+                  MaterialPageRoute(
+                      builder: (context) => const employeeViewProfile()),
                 );
               },
               child: Container(
                 width: 150, // Set the desired width here
                 alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 10), // Adjust the vertical padding here
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10), // Adjust the vertical padding here
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 33, 82, 243),
+                  color: const Color.fromARGB(255, 33, 82, 243),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
+                child: const Text(
                   'Edit Profile',
                   style: TextStyle(
                     color: Colors.white,
@@ -79,24 +79,28 @@ class _empProfileState extends State<empProfile> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const ChangePasswordPage()),
                 );
               },
               child: Container(
                 width: 300, // Set the desired width here
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                padding: const EdgeInsets.symmetric(
+                    vertical: 15, horizontal: 15), // Adjust the padding here
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 81, 76, 76),
+                  color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Icon(Icons.lock, color: Colors.white),
-                        SizedBox(width: 10), // Add some space between the icon and text
+                        SizedBox(
+                            width:
+                                10), // Add some space between the icon and text
                         Text(
                           'Change Password',
                           style: TextStyle(
@@ -107,7 +111,8 @@ class _empProfileState extends State<empProfile> {
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                    Icon(Icons.arrow_forward_ios,
+                        color: Colors.white), // Add arrow icon
                   ],
                 ),
               ),
@@ -121,18 +126,21 @@ class _empProfileState extends State<empProfile> {
               child: Container(
                 width: 300, // Set the desired width here
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                padding: const EdgeInsets.symmetric(
+                    vertical: 15, horizontal: 15), // Adjust the padding here
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Icon(Icons.settings, color: Colors.white),
-                        SizedBox(width: 10), // Add some space between the icon and text
+                        SizedBox(
+                            width:
+                                10), // Add some space between the icon and text
                         Text(
                           'Settings',
                           style: TextStyle(
@@ -143,7 +151,8 @@ class _empProfileState extends State<empProfile> {
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                    Icon(Icons.arrow_forward_ios,
+                        color: Colors.white), // Add arrow icon
                   ],
                 ),
               ),
@@ -157,18 +166,21 @@ class _empProfileState extends State<empProfile> {
               child: Container(
                 width: 300, // Set the desired width here
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15), // Adjust the padding here
+                padding: const EdgeInsets.symmetric(
+                    vertical: 15, horizontal: 15), // Adjust the padding here
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 81, 76, 76),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Icon(Icons.logout, color: Colors.white),
-                        SizedBox(width: 10), // Add some space between the icon and text
+                        SizedBox(
+                            width:
+                                10), // Add some space between the icon and text
                         Text(
                           'Logout',
                           style: TextStyle(
@@ -179,7 +191,8 @@ class _empProfileState extends State<empProfile> {
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                    Icon(Icons.arrow_forward_ios,
+                        color: Colors.white), // Add arrow icon
                   ],
                 ),
               ),
@@ -187,13 +200,15 @@ class _empProfileState extends State<empProfile> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, // Align FAB to center
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked, // Align FAB to center
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/empHome"); // Add your FAB functionality here
+          Navigator.pushNamed(
+              context, "/empHome"); // Add your FAB functionality here
         },
-        backgroundColor: Color.fromARGB(255, 33, 82, 243),
-        child: Icon(
+        backgroundColor: const Color.fromARGB(255, 33, 82, 243),
+        child: const Icon(
           Icons.home,
           size: 30, // Change the size of the FAB icon
           color: Colors.white,
@@ -203,7 +218,8 @@ class _empProfileState extends State<empProfile> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor: Colors.grey, // Change the selected item color
-        unselectedItemColor: Color.fromARGB(255, 33, 82, 243), // Change the unselected item color
+        unselectedItemColor: const Color.fromARGB(
+            255, 33, 82, 243), // Change the unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -223,13 +239,13 @@ class _empProfileState extends State<empProfile> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamed(context, "/empNoty");// Navigate without back button
+          Navigator.pushNamed(
+              context, "/empNoty"); // Navigate without back button
           break;
         case 1:
           Navigator.pushNamed(context, "/employeeProfile");
           break;
       }
-   
     });
   }
 }

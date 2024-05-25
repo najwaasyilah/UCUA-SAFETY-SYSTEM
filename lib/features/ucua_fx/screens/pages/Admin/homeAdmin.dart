@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/listAllUAForm.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'action_form/listAction_form.dart';
 import 'condition_form/listCondition_form.dart';
 import 'user_profile/admin_management_tools.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -90,7 +88,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Color.fromRGBO(158, 158, 158, 1), // Set selected item color
+        selectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
         unselectedItemColor: const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -196,7 +194,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description_rounded,
-              iconColor: Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
+              iconColor: const Color.fromARGB(255, 33, 82, 243), // Set the icon color for "Submitted"
               label: 'Reported',
               text: '5',
               onTap: () {
@@ -268,7 +266,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Action"
               label: '',
               text: 'Unsafe Action',
               onTap: () {
@@ -281,7 +279,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
+              iconColor: const Color.fromARGB(255, 194, 63, 216), // Set the icon color for "Unsafe Condition"
               label: '',
               text: 'Unsafe Condition',
               onTap: () {
@@ -315,7 +313,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => adminListUAForm()),
+              MaterialPageRoute(builder: (context) => const adminListUAForm()),
             );
             
           },
@@ -327,7 +325,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => adminListUCForm()),
+              MaterialPageRoute(builder: (context) => const adminListUCForm()),
             );
           },
         ),
@@ -358,7 +356,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdminUserManagementScreen()),
+                  MaterialPageRoute(builder: (context) => const AdminUserManagementScreen()),
                 );
               },
               width: 80,
@@ -367,7 +365,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.photo_rounded,
-              iconColor: Color.fromARGB(255, 29, 112, 180), // Set the icon color for "Gallery"
+              iconColor: const Color.fromARGB(255, 29, 112, 180), // Set the icon color for "Gallery"
               label: 'Gallery',
               text: '',
               onTap: () {
@@ -379,13 +377,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.library_books,
-              iconColor: Color.fromARGB(255, 22, 111, 22), // Set the icon color for "Reports"
+              iconColor: const Color.fromARGB(255, 22, 111, 22), // Set the icon color for "Reports"
               label: 'Reports',
               text: '',
               onTap: () {
                  Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => adminListOfReports()),
+                  MaterialPageRoute(builder: (context) => const adminListOfReports()),
                 );
               },
               width: 80,

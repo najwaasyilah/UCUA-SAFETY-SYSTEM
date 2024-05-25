@@ -7,7 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_wid
 class empViewUCForm extends StatefulWidget {
   final String docId;
 
-  const empViewUCForm({Key? key, required this.docId}) : super(key: key);
+  const empViewUCForm({super.key, required this.docId});
 
   @override
   State<empViewUCForm> createState() => _empViewUCFormState();
@@ -150,7 +150,7 @@ class _empViewUCFormState extends State<empViewUCForm> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
