@@ -315,8 +315,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.cancel,
               iconColor: Colors.red, // Set the icon color for "Rejected"
-              label: '$rejectedCount',
-              text: '1',
+              label: 'Rejected',
+              text: '$rejectedCount',
               onTap: () {
                 // Add navigation or functionality for Chart 4
               },
