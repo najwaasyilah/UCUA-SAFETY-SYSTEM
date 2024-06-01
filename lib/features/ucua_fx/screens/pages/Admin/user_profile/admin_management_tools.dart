@@ -17,13 +17,22 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
 
   void _addUser(Map<String, dynamic> user, String password) async {
     try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      // Create a new user without signing out the current admin
+      await _auth
+          .createUserWithEmailAndPassword(
         email: user['email'],
         password: password,
-      );
-      user['uid'] = userCredential.user!.uid;
-      _firestore.collection('users').doc(userCredential.user!.uid).set(user);
+      )
+          .then((userCredential) {
+        user['uid'] = userCredential.user!.uid;
+        _firestore.collection('users').doc(userCredential.user!.uid).set(user);
+        userCredential.user!.sendEmailVerification();
+        _auth.signOut(); // Sign out the newly created user
+        _auth.signInWithEmailAndPassword(
+          email: 'admin@example.com', // Use admin's credentials
+          password: 'adminpassword', // Use admin's credentials
+        );
+      });
     } catch (e) {
       print("Error adding user: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -32,12 +41,60 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     }
   }
 
-  void _updateUser(String userId, Map<String, dynamic> user) {
-    _firestore.collection('users').doc(userId).update(user);
+  void _updateUser(String userId, Map<String, dynamic> user) async {
+    try {
+      DocumentSnapshot docSnapshot =
+          await _firestore.collection('users').doc(userId).get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic> currentUserData =
+            docSnapshot.data() as Map<String, dynamic>;
+        if (user['email'] != currentUserData['email']) {
+          User? userAuth = _auth.currentUser;
+          if (userAuth != null) {
+            await _verifyBeforeUpdateEmail(userAuth, user['email']);
+          }
+        }
+      }
+      _firestore.collection('users').doc(userId).update(user);
+    } catch (e) {
+      print("Error updating user: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating user: $e')),
+      );
+    }
   }
 
   void _deleteUser(String userId) {
     _firestore.collection('users').doc(userId).delete();
+  }
+
+  Future<void> _sendEmailVerification(User user) async {
+    try {
+      await user.sendEmailVerification();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email verification sent!')),
+      );
+    } catch (e) {
+      print("Error sending email verification: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending email verification: $e')),
+      );
+    }
+  }
+
+  Future<void> _verifyBeforeUpdateEmail(User user, String newEmail) async {
+    try {
+      await user.verifyBeforeUpdateEmail(newEmail);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Verification email sent for email update!')),
+      );
+    } catch (e) {
+      print("Error verifying email before update: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error verifying email before update: $e')),
+      );
+    }
   }
 
   @override
@@ -225,12 +282,6 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                     controller: profileImageUrlController,
                     decoration:
                         const InputDecoration(labelText: 'Profile Image URL'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a profile image URL';
-                      }
-                      return null;
-                    },
                   ),
                 ],
               ),
