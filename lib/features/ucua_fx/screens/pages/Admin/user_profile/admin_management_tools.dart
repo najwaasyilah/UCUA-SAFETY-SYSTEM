@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminUserManagementScreen extends StatefulWidget {
   const AdminUserManagementScreen({super.key});
@@ -11,10 +12,24 @@ class AdminUserManagementScreen extends StatefulWidget {
 
 class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final Color mainColor = const Color.fromARGB(255, 33, 82, 243);
 
-  void _addUser(Map<String, dynamic> user) {
-    _firestore.collection('users').add(user);
+  void _addUser(Map<String, dynamic> user, String password) async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: user['email'],
+        password: password,
+      );
+      user['uid'] = userCredential.user!.uid;
+      _firestore.collection('users').doc(userCredential.user!.uid).set(user);
+    } catch (e) {
+      print("Error adding user: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding user: $e')),
+      );
+    }
   }
 
   void _updateUser(String userId, Map<String, dynamic> user) {
@@ -44,9 +59,11 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
               DocumentSnapshot doc = snapshot.data!.docs[index];
               Map<String, dynamic> user = doc.data() as Map<String, dynamic>;
               String firstName = user['firstName'] ?? 'No Name';
+              String lastName = user['lastName'] ?? 'No Last Name';
               String staffID = user['staffID'] ?? 'No ID';
               String email = user['email'] ?? 'No Email';
               String role = user['role'] ?? 'No Role';
+              String phone = user['phone'] ?? 'No Phone';
               String? profileImageUrl = user['profileImageUrl'];
 
               return Card(
@@ -60,12 +77,13 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                         : const AssetImage('assets/default_profile_picture.png')
                             as ImageProvider,
                   ),
-                  title: Text(firstName),
+                  title: Text('$firstName $lastName'),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Staff ID: $staffID'),
                       Text('Email: $email'),
+                      Text('Phone: $phone'),
                       Text('Role: $role'),
                     ],
                   ),
@@ -107,14 +125,19 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     final formKey = GlobalKey<FormState>();
     final TextEditingController nameController =
         TextEditingController(text: user?['firstName']);
+    final TextEditingController lastNameController =
+        TextEditingController(text: user?['lastName']);
     final TextEditingController emailController =
         TextEditingController(text: user?['email']);
     final TextEditingController roleController =
         TextEditingController(text: user?['role']);
     final TextEditingController staffIDController =
         TextEditingController(text: user?['staffID']);
+    final TextEditingController phoneController =
+        TextEditingController(text: user?['phone']);
     final TextEditingController profileImageUrlController =
         TextEditingController(text: user?['profileImageUrl']);
+    final TextEditingController passwordController = TextEditingController();
 
     showDialog(
       context: context,
@@ -138,6 +161,16 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                     },
                   ),
                   TextFormField(
+                    controller: lastNameController,
+                    decoration: const InputDecoration(labelText: 'Last Name'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a last name';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
                     controller: emailController,
                     decoration: const InputDecoration(labelText: 'Email'),
                     validator: (value) {
@@ -147,6 +180,17 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                       return null;
                     },
                   ),
+                  if (user == null)
+                    TextFormField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        return null;
+                      },
+                    ),
                   TextFormField(
                     controller: roleController,
                     decoration: const InputDecoration(labelText: 'Role'),
@@ -163,6 +207,16 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a staff ID';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: phoneController,
+                    decoration: const InputDecoration(labelText: 'Phone'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a phone number';
                       }
                       return null;
                     },
@@ -188,13 +242,15 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                 if (formKey.currentState!.validate()) {
                   Map<String, dynamic> newUser = {
                     'firstName': nameController.text,
+                    'lastName': lastNameController.text,
                     'email': emailController.text,
                     'role': roleController.text,
                     'staffID': staffIDController.text,
+                    'phone': phoneController.text,
                     'profileImageUrl': profileImageUrlController.text,
                   };
                   if (userId == null) {
-                    _addUser(newUser);
+                    _addUser(newUser, passwordController.text);
                   } else {
                     _updateUser(userId, newUser);
                   }
