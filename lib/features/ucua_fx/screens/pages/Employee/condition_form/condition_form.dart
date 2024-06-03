@@ -48,53 +48,63 @@ class _empUCFormState extends State<empUCForm> {
 
 
   void _submitForm(String staffID) async {
-    String location = _selectedLocation;
-    String conditionDetails = _conditionDetailsController.text;
-    String date = _selectedDate.toString();
+  String location = _selectedLocation;
+  String conditionDetails = _conditionDetailsController.text;
+  String date = _selectedDate.toString();
 
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    /*String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    String staffID = await getStaffIDFromUID(uid);*/
+  String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+  Map<String, dynamic> userInfo = await getReporterInfo(uid);
+  String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
+  String reporterDesignation = userInfo['role'] ?? '';
 
-    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    Map<String, dynamic> userInfo = await getReporterInfo(uid);
-    String staffID = userInfo['staffID'] ?? '';
-    String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
-    String reporterDesignation = userInfo['role'] ?? '';
+  QuerySnapshot querySnapshot = await firestore.collection('ucform').orderBy('ucformid', descending: true).limit(1).get();
+  String lastId = 'UCFORM00';
+  if (querySnapshot.docs.isNotEmpty) {
+    lastId = querySnapshot.docs.first['ucformid'];
+  }
 
+  int lastIdNumber = int.parse(lastId.replaceAll('UCFORM', ''));
+  String newIdNumber = (lastIdNumber + 1).toString().padLeft(2, '0');
+  String ucformid = 'UCFORM$newIdNumber';
 
-    List<String> imageUrls = [];
+  List<String> imageUrls = [];
 
-    try {
-
-      for (int i = 0; i < _images.length; i++) {
-        if (_images[i] != null) {
-          final taskSnapshot = await firebase_storage.FirebaseStorage.instance
-              .ref('ucform/$staffID/$date/image$i.jpg')
-              .putFile(_images[i]!);
-          final url = await taskSnapshot.ref.getDownloadURL();
-          imageUrls.add(url);
-        }
+  try {
+    for (int i = 0; i < _images.length; i++) {
+      if (_images[i] != null) {
+        final taskSnapshot = await firebase_storage.FirebaseStorage.instance
+            .ref('ucform/$staffID/$date/image$i.jpg')
+            .putFile(_images[i]!);
+        final url = await taskSnapshot.ref.getDownloadURL();
+        imageUrls.add(url);
       }
-
-      await firestore.collection('ucform').add({
-        'location': location,
-        'conditionDetails': conditionDetails,
-        'date': date,
-        'staffID': staffID, 
-        'reporterName':reporterName,
-        'reporterDesignation':reporterDesignation,
-        'imageUrls': imageUrls,
-      });
-      print('UC Form data saved successfully!');
-      showToast(message: "Form data saved successfully!");
-    } catch (e) {
-      print('Error saving form data: $e');
     }
 
-    _resetForm();
+    await firestore.collection('ucform').doc(ucformid).set({
+      'ucformid': ucformid,
+      'location': location,
+      'conditionDetails': conditionDetails,
+      'date': date,
+      'staffID': staffID, 
+      'reporterName': reporterName,
+      'reporterDesignation': reporterDesignation,
+      'imageUrls': imageUrls,
+    });
+
+    // Update the latest document's ucformid field
+    await querySnapshot.docs.first.reference.update({'ucformid': ucformid});
+
+    print('UC Form data saved successfully!');
+    showToast(message: "Form data saved successfully!");
+  } catch (e) {
+    print('Error saving form data: $e');
   }
+
+  _resetForm();
+}
+
 
   Future<String> getStaffIDFromUID(String uid) async {
     try {
@@ -106,14 +116,14 @@ class _empUCFormState extends State<empUCForm> {
         if (userData != null) {
           return userData['staffID'] ?? ''; 
         } else {
-          return '';
+          return 'User Not Exist';
         }
       } else {
-        return ''; 
+        return 'User not exist'; 
       }
     } catch (e) {
       print('Error getting staffID: $e');
-      return '';
+      return 'No user with staff ID';
     }
   }
 
@@ -324,8 +334,10 @@ class _empUCFormState extends State<empUCForm> {
                             child: const Text('Back'),
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              String staffID = FirebaseAuth.instance.currentUser?.uid ?? '';
+                            onPressed: () async {
+                              //String staffID = FirebaseAuth.instance.currentUser?.uid ?? '';
+                              String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+                              String staffID = await getStaffIDFromUID(uid);
                               _submitForm(staffID);
                             },
                             child: const Text('Submit'),

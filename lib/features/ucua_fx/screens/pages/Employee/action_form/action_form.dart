@@ -69,14 +69,20 @@ class _empUAFormState extends State<empUAForm> {
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    /*String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    String staffID = await getStaffIDFromUID(uid);*/
-
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     Map<String, dynamic> userInfo = await getReporterInfo(uid);
-    String staffID = userInfo['staffID'] ?? '';
     String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
     String reporterDesignation = userInfo['role'] ?? '';
+  
+    QuerySnapshot querySnapshot = await firestore.collection('uaform').orderBy('uaformid', descending: true).limit(1).get();
+    String lastId = 'UAFORM00';
+    if (querySnapshot.docs.isNotEmpty) {
+      lastId = querySnapshot.docs.first['uaformid'];
+    }
+
+    int lastIdNumber = int.parse(lastId.replaceAll('UAFORM', ''));
+    String newIdNumber = (lastIdNumber + 1).toString().padLeft(2, '0');
+    String uaformid = 'UAFORM$newIdNumber';
 
     List<String> imageUrls = [];
 
@@ -84,14 +90,15 @@ class _empUAFormState extends State<empUAForm> {
       for (int i = 0; i < _images.length; i++) {
         if (_images[i] != null) {
           final taskSnapshot = await firebase_storage.FirebaseStorage.instance
-              .ref('uaform/$staffID/$date/image$i.jpg')
+              .ref('uaform/$uaformid/image$i.jpg')
               .putFile(_images[i]!);
           final url = await taskSnapshot.ref.getDownloadURL();
           imageUrls.add(url);
         }
       }
 
-      await firestore.collection('uaform').add({
+      await firestore.collection('uaform').doc(uaformid).set({
+        'uaformid': uaformid,
         'location': location,
         'offenceCode': offenceCode,
         'ica': ica,
@@ -104,6 +111,7 @@ class _empUAFormState extends State<empUAForm> {
         'reporterDesignation': reporterDesignation,
         'imageUrls': imageUrls,
       });
+
       showToast(message: "Unsafe Action Form Submitted Successfully!");
     } catch (e) {
       print('Error saving form data: $e');
@@ -112,7 +120,6 @@ class _empUAFormState extends State<empUAForm> {
     _resetForm();
   }
 
-  
   Future getImageGallery(int index) async {
     final XFile? pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
@@ -468,8 +475,10 @@ class _empUAFormState extends State<empUAForm> {
                             child: const Text('Back'),
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              String staffID = FirebaseAuth.instance.currentUser?.uid ?? '';
+                            onPressed: () async {
+                              //String staffID = FirebaseAuth.instance.currentUser?.uid ?? '';
+                              String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+                              String staffID = await getStaffIDFromUID(uid);
                               _submitForm(staffID);
                             },
 
