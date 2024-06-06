@@ -137,6 +137,13 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
       String message = _constructMessage(action, widget.docId, userName);
         print('Notification Message: $message');
 
+        DocumentSnapshot formSnapshot = await FirebaseFirestore.instance
+            .collection('uaform')
+            .doc(widget.docId)
+            .get();
+
+        String reporterDesignation = formSnapshot['reporterDesignation'] ?? 'Unknown';
+
         Map<String, dynamic> notificationData = {
             'message': message,
             'timestamp': FieldValue.serverTimestamp(),
@@ -147,8 +154,8 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
             'adminNotiStatus': 'unread',
         };
 
-        if (userRole == 'employee') {
-          notificationData['empNotiStatus'] = 'unread';
+        if (reporterDesignation == 'Employee') {
+            notificationData['empNotiStatus'] = 'unread';
         }
 
         await FirebaseFirestore.instance.collection('uaform').doc(widget.docId).collection('notifications').add(notificationData);

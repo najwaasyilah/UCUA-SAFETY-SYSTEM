@@ -103,49 +103,55 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
 
   Future<void> _handleAction(String action) async {
     try {
-      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+        String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUserId)
-          .get();
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserId)
+            .get();
 
-      String userName = userSnapshot['firstName'] ?? 'Unknown User';
-      String userRole = userSnapshot['role'] ?? 'Unknown Role';
+        String userName = userSnapshot['firstName'] ?? 'Unknown User';
+        String userRole = userSnapshot['role'] ?? 'Unknown Role';
 
-      List<String> uploadedImageUrls = [];
+        List<String> uploadedImageUrls = [];
 
-      for (var file in _conditionImages) {
-        if (file != null) {
-          String fileName = 'followup_${DateTime.now().millisecondsSinceEpoch}.jpg';
-          Reference ref = FirebaseStorage.instance.ref().child(fileName);
-          UploadTask uploadTask = ref.putFile(file);
-          TaskSnapshot snapshot = await uploadTask;
-          String downloadUrl = await snapshot.ref.getDownloadURL();
-          uploadedImageUrls.add(downloadUrl);
+        for (var file in _conditionImages) {
+            if (file != null) {
+                String fileName = 'followup_${DateTime.now().millisecondsSinceEpoch}.jpg';
+                Reference ref = FirebaseStorage.instance.ref().child(fileName);
+                UploadTask uploadTask = ref.putFile(file);
+                TaskSnapshot snapshot = await uploadTask;
+                String downloadUrl = await snapshot.ref.getDownloadURL();
+                uploadedImageUrls.add(downloadUrl);
+            }
         }
-      }
 
-      Map<String, dynamic> followUpData = {
-        'ucformid': widget.docId,
-        'remark': _remarkController.text,
-        'status': action,
-        'imageUrls': uploadedImageUrls,
-        'timestamp': Timestamp.now(),
-        'userName': userName, 
-        'userRole': userRole,
-      };
+        Map<String, dynamic> followUpData = {
+            'ucformid': widget.docId,
+            'remark': _remarkController.text,
+            'status': action,
+            'imageUrls': uploadedImageUrls,
+            'timestamp': Timestamp.now(),
+            'userName': userName,
+            'userRole': userRole,
+        };
 
-      await FirebaseFirestore.instance
-          .collection('ucform')
-          .doc(widget.docId)
-          .collection('ucfollowup')
-          .add(followUpData);
+        await FirebaseFirestore.instance
+            .collection('ucform')
+            .doc(widget.docId)
+            .collection('ucfollowup')
+            .add(followUpData);
 
-      String message = _constructMessage(action, widget.docId, userName);
+        String message = _constructMessage(action, widget.docId, userName);
         print('Notification Message: $message');
 
-        // Determine notification statuses based on user role
+        DocumentSnapshot formSnapshot = await FirebaseFirestore.instance
+            .collection('ucform')
+            .doc(widget.docId)
+            .get();
+
+        String reporterDesignation = formSnapshot['reporterDesignation'] ?? 'Unknown';
+
         Map<String, dynamic> notificationData = {
             'message': message,
             'timestamp': FieldValue.serverTimestamp(),
@@ -156,36 +162,36 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
             'adminNotiStatus': 'unread',
         };
 
-        if (userRole == 'employee') {
+        if (reporterDesignation == 'Employee') {
             notificationData['empNotiStatus'] = 'unread';
         }
 
         await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).collection('notifications').add(notificationData);
 
-      await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).update({
-        'status': action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending',
-        'approvalName': userName,
-        'approvalDesignation': userRole,
-      });
+        await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).update({
+            'status': action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending',
+            'approvalName': userName,
+            'approvalDesignation': userRole,
+        });
 
-      setState(() {
-        _status = action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending';
-        approvalName = userName;
-        approvalDesignation = userRole;
-      });
+        setState(() {
+            _status = action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending';
+            approvalName = userName;
+            approvalDesignation = userRole;
+        });
 
-      showToast(message: "The form is $action");
-      fetchFormData();
-      fetchFollowUps();
+        showToast(message: "The form is $action");
+        fetchFormData();
+        fetchFollowUps();
 
-      setState(() {
-        followUps.add(followUpData);
-        _remarkController.clear();
-        _conditionImages = [null, null];
-      });
+        setState(() {
+            followUps.add(followUpData);
+            _remarkController.clear();
+            _conditionImages = [null, null];
+        });
 
     } catch (e) {
-      print('Error saving follow-up: $e');
+        print('Error saving follow-up: $e');
     }
   }
 

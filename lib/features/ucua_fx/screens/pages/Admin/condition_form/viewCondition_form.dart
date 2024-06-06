@@ -146,7 +146,13 @@ class _adminViewUCFormState extends State<adminViewUCForm> {
       String message = _constructMessage(action, widget.docId, userName);
         print('Notification Message: $message');
 
-        // Determine notification statuses based on user role
+        DocumentSnapshot formSnapshot = await FirebaseFirestore.instance
+            .collection('ucform')
+            .doc(widget.docId)
+            .get();
+
+        String reporterDesignation = formSnapshot['reporterDesignation'] ?? 'Unknown';
+
         Map<String, dynamic> notificationData = {
             'message': message,
             'timestamp': FieldValue.serverTimestamp(),
@@ -157,7 +163,7 @@ class _adminViewUCFormState extends State<adminViewUCForm> {
             'adminNotiStatus': 'unread',
         };
 
-        if (userRole == 'employee') {
+        if (reporterDesignation == 'Employee') {
             notificationData['empNotiStatus'] = 'unread';
         }
 
