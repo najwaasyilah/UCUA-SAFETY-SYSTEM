@@ -16,6 +16,7 @@ class empUCForm extends StatefulWidget {
 }
 
 class _empUCFormState extends State<empUCForm> {
+  
   List<File?> _images = [null, null, null];
   final picker = ImagePicker();
   
@@ -48,63 +49,71 @@ class _empUCFormState extends State<empUCForm> {
 
 
   void _submitForm(String staffID) async {
-  String location = _selectedLocation;
-  String conditionDetails = _conditionDetailsController.text;
-  String date = _selectedDate.toString();
+    String location = _selectedLocation;
+    String conditionDetails = _conditionDetailsController.text;
+    String date = _selectedDate.toString();
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-  Map<String, dynamic> userInfo = await getReporterInfo(uid);
-  String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
-  String reporterDesignation = userInfo['role'] ?? '';
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    Map<String, dynamic> userInfo = await getReporterInfo(uid);
+    String reporterName = '${userInfo['firstName']} ${userInfo['lastName']}';
+    String reporterDesignation = userInfo['role'] ?? '';
 
-  QuerySnapshot querySnapshot = await firestore.collection('ucform').orderBy('ucformid', descending: true).limit(1).get();
-  String lastId = 'UCFORM00';
-  if (querySnapshot.docs.isNotEmpty) {
-    lastId = querySnapshot.docs.first['ucformid'];
-  }
-
-  int lastIdNumber = int.parse(lastId.replaceAll('UCFORM', ''));
-  String newIdNumber = (lastIdNumber + 1).toString().padLeft(2, '0');
-  String ucformid = 'UCFORM$newIdNumber';
-
-  List<String> imageUrls = [];
-
-  try {
-    for (int i = 0; i < _images.length; i++) {
-      if (_images[i] != null) {
-        final taskSnapshot = await firebase_storage.FirebaseStorage.instance
-            .ref('ucform/$staffID/$date/image$i.jpg')
-            .putFile(_images[i]!);
-        final url = await taskSnapshot.ref.getDownloadURL();
-        imageUrls.add(url);
-      }
+    QuerySnapshot querySnapshot = await firestore.collection('ucform').orderBy('ucformid', descending: true).limit(1).get();
+    String lastId = 'UCFORM00';
+    if (querySnapshot.docs.isNotEmpty) {
+      lastId = querySnapshot.docs.first['ucformid'];
     }
 
-    await firestore.collection('ucform').doc(ucformid).set({
-      'ucformid': ucformid,
-      'location': location,
-      'conditionDetails': conditionDetails,
-      'date': date,
-      'staffID': staffID, 
-      'reporterName': reporterName,
-      'reporterDesignation': reporterDesignation,
-      'imageUrls': imageUrls,
-    });
+    int lastIdNumber = int.parse(lastId.replaceAll('UCFORM', ''));
+    String newIdNumber = (lastIdNumber + 1).toString().padLeft(2, '0');
+    String ucformid = 'UCFORM$newIdNumber';
 
-    // Update the latest document's ucformid field
-    await querySnapshot.docs.first.reference.update({'ucformid': ucformid});
+    List<String> imageUrls = [];
 
-    print('UC Form data saved successfully!');
-    showToast(message: "Form data saved successfully!");
-  } catch (e) {
-    print('Error saving form data: $e');
+    try {
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final taskSnapshot = await firebase_storage.FirebaseStorage.instance
+              .ref('ucform/$staffID/$date/image$i.jpg')
+              .putFile(_images[i]!);
+          final url = await taskSnapshot.ref.getDownloadURL();
+          imageUrls.add(url);
+        }
+      }
+
+      await firestore.collection('ucform').doc(ucformid).set({
+        'ucformid': ucformid,
+        'location': location,
+        'conditionDetails': conditionDetails,
+        'date': date,
+        'staffID': staffID,
+        'reporterName': reporterName,
+        'reporterDesignation': reporterDesignation,
+        'imageUrls': imageUrls,
+      });
+
+      await firestore.collection('ucform').doc(ucformid).collection('notifications').add({
+        'message': '[${ucformid}] ${reporterName} has submitted a new UC Form',
+        'timestamp': FieldValue.serverTimestamp(),
+        'department': '${reporterDesignation}',
+        'formType': 'ucform',
+        'formId': ucformid,
+        'staffID': staffID,
+        'empNotiStatus': 'unread',
+        'sdNotiStatus': 'unread',
+        'adminNotiStatus': 'unread',
+      });
+
+      print('Unsafe Condition Form sent successfully!');
+      showToast(message: "Unsafe Condition Form sent successfully!");
+    } catch (e) {
+      print('Error saving form data: $e');
+    }
+
+    _resetForm();
   }
-
-  _resetForm();
-}
-
 
   Future<String> getStaffIDFromUID(String uid) async {
     try {

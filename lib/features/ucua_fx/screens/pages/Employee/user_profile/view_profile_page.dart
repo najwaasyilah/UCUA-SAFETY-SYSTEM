@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/profile.dart';
+import 'package:badges/badges.dart' as badges;
 
 class empProfile extends StatefulWidget {
   const empProfile({super.key});
@@ -22,10 +23,45 @@ class _empProfileState extends State<empProfile> {
   String? profileImageUrl;
   final ImagePicker _picker = ImagePicker();
 
+  int _unreadNotifications = 0;
+
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    _fetchUnreadNotificationsCount();
+  }
+
+  Future<void> _fetchUnreadNotificationsCount() async {
+    try {
+      int unreadCount = 0;
+
+      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await ucformDoc.reference
+            .collection('notifications')
+            .where('empNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await uaformDoc.reference
+            .collection('notifications')
+            .where('empNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      setState(() {
+        _unreadNotifications = unreadCount;
+      });
+    } catch (e) {
+      print('Error fetching unread notifications count: $e');
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -64,7 +100,6 @@ class _empProfileState extends State<empProfile> {
           TaskSnapshot snapshot = await uploadTask;
           String downloadUrl = await snapshot.ref.getDownloadURL();
 
-          // Update user profile image URL in Firestore
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
@@ -299,12 +334,19 @@ class _empProfileState extends State<empProfile> {
         selectedItemColor: Colors.grey, // Change the selected item color
         unselectedItemColor: const Color.fromARGB(
             255, 33, 82, 243), // Change the unselected item color
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: badges.Badge(
+              badgeContent: Text(
+                '$_unreadNotifications',
+                style: TextStyle(color: Colors.white),
+              ),
+              child: Icon(Icons.notifications),
+              showBadge: _unreadNotifications > 0,
+            ),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),

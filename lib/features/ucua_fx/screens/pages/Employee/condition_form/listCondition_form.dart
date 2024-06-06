@@ -32,11 +32,28 @@ class _empListUCFormState extends State<empListUCForm> {
     }
   }
 
-  void deleteConditionForm(String docId) async {
+  Future<void> deleteConditionForm(String docId) async {
     try {
-      await FirebaseFirestore.instance.collection('ucform').doc(docId).delete();
+        DocumentReference mainDocRef = FirebaseFirestore.instance.collection('ucform').doc(docId);
+        //await deleteImages(docId);
+
+        Future<void> deleteSubcollection(CollectionReference collectionRef) async {
+            QuerySnapshot snapshot;
+            do {
+                snapshot = await collectionRef.limit(10).get();
+                for (DocumentSnapshot doc in snapshot.docs) {
+                    await doc.reference.delete();
+                }
+            } while (snapshot.size == 10);
+        }
+
+        await deleteSubcollection(mainDocRef.collection('ucfollowup'));
+        await deleteSubcollection(mainDocRef.collection('notifications'));
+        await mainDocRef.delete();
+
+        print('Successfully deleted main document and its subcollections: $docId');
     } catch (e) {
-      print('Error deleting form: $e');
+        print('Error deleting form: $e');
     }
   }
 
@@ -122,8 +139,7 @@ class _empListUCFormState extends State<empListUCForm> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        //'Title: ${document['title']}',
-                                        'Unsafe Condition Report',
+                                        '${document['ucformid']}',
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 5),

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/listAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/listCondition_form.dart';
+import 'package:badges/badges.dart' as badges;
 
 class empHomePage extends StatefulWidget {
   const empHomePage({super.key});
@@ -12,10 +13,13 @@ class empHomePage extends StatefulWidget {
 }
 
 class _empHomePageState extends State<empHomePage> {
+  
   int _selectedIndex = 0;
   String? employeeName;
   String? staffID;
   String? profileImageUrl;
+
+  int _unreadNotifications = 0;
 
   int reportedCount = 0;
   int pendingCount = 0;
@@ -26,7 +30,40 @@ class _empHomePageState extends State<empHomePage> {
   void initState() {
     super.initState();
     _fetchEmpData();
-    //_fetchFormStatistics();
+    //_fetchFormStatistics(staffID);
+    _fetchUnreadNotificationsCount();
+  }
+
+  Future<void> _fetchUnreadNotificationsCount() async {
+    try {
+      int unreadCount = 0;
+
+      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await ucformDoc.reference
+            .collection('notifications')
+            .where('empNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await uaformDoc.reference
+            .collection('notifications')
+            .where('empNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      setState(() {
+        _unreadNotifications = unreadCount;
+      });
+    } catch (e) {
+      print('Error fetching unread notifications count: $e');
+    }
   }
 
   Future<void> _fetchEmpData() async {
@@ -94,10 +131,10 @@ class _empHomePageState extends State<empHomePage> {
 
       // Update state with calculated values
       setState(() {
-        reportedCount = totalReported;
-        pendingCount = pending;
-        approvedCount = approved;
-        rejectedCount = rejected;
+        this.reportedCount = totalReported;
+        this.pendingCount = pending;
+        this.approvedCount = approved;
+        this.rejectedCount = rejected;
       });
     } catch (e) {
       print('Error fetching form statistics: $e');
@@ -155,16 +192,21 @@ class _empHomePageState extends State<empHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor:
-            const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
-        unselectedItemColor:
-            const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
-        items: const <BottomNavigationBarItem>[
+        selectedItemColor:  const Color.fromRGBO(158, 158, 158, 1),
+        unselectedItemColor: Colors.grey,
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: badges.Badge(
+              badgeContent: Text(
+                '$_unreadNotifications',
+                style: TextStyle(color: Colors.white),
+              ),
+              child: Icon(Icons.notifications),
+              showBadge: _unreadNotifications > 0,
+            ),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
@@ -239,7 +281,7 @@ class _empHomePageState extends State<empHomePage> {
               CircleAvatar(
                 radius: 45,
                 backgroundImage: profileImageUrl != null
-                    ? NetworkImage(profileImageUrl)
+                    ? NetworkImage(profileImageUrl!)
                     : const AssetImage('assets/profile_picture.png')
                         as ImageProvider,
               ),
@@ -249,7 +291,8 @@ class _empHomePageState extends State<empHomePage> {
         const SizedBox(height: 20),
         const Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+              horizontal: 35.0
+          ), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
