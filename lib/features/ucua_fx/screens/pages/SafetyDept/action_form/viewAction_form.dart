@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
-import '../../../../../../global_common/toast.dart';
+import 'package:ucua_staging/global_common/toast.dart';
 
 class safeDeptViewUAForm extends StatefulWidget {
   final String docId;
@@ -104,7 +104,7 @@ class _SafeDeptViewUAFormState extends State<safeDeptViewUAForm> {
           .doc(currentUserId)
           .get();
 
-      String userName = userSnapshot['name'] ?? 'Unknown User';
+      String userName = userSnapshot['firstName'] ?? 'Unknown User';
       String userRole = userSnapshot['role'] ?? 'Unknown Role';
 
       List<String> uploadedImageUrls = [];
@@ -136,16 +136,24 @@ class _SafeDeptViewUAFormState extends State<safeDeptViewUAForm> {
           .add(followUpData);
 
       String message = _constructMessage(action, widget.docId, userName);
-      print('Notification Message: $message');
+        print('Notification Message: $message');
 
-      await FirebaseFirestore.instance.collection('uaform').doc(widget.docId).collection('notifications').add({
-        'message': message,
-        'timestamp': FieldValue.serverTimestamp(),
-        'department': userRole,
-        'formType': 'uaform',
-        'formId': widget.docId,
-        'notiStatus': 'unread',
-      });
+        Map<String, dynamic> notificationData = {
+            'message': message,
+            'timestamp': FieldValue.serverTimestamp(),
+            'department': userRole,
+            'formType': 'uaform',
+            'formId': widget.docId,
+            'sdNotiStatus': 'unread',
+            'adminNotiStatus': 'unread',
+        };
+
+        if (userRole == 'employee') {
+          notificationData['empNotiStatus'] = 'unread';
+        }
+
+        await FirebaseFirestore.instance.collection('uaform').doc(widget.docId).collection('notifications').add(notificationData);
+
 
       await FirebaseFirestore.instance.collection('uaform').doc(widget.docId).update({
         'status': action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending',

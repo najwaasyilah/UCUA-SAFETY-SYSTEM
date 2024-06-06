@@ -60,25 +60,28 @@ class _safeDeptListAllUCFormState extends State<safeDeptListAllUCForm> {
     }
   }
 
-  void deleteConditionForm(String docId) async {
+  Future<void> deleteConditionForm(String docId) async {
     try {
-      await deleteImages(docId); 
+        DocumentReference mainDocRef = FirebaseFirestore.instance.collection('ucform').doc(docId);
+        await deleteImages(docId);
 
-      final followupCollectionRef = FirebaseFirestore.instance.collection('ucform').doc(docId).collection('ucfollowup');
-      final followupDocs = await followupCollectionRef.get();
-      for (final followupDoc in followupDocs.docs) {
-        try {
-          await followupDoc.reference.delete();
-          print('Deleted follow-up document: ${followupDoc.id}');
-        } catch (e) {
-          print('Error deleting follow-up document: ${followupDoc.id} - $e');
+        Future<void> deleteSubcollection(CollectionReference collectionRef) async {
+            QuerySnapshot snapshot;
+            do {
+                snapshot = await collectionRef.limit(10).get();
+                for (DocumentSnapshot doc in snapshot.docs) {
+                    await doc.reference.delete();
+                }
+            } while (snapshot.size == 10);
         }
-      }
 
-      await FirebaseFirestore.instance.collection('ucform').doc(docId).delete();
-      print('Successfully deleted main document: $docId');
+        await deleteSubcollection(mainDocRef.collection('ucfollowup'));
+        await deleteSubcollection(mainDocRef.collection('notifications'));
+        await mainDocRef.delete();
+
+        print('Successfully deleted main document and its subcollections: $docId');
     } catch (e) {
-      print('Error deleting form: $e');
+        print('Error deleting form: $e');
     }
   }
 
@@ -163,7 +166,7 @@ class _safeDeptListAllUCFormState extends State<safeDeptListAllUCForm> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Unsafe Condition Form',
+                                        '${document['ucformid']}',
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 5),

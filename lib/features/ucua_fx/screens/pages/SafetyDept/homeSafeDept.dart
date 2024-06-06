@@ -5,6 +5,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_fo
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
+import 'package:badges/badges.dart' as badges;
 
 class SafetyDeptHomePage extends StatefulWidget {
   const SafetyDeptHomePage({super.key});
@@ -19,6 +20,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
   String? staffID;
   String? profileImageUrl;
 
+  int _unreadNotifications = 0;
+
   int reportedCount = 0;
   int pendingCount = 0;
   int approvedCount = 0;
@@ -29,6 +32,40 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
     super.initState();
     _fetchSafeDeptData();
     _fetchFormStatistics();
+    _fetchUnreadNotificationsCount();
+  }
+
+  Future<void> _fetchUnreadNotificationsCount() async {
+    try {
+      int unreadCount = 0;
+
+      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await ucformDoc.reference
+            .collection('notifications')
+            .where('sdNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await uaformDoc.reference
+            .collection('notifications')
+            //.doc('notificationId')
+            .where('sdNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      setState(() {
+        _unreadNotifications = unreadCount;
+      });
+    } catch (e) {
+      print('Error fetching unread notifications count: $e');
+    }
   }
 
   Future<void> _fetchSafeDeptData() async {
@@ -161,16 +198,21 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor:
-            const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
-        unselectedItemColor:
-            const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
-        items: const <BottomNavigationBarItem>[
+        selectedItemColor:  const Color.fromRGBO(158, 158, 158, 1),
+        unselectedItemColor: Colors.grey,
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: badges.Badge(
+              badgeContent: Text(
+                '$_unreadNotifications',
+                style: TextStyle(color: Colors.white),
+              ),
+              child: Icon(Icons.notifications),
+              showBadge: _unreadNotifications > 0,
+            ),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
@@ -547,15 +589,15 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             Icon(
               icon,
-              size: iconSize, // Use the passed icon size
-              color: iconColor, // Use the passed icon color
+              size: iconSize,
+              color: iconColor,
             ),
-            const SizedBox(height: 5), // Spacing between icon and text
+            const SizedBox(height: 5), 
             Text(
               text,
-              textAlign: TextAlign.center, // Center align the text
+              textAlign: TextAlign.center, 
               style: const TextStyle(
-                fontSize: 14, // Adjust the font size as needed
+                fontSize: 14, 
                 color: Colors.black,
               ),
             ),
@@ -570,9 +612,9 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 370, // Increased width
-        height: 70, // Added height to increase size
-        padding: const EdgeInsets.all(20), // Increased padding for a larger box
+        width: 370,
+        height: 70, 
+        padding: const EdgeInsets.all(20), 
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 33, 82, 243),
           borderRadius: BorderRadius.circular(20),
