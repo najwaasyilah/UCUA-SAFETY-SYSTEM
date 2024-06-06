@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // For Image Picker
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/profile.dart';
 import 'change_password_page.dart';
+import 'package:badges/badges.dart' as badges;
 
 class AdminProfile extends StatefulWidget {
   const AdminProfile({super.key});
@@ -22,10 +23,45 @@ class _AdminProfileState extends State<AdminProfile> {
   String? profileImageUrl;
   final ImagePicker _picker = ImagePicker();
 
+    int _unreadNotifications = 0;
+
   @override
   void initState() {
     super.initState();
     fetchAdminData();
+    _fetchUnreadNotificationsCount();
+  }
+
+  Future<void> _fetchUnreadNotificationsCount() async {
+    try {
+      int unreadCount = 0;
+
+      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await ucformDoc.reference
+            .collection('notifications')
+            .where('adminNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await uaformDoc.reference
+            .collection('notifications')
+            .where('adminNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      setState(() {
+        _unreadNotifications = unreadCount;
+      });
+    } catch (e) {
+      print('Error fetching unread notifications count: $e');
+    }
   }
 
   Future<void> fetchAdminData() async {
@@ -298,15 +334,21 @@ class _AdminProfileState extends State<AdminProfile> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color.fromARGB(
-            255, 33, 82, 243), // Change the selected item color
-        unselectedItemColor: Colors.grey, // Change the unselected item color
-        items: const <BottomNavigationBarItem>[
+        selectedItemColor: const Color.fromARGB(255, 33, 82, 243),
+        unselectedItemColor: Colors.grey,
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: badges.Badge(
+              badgeContent: Text(
+                '$_unreadNotifications',
+                style: TextStyle(color: Colors.white),
+              ),
+              child: Icon(Icons.notifications),
+              showBadge: _unreadNotifications > 0,
+            ),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),

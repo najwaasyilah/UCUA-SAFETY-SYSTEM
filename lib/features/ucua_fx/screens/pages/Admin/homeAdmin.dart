@@ -5,6 +5,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.da
 import 'action_form/listAction_form.dart';
 import 'condition_form/listCondition_form.dart';
 import 'user_profile/admin_management_tools.dart';
+import 'package:badges/badges.dart' as badges;
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -19,6 +20,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
   String? staffID;
   String? profileImageUrl;
 
+  int _unreadNotifications = 0;
+
   int reportedCount = 0;
   int pendingCount = 0;
   int approvedCount = 0;
@@ -29,6 +32,40 @@ class _AdminHomePageState extends State<AdminHomePage> {
     super.initState();
     _fetchAdminData();
     _fetchFormStatistics();
+    _fetchUnreadNotificationsCount();
+  }
+
+  Future<void> _fetchUnreadNotificationsCount() async {
+    try {
+      int unreadCount = 0;
+
+      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await ucformDoc.reference
+            .collection('notifications')
+            .where('adminNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await uaformDoc.reference
+            .collection('notifications')
+            //.doc('notificationId')
+            .where('adminNotiStatus', isEqualTo: 'unread')
+            .get();
+
+        unreadCount += notificationSnapshot.size;
+      }
+
+      setState(() {
+        _unreadNotifications = unreadCount;
+      });
+    } catch (e) {
+      print('Error fetching unread notifications count: $e');
+    }
   }
 
   Future<void> _fetchAdminData() async {
@@ -160,16 +197,21 @@ class _AdminHomePageState extends State<AdminHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor:
-            const Color.fromRGBO(158, 158, 158, 1), // Set selected item color
-        unselectedItemColor:
-            const Color.fromRGBO(158, 158, 158, 1), // Set unselected item color
-        items: const <BottomNavigationBarItem>[
+        selectedItemColor:  const Color.fromRGBO(158, 158, 158, 1),
+        unselectedItemColor: Colors.grey,
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: badges.Badge(
+              badgeContent: Text(
+                '$_unreadNotifications',
+                style: TextStyle(color: Colors.white),
+              ),
+              child: Icon(Icons.notifications),
+              showBadge: _unreadNotifications > 0,
+            ),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),

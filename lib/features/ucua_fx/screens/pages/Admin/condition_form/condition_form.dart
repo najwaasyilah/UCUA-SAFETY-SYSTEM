@@ -97,8 +97,20 @@ class _adminUCFormState extends State<adminUCForm> {
     // Update the latest document's ucformid field
     await querySnapshot.docs.first.reference.update({'ucformid': ucformid});
 
-    print('UC Form data saved successfully!');
-    showToast(message: "Form data saved successfully!");
+    await firestore.collection('ucform').doc(ucformid).collection('notifications').add(
+        {
+        'message': '[${ucformid}] ${reporterName} has submitted a new UC Form',
+        'timestamp': FieldValue.serverTimestamp(),
+        'department': '${reporterDesignation}',
+        'formType': 'ucform',
+        'formId': ucformid,
+        'sdNotiStatus': 'unread',
+        'adminNotiStatus': 'unread',
+        }
+      );
+
+    print('Unsafe Condition Form sent successfully!');
+    showToast(message: "Unsafe Condition Form sent successfully!");
   } catch (e) {
     print('Error saving form data: $e');
   }

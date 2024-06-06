@@ -143,6 +143,27 @@ class _adminViewUCFormState extends State<adminViewUCForm> {
           .collection('ucfollowup')
           .add(followUpData);
 
+      String message = _constructMessage(action, widget.docId, userName);
+        print('Notification Message: $message');
+
+        // Determine notification statuses based on user role
+        Map<String, dynamic> notificationData = {
+            'message': message,
+            'timestamp': FieldValue.serverTimestamp(),
+            'department': userRole,
+            'formType': 'ucform',
+            'formId': widget.docId,
+            'sdNotiStatus': 'unread',
+            'adminNotiStatus': 'unread',
+        };
+
+        if (userRole == 'employee') {
+            notificationData['empNotiStatus'] = 'unread';
+        }
+
+      await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).collection('notifications').add(notificationData);
+
+
       await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).update({
         'status': action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending',
         'approvalName': userName,
@@ -166,6 +187,28 @@ class _adminViewUCFormState extends State<adminViewUCForm> {
       });
     } catch (e) {
       print('Error saving follow-up: $e');
+    }
+  }
+
+  String _constructMessage(String action, String docId, String userName) {
+    if (action == 'Approve') {
+      return '[$docId] $userName has approved the UC Form';
+    } else if (action == 'Reject') {
+      return '[$docId] $userName has rejected the UC Form';
+    } else if (action == 'Save') {
+      return '[$docId] $userName has updated the UC Form';
+    } else {
+      return '[$docId] $userName has performed an action on the UC Form';
+    }
+  }
+
+  String _getStatus(String action) {
+    if (action.toLowerCase() == 'approve' || action.toLowerCase() == 'approved') {
+      return 'Approved';
+    } else if (action.toLowerCase() == 'reject' || action.toLowerCase() == 'rejected') {
+      return 'Rejected';
+    } else {
+      return 'Pending';
     }
   }
 

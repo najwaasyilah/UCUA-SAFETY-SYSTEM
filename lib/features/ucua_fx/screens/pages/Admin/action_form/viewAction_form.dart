@@ -134,6 +134,25 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
           .collection('uafollowup')
           .add(followUpData);
 
+      String message = _constructMessage(action, widget.docId, userName);
+        print('Notification Message: $message');
+
+        Map<String, dynamic> notificationData = {
+            'message': message,
+            'timestamp': FieldValue.serverTimestamp(),
+            'department': userRole,
+            'formType': 'uaform',
+            'formId': widget.docId,
+            'sdNotiStatus': 'unread',
+            'adminNotiStatus': 'unread',
+        };
+
+        if (userRole == 'employee') {
+          notificationData['empNotiStatus'] = 'unread';
+        }
+
+        await FirebaseFirestore.instance.collection('uaform').doc(widget.docId).collection('notifications').add(notificationData);
+
       await FirebaseFirestore.instance.collection('uaform').doc(widget.docId).update({
         'status': action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending',
         'approvalName': userName,
@@ -157,6 +176,28 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
       });
     } catch (e) {
       print('Error saving follow-up: $e');
+    }
+  }
+
+  String _constructMessage(String action, String docId, String userName) {
+    if (action == 'Approve') {
+      return '[$docId] $userName has approved the UA Form';
+    } else if (action == 'Reject') {
+      return '[$docId] $userName has rejected the UA Form';
+    } else if (action == 'Save') {
+      return '[$docId] $userName has updated the UA Form';
+    } else {
+      return '[$docId] $userName has performed an action on the UA Form';
+    }
+  }
+
+  String _getStatus(String action) {
+    if (action.toLowerCase() == 'approve' || action.toLowerCase() == 'approved') {
+      return 'Approved';
+    } else if (action.toLowerCase() == 'reject' || action.toLowerCase() == 'rejected') {
+      return 'Rejected';
+    } else {
+      return 'Pending';
     }
   }
 
