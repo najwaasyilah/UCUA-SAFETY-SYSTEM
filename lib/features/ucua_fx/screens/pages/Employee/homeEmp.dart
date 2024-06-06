@@ -94,10 +94,10 @@ class _empHomePageState extends State<empHomePage> {
 
       // Update state with calculated values
       setState(() {
-        this.reportedCount = totalReported;
-        this.pendingCount = pending;
-        this.approvedCount = approved;
-        this.rejectedCount = rejected;
+        reportedCount = totalReported;
+        pendingCount = pending;
+        approvedCount = approved;
+        rejectedCount = rejected;
       });
     } catch (e) {
       print('Error fetching form statistics: $e');
@@ -239,7 +239,7 @@ class _empHomePageState extends State<empHomePage> {
               CircleAvatar(
                 radius: 45,
                 backgroundImage: profileImageUrl != null
-                    ? NetworkImage(profileImageUrl!)
+                    ? NetworkImage(profileImageUrl)
                     : const AssetImage('assets/profile_picture.png')
                         as ImageProvider,
               ),

@@ -244,7 +244,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               CircleAvatar(
                 radius: 45,
                 backgroundImage: profileImageUrl != null
-                    ? NetworkImage(profileImageUrl!)
+                    ? NetworkImage(profileImageUrl)
                     : const AssetImage('assets/profile_picture.png')
                         as ImageProvider,
               ),

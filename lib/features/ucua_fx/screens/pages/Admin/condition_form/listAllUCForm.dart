@@ -88,7 +88,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
       case 'rejected':
         return Colors.red;
       case 'pending':
-        return Color.fromARGB(255, 212, 192, 6);
+        return const Color.fromARGB(255, 212, 192, 6);
       default:
         return Colors.grey; 
     }
@@ -170,19 +170,19 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
                                         'Date Created: ${document['date']}',
                                         style: const TextStyle(fontSize: 16),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       if ((document.data() as Map<String, dynamic>).containsKey('status'))
                                       Row(
                                         children: [
                                           Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                             decoration: BoxDecoration(
                                               color: getStatusColor(document['status']), 
                                               borderRadius: BorderRadius.circular(5),
                                             ),
                                             child: Text(
                                               'Status: ${document['status']}', 
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                                             ),
                                           ),
                                         ],

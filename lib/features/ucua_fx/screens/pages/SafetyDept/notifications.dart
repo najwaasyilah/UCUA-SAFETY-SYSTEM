@@ -8,7 +8,7 @@ import '../../../../../notification.dart';
 import 'package:badges/badges.dart' as badges;
 
 class SafeDeptNotyPage extends StatefulWidget {
-  const SafeDeptNotyPage({Key? key}) : super(key: key);
+  const SafeDeptNotyPage({super.key});
 
   @override
   _SafeDeptNotyPageState createState() => _SafeDeptNotyPageState();
@@ -17,7 +17,7 @@ class SafeDeptNotyPage extends StatefulWidget {
 class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
   int _selectedIndex = 0;
   int _unreadNotifications = 0;
-  List<Map<String, dynamic>> _notifications = [];
+  final List<Map<String, dynamic>> _notifications = [];
   late NotificationService _notificationService;
 
   @override
@@ -138,7 +138,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
           return ListTile(
             title: Text(
               notification['title']!,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,12 +147,12 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
                   child: Text(notification['body']!),
                 ),
                 Flexible(
-                  child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
+                  child: Text(formattedTime, style: const TextStyle(color: Colors.grey)),
                 ),
               ],
             ),
             trailing: notification['sdNotiStatus'] == 'unread'
-                ? Icon(Icons.circle, color: Colors.blue, size: 10)
+                ? const Icon(Icons.circle, color: Colors.blue, size: 10)
                 : null,
             onTap: () async {
               String formType = notification['type'];
@@ -219,10 +219,10 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
+              child: const Icon(Icons.notifications),
             ),
             label: 'Notifications',
           ),

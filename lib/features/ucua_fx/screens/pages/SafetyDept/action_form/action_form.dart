@@ -114,9 +114,9 @@ class _safeDeptUAFormState extends State<safeDeptUAForm> {
       });
 
       await firestore.collection('uaform').doc(uaformid).collection('notifications').add({
-        'message': '[${uaformid}] ${reporterName} has submitted a new UA Form',
+        'message': '[$uaformid] $reporterName has submitted a new UA Form',
         'timestamp': FieldValue.serverTimestamp(),
-        'department': '${reporterDesignation}',
+        'department': reporterDesignation,
         'formType': 'uaform',
         'formId': uaformid,
         'sdNotiStatus': 'unread',
