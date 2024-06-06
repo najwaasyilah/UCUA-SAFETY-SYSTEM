@@ -113,7 +113,18 @@ class _safeDeptUAFormState extends State<safeDeptUAForm> {
         'imageUrls': imageUrls,
       });
 
-      showToast(message: "Unsafe Action Form Submitted Successfully!");
+      await firestore.collection('uaform').doc(uaformid).collection('notifications').add({
+        'message': '[${uaformid}] ${reporterName} has submitted a new UA Form',
+        'timestamp': FieldValue.serverTimestamp(),
+        'department': '${reporterDesignation}',
+        'formType': 'uaform',
+        'formId': uaformid,
+        'sdNotiStatus': 'unread',
+        'adminNotiStatus': 'unread',
+      });
+
+      print('Unsafe Action Form sent successfully!');
+      showToast(message: "Unsafe Action Form sent successfully!");
     } catch (e) {
       print('Error saving form data: $e');
     }

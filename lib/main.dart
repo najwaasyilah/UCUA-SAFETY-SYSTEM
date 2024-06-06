@@ -31,13 +31,18 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_prof
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/signUpPage.dart';
-//import 'package:ucua_staging/features/user_profile/view_profile_page.dart';
-
+import 'package:ucua_staging/notification.dart';
+//import 'ucuaNotify.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //must put this
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //await NotificationService().initialize(); 
+
+  NotificationService notificationService = NotificationService();
+  await notificationService.initialize(); 
+  
   runApp(const MyApp());
 }
 

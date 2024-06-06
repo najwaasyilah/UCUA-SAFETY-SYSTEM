@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, file_names, camel_case_types, avoid_print
 import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,8 +27,6 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
   List<Map<String, dynamic>> followUps = [];
   List<String> _imageUrls = [];
   List<File?> _conditionImages = [null, null];
-  /*List<File?> _conditionImages = [null, null];
-  List<String> _conditionTakenImageUrls = [];*/
 
   String _status = 'Pending';
   String? approvalName;
@@ -129,6 +127,7 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
       }
 
       Map<String, dynamic> followUpData = {
+        'ucformid': widget.docId,
         'remark': _remarkController.text,
         'status': action,
         'imageUrls': uploadedImageUrls,
@@ -142,6 +141,18 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
           .doc(widget.docId)
           .collection('ucfollowup')
           .add(followUpData);
+
+      String message = _constructMessage(action, widget.docId, userName);
+      print('Notification Message: $message');
+
+      await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).collection('notifications').add({
+        'message': message,
+        'timestamp': FieldValue.serverTimestamp(),
+        'department': userRole,
+        'formType': 'ucform',
+        'formId': widget.docId,
+        'notiStatus': 'unread',
+      });
 
       await FirebaseFirestore.instance.collection('ucform').doc(widget.docId).update({
         'status': action == 'Approve' ? 'Approved' : action == 'Reject' ? 'Rejected' : 'Pending',
@@ -164,8 +175,31 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
         _remarkController.clear();
         _conditionImages = [null, null];
       });
+
     } catch (e) {
       print('Error saving follow-up: $e');
+    }
+  }
+
+  String _constructMessage(String action, String docId, String userName) {
+    if (action == 'Approve') {
+      return '[$docId] $userName has approved the UC Form';
+    } else if (action == 'Reject') {
+      return '[$docId] $userName has rejected the UC Form';
+    } else if (action == 'Save') {
+      return '[$docId] $userName has updated the UC Form';
+    } else {
+      return '[$docId] $userName has performed an action on the UC Form';
+    }
+  }
+
+  String _getStatus(String action) {
+    if (action.toLowerCase() == 'approve' || action.toLowerCase() == 'approved') {
+      return 'Approved';
+    } else if (action.toLowerCase() == 'reject' || action.toLowerCase() == 'rejected') {
+      return 'Rejected';
+    } else {
+      return 'Pending';
     }
   }
 
