@@ -16,7 +16,6 @@ class empNotyPage extends StatefulWidget {
 }
 
 class _empNotyPageState extends State<empNotyPage> {
-
   int _selectedIndex = 0;
   int _unreadNotifications = 0;
   List<Map<String, dynamic>> _notifications = [];
@@ -88,7 +87,6 @@ class _empNotyPageState extends State<empNotyPage> {
       unreadCount += await _processFormNotifications(ucFormSnapshot, 'ucform');
       unreadCount += await _processFormNotifications(uaFormSnapshot, 'uaform');
 
-      // Sort notifications by timestamp
       _notifications.sort((a, b) {
         Timestamp timestampA = a['timestamp'] as Timestamp;
         Timestamp timestampB = b['timestamp'] as Timestamp;
@@ -136,7 +134,7 @@ class _empNotyPageState extends State<empNotyPage> {
     Duration difference = DateTime.now().difference(date);
 
     if (difference.inDays > 8) {
-      return DateFormat('dd/MM/yyyy').format(date); // Show the full date for older messages
+      return DateFormat('dd/MM/yyyy').format(date); 
     } else if ((difference.inDays / 7).floor() >= 1) {
       return '${(difference.inDays / 7).floor()}w';
     } else if (difference.inDays >= 1) {
@@ -160,18 +158,18 @@ class _empNotyPageState extends State<empNotyPage> {
         title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body: ListView.separated(
         itemCount: _notifications.length,
         itemBuilder: (context, index) {
           var notification = _notifications[index];
           var timestamp = notification['timestamp'] as Timestamp;
           var date = timestamp.toDate();
-          var formattedTime = timeAgo(date); // Custom function to format time
+          var formattedTime = timeAgo(date);
 
           return ListTile(
             title: Text(
               notification['title']!,
-              style: TextStyle(fontWeight: FontWeight.bold), // Make title bold
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,7 +183,10 @@ class _empNotyPageState extends State<empNotyPage> {
               ],
             ),
             trailing: notification['empNotiStatus'] == 'unread'
-                ? Icon(Icons.circle, color: Colors.blue, size: 10)
+                ? Transform.translate(
+                    offset: Offset(0, 12),
+                    child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                  )
                 : null,
             onTap: () async {
               String formType = notification['type'];
@@ -224,6 +225,9 @@ class _empNotyPageState extends State<empNotyPage> {
               }
             },
           );
+        },
+        separatorBuilder: (context, index) {
+          return Divider();
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -267,14 +271,15 @@ class _empNotyPageState extends State<empNotyPage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      switch (index) {
-        case 0:
-          Navigator.pushNamed(context, "/empNoty"); 
-          break;
-        case 1:
-          Navigator.pushNamed(context, "/employeeProfile"); 
-          break;
-      }
     });
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, "/empNoty");
+        break;
+      case 1:
+        Navigator.pushNamed(context, "/employeeProfile");
+        break;
+    }
   }
 }
