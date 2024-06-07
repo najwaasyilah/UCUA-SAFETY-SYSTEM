@@ -17,6 +17,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_f
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/listCondition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/homeEmp.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/notifications.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/settings.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/action_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/listAction_form.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
         '/empUCFormList': (context) => const empListUCForm(),
         '/empUAForm': (context) => const empUAForm(),
         '/empUAFormList': (context) => const empListUAForm(),
+        '/empSettings': (context) => const empSettingsPage(),
 
         //View notification page
         '/empNoty': (context) => const empNotyPage(),
