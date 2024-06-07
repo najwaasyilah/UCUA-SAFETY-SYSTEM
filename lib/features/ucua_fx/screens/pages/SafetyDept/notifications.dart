@@ -15,7 +15,6 @@ class SafeDeptNotyPage extends StatefulWidget {
 }
 
 class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
-  
   int _selectedIndex = 0;
   int _unreadNotifications = 0;
   List<Map<String, dynamic>> _notifications = [];
@@ -128,7 +127,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
         title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body: ListView.separated(
         itemCount: _notifications.length,
         itemBuilder: (context, index) {
           var notification = _notifications[index];
@@ -153,7 +152,10 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
               ],
             ),
             trailing: notification['sdNotiStatus'] == 'unread'
-                ? Icon(Icons.circle, color: Colors.blue, size: 10)
+                ? Transform.translate(
+                    offset: Offset(0, 12), // Adjust this value to move the dot down
+                    child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                  )
                 : null,
             onTap: () async {
               String formType = notification['type'];
@@ -196,6 +198,9 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
               }
             },
           );
+        },
+        separatorBuilder: (context, index) {
+          return Divider(); // Adds a divider between each ListTile
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
