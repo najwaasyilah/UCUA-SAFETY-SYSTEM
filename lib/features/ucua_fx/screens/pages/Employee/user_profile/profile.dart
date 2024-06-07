@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/widgets/form_container_widget.dart';
 
 class employeeViewProfile extends StatefulWidget {
@@ -18,7 +22,8 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
   final TextEditingController _staffIDController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final ImagePicker _picker = ImagePicker();
+  String? profileImageUrl;
   bool _isLoading = false;
 
   @override
@@ -45,7 +50,47 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
           _phoneNoController.text = userData['phoneNo'] ?? '';
           _staffIDController.text = userData['staffID'] ?? '';
           _emailController.text = userData['email'] ?? '';
+          profileImageUrl = userData['profileImageUrl'];
         });
+      }
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      try {
+        if (currentUser != null) {
+          // Upload image to Firebase Storage
+          String fileName = '${currentUser!.uid}.jpg';
+          Reference storageRef = FirebaseStorage.instance
+              .ref()
+              .child('profile_pictures/$fileName');
+          UploadTask uploadTask = storageRef.putFile(File(pickedFile.path));
+          TaskSnapshot snapshot = await uploadTask;
+          String downloadUrl = await snapshot.ref.getDownloadURL();
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser!.uid)
+              .update({'profileImageUrl': downloadUrl});
+
+          setState(() {
+            profileImageUrl = downloadUrl;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Profile picture updated successfully')),
+          );
+        }
+      } catch (e) {
+        print('Error uploading profile picture: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Error uploading profile picture. Please try again later.')),
+        );
       }
     }
   }
@@ -129,22 +174,22 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
             children: [
               Stack(
                 children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    child: Icon(Icons.account_circle,
-                        size: 100, color: Color.fromARGB(255, 33, 82, 243)),
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: profileImageUrl != null
+                        ? NetworkImage(profileImageUrl!)
+                        : const AssetImage('assets/profile_picture.png')
+                            as ImageProvider,
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: IconButton(
-                      onPressed: () {
-                        // Add your edit functionality here
-                      },
-                      icon: const Icon(
-                        Icons.camera_alt_rounded,
-                        color: Color.fromARGB(255, 248, 244, 244),
-                        size: 30,
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                      child: IconButton(
+                        icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                        onPressed: _pickImage,
                       ),
                     ),
                   ),
