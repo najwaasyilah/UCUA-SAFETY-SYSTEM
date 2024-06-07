@@ -87,6 +87,7 @@ class _empNotyPageState extends State<empNotyPage> {
       unreadCount += await _processFormNotifications(ucFormSnapshot, 'ucform');
       unreadCount += await _processFormNotifications(uaFormSnapshot, 'uaform');
 
+      // Sort notifications by timestamp
       _notifications.sort((a, b) {
         Timestamp timestampA = a['timestamp'] as Timestamp;
         Timestamp timestampB = b['timestamp'] as Timestamp;
