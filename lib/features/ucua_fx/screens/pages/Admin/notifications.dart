@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, library_private_types_in_public_api
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +11,10 @@ class adminNotyPage extends StatefulWidget {
   const adminNotyPage({super.key});
 
   @override
-  _adminNotyPageState createState() => _adminNotyPageState();
+  _AdminNotyPageState createState() => _AdminNotyPageState();
 }
 
-class _adminNotyPageState extends State<adminNotyPage> {
-
+class _AdminNotyPageState extends State<adminNotyPage> {
   int _selectedIndex = 0;
   int _unreadNotifications = 0;
   List<Map<String, dynamic>> _notifications = [];
@@ -42,6 +40,7 @@ class _adminNotyPageState extends State<adminNotyPage> {
             'formId': formId,
             'notificationId': notificationId,
             'adminNotiStatus': 'unread',
+            'timestamp': Timestamp.now(), // Assuming current timestamp for new notifications
           });
           _unreadNotifications++;
         });
@@ -129,7 +128,7 @@ class _adminNotyPageState extends State<adminNotyPage> {
         title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body: ListView.separated(
         itemCount: _notifications.length,
         itemBuilder: (context, index) {
           var notification = _notifications[index];
@@ -154,7 +153,10 @@ class _adminNotyPageState extends State<adminNotyPage> {
               ],
             ),
             trailing: notification['adminNotiStatus'] == 'unread'
-                ? Icon(Icons.circle, color: Colors.blue, size: 10)
+                ? Transform.translate(
+                    offset: Offset(0, 12), // Adjust this value to move the dot down
+                    child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                  )
                 : null,
             onTap: () async {
               String formType = notification['type'];
@@ -171,9 +173,11 @@ class _adminNotyPageState extends State<adminNotyPage> {
                 );
               }
 
-              bool isSafetyDepartment = true; // Change this based on your role-checking logic
+              
 
-              if (isSafetyDepartment && notification['adminNotiStatus'] != 'read') {
+              bool isAdmin = true; // Change this based on your role-checking logic
+
+              if (isAdmin && notification['adminNotiStatus'] != 'read') {
                 try {
                   final docRef = FirebaseFirestore.instance
                       .collection(formType)
@@ -197,6 +201,9 @@ class _adminNotyPageState extends State<adminNotyPage> {
               }
             },
           );
+        },
+        separatorBuilder: (context, index) {
+          return Divider(); // Adds a divider between each ListTile
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
