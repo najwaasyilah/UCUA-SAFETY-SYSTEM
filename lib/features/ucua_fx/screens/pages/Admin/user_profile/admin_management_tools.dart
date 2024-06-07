@@ -228,6 +228,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     final TextEditingController passwordController = TextEditingController();
 
     showDialog(
+      barrierColor: Colors.blue,
       context: context,
       builder: (context) {
         return AlertDialog(
