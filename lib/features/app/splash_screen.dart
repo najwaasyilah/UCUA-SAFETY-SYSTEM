@@ -3,7 +3,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, required LoginPage child});
+  const SplashScreen({super.key, required this.child});
+
+  final LoginPage child;
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -44,14 +46,31 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: const Color.fromARGB(255, 33, 82, 243), // Blue gradient background color
       body: Center(
         child: isLoading
-            ? const SpinKitFadingCircle(
-                color: Colors.white, // Loading spinner color
-                size: 50.0,
+            ? const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/ucua-logo.png'), // Path to your logo image
+                    width: 200, // Set the desired width
+                    height: 200, // Set the desired height
+                  ),
+                  /*SizedBox(height: 5), // Space between logo and spinner
+                  SpinKitThreeBounce(
+                    color: Colors.white, // Loading spinner color
+                    size: 50.0,
+                  ),*/
+                ],
               )
             : showWelcome
                 ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image(
+                        image: AssetImage('assets/ucua-logo.png'), // Path to your logo image
+                        width: 200, // Set the desired width
+                        height: 200, // Set the desired height
+                      ),
+                      SizedBox(height: 5), // Space between logo and text
                       Text(
                         "Welcome to",
                         style: TextStyle(
