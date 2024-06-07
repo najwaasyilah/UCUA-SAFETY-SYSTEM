@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/profile.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/settings.dart';
 import 'package:badges/badges.dart' as badges;
 
 class empProfile extends StatefulWidget {
@@ -140,16 +141,28 @@ class _empProfileState extends State<empProfile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: profileImageUrl != null
-                  ? NetworkImage(profileImageUrl!)
-                  : const AssetImage('assets/profile_picture.png')
-                      as ImageProvider,
-              child: IconButton(
-                icon: const Icon(Icons.camera_alt, color: Colors.white),
-                onPressed: _pickImage,
-              ),
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!)
+                      : const AssetImage('assets/profile_picture.png')
+                          as ImageProvider,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: const CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                      child: Icon(Icons.camera_alt, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Text(
@@ -237,42 +250,40 @@ class _empProfileState extends State<empProfile> {
             ),
             const SizedBox(height: 20), // Add some space between the buttons
             GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/empViewProfile');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.settings, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
-                        Text(
-                          'Settings',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
-                          ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
-                  ],
-                ),
+  onTap: () {
+    Navigator.pushNamed(context, '/empSettings');
+  },
+  child: Container(
+    width: 300, // Set the desired width here
+    alignment: Alignment.centerLeft,
+    padding: const EdgeInsets.symmetric(
+        vertical: 15, horizontal: 15), // Adjust the padding here
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 81, 76, 76),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.settings, color: Colors.white),
+            SizedBox(width: 10), // Add some space between the icon and text
+            Text(
+              'Settings',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18, // Increase the text size
               ),
             ),
+          ],
+        ),
+        Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+      ],
+    ),
+  ),
+),
+
             const SizedBox(height: 20), // Add some space between the buttons
             GestureDetector(
               onTap: () {
