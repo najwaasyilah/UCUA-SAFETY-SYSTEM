@@ -21,6 +21,7 @@ class _empNotyPageState extends State<empNotyPage> {
   List<Map<String, dynamic>> _notifications = [];
   late NotificationService _notificationService;
   String? currentUserStaffID;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -73,69 +74,71 @@ class _empNotyPageState extends State<empNotyPage> {
     if (currentUserStaffID == null) {
       return;
     }
+    setState(() {
+      _isLoading = true;
+    });
     try {
+      List<Map<String, dynamic>> allNotifications = [];
+
       QuerySnapshot ucFormSnapshot = await FirebaseFirestore.instance
           .collection('ucform')
           .where('staffID', isEqualTo: currentUserStaffID)
           .get();
+      for (var formDoc in ucFormSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await formDoc.reference.collection('notifications').get();
+        allNotifications.addAll(_processNotificationSnapshot(notificationSnapshot, 'ucform', formDoc.id));
+      }
+
       QuerySnapshot uaFormSnapshot = await FirebaseFirestore.instance
           .collection('uaform')
           .where('staffID', isEqualTo: currentUserStaffID)
           .get();
-      int unreadCount = 0;
+      for (var formDoc in uaFormSnapshot.docs) {
+        QuerySnapshot notificationSnapshot = await formDoc.reference.collection('notifications').get();
+        allNotifications.addAll(_processNotificationSnapshot(notificationSnapshot, 'uaform', formDoc.id));
+      }
 
-      unreadCount += await _processFormNotifications(ucFormSnapshot, 'ucform');
-      unreadCount += await _processFormNotifications(uaFormSnapshot, 'uaform');
-
-      // Sort notifications by timestamp
-      _notifications.sort((a, b) {
+      allNotifications.sort((a, b) {
         Timestamp timestampA = a['timestamp'] as Timestamp;
         Timestamp timestampB = b['timestamp'] as Timestamp;
         return timestampB.compareTo(timestampA);
       });
 
       setState(() {
-        _unreadNotifications = unreadCount;
+        _notifications = allNotifications;
+        _unreadNotifications = allNotifications.where((n) => n['empNotiStatus'] == 'unread').length;
+        _isLoading = false;
       });
     } catch (e) {
       print('Error fetching notifications: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
-  Future<int> _processFormNotifications(QuerySnapshot formSnapshot, String type) async {
-    int unreadCount = 0;
-    for (QueryDocumentSnapshot formDoc in formSnapshot.docs) {
-      CollectionReference notificationsRef = formDoc.reference.collection('notifications');
-      QuerySnapshot notificationSnapshot = await notificationsRef.get();
-      for (QueryDocumentSnapshot notificationDoc in notificationSnapshot.docs) {
-        var notificationData = notificationDoc.data() as Map<String, dynamic>?;
-        if (notificationData != null) {
-          String empNotiStatus = notificationData.containsKey('empNotiStatus') ? notificationData['empNotiStatus'] : 'unread';
-          if (notificationData['staffID'] == currentUserStaffID) {
-            _notifications.add({
-              'title': notificationData['department'] ?? 'No department',
-              'body': notificationData['message'] ?? 'No message',
-              'timestamp': notificationData['timestamp'] ?? Timestamp.now(),
-              'type': type,
-              'formId': formDoc.id,
-              'notificationId': notificationDoc.id,
-              'empNotiStatus': empNotiStatus,
-            });
-            if (empNotiStatus == 'unread') {
-              unreadCount++;
-            }
-          }
-        }
-      }
+  List<Map<String, dynamic>> _processNotificationSnapshot(QuerySnapshot snapshot, String type, String formId) {
+    List<Map<String, dynamic>> notifications = [];
+    for (var notificationDoc in snapshot.docs) {
+      var notificationData = notificationDoc.data() as Map<String, dynamic>;
+      notifications.add({
+        'title': notificationData['department'] ?? 'No department',
+        'body': notificationData['message'] ?? 'No message',
+        'timestamp': notificationData['timestamp'] ?? Timestamp.now(),
+        'type': type,
+        'formId': formId,
+        'notificationId': notificationDoc.id,
+        'empNotiStatus': notificationData['empNotiStatus'] ?? 'unread',
+      });
     }
-    return unreadCount;
+    return notifications;
   }
 
   String timeAgo(DateTime date) {
     Duration difference = DateTime.now().difference(date);
 
     if (difference.inDays > 8) {
-      return DateFormat('dd/MM/yyyy').format(date); 
+      return DateFormat('dd/MM/yyyy').format(date);
     } else if ((difference.inDays / 7).floor() >= 1) {
       return '${(difference.inDays / 7).floor()}w';
     } else if (difference.inDays >= 1) {
@@ -159,78 +162,80 @@ class _empNotyPageState extends State<empNotyPage> {
         title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        itemCount: _notifications.length,
-        itemBuilder: (context, index) {
-          var notification = _notifications[index];
-          var timestamp = notification['timestamp'] as Timestamp;
-          var date = timestamp.toDate();
-          var formattedTime = timeAgo(date);
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.separated(
+              itemCount: _notifications.length,
+              itemBuilder: (context, index) {
+                var notification = _notifications[index];
+                var timestamp = notification['timestamp'] as Timestamp;
+                var date = timestamp.toDate();
+                var formattedTime = timeAgo(date);
 
-          return ListTile(
-            title: Text(
-              notification['title']!,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(notification['body']!),
-                ),
-                Flexible(
-                  child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
-                ),
-              ],
-            ),
-            trailing: notification['empNotiStatus'] == 'unread'
-                ? Transform.translate(
-                    offset: Offset(0, 12),
-                    child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
-                  )
-                : null,
-            onTap: () async {
-              String formType = notification['type'];
-              String formId = notification['formId'];
-
-              if (formType == 'ucform' || formType == 'uaform') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => formType == 'ucform'
-                        ? empViewUCForm(docId: formId)
-                        : empViewUAForm(docId: formId),
+                return ListTile(
+                  title: Text(
+                    notification['title']!,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(notification['body']!),
+                      ),
+                      Flexible(
+                        child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
+                      ),
+                    ],
+                  ),
+                  trailing: notification['empNotiStatus'] == 'unread'
+                      ? Transform.translate(
+                          offset: Offset(0, 12),
+                          child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                        )
+                      : null,
+                  onTap: () async {
+                    String formType = notification['type'];
+                    String formId = notification['formId'];
+
+                    if (formType == 'ucform' || formType == 'uaform') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => formType == 'ucform'
+                              ? empViewUCForm(docId: formId)
+                              : empViewUAForm(docId: formId),
+                        ),
+                      );
+                    }
+
+                    if (notification['empNotiStatus'] != 'read') {
+                      try {
+                        final docRef = FirebaseFirestore.instance
+                            .collection(formType)
+                            .doc(formId)
+                            .collection('notifications')
+                            .doc(notification['notificationId']);
+
+                        await docRef.update({
+                          'empNotiStatus': 'read',
+                        });
+
+                        setState(() {
+                          _notifications[index]['empNotiStatus'] = 'read';
+                          _unreadNotifications--;
+                        });
+                      } catch (e) {
+                        print('Error marking notifications as read: $e');
+                      }
+                    }
+                  },
                 );
-              }
-
-              if (notification['empNotiStatus'] != 'read') {
-                try {
-                  final docRef = FirebaseFirestore.instance
-                      .collection(formType)
-                      .doc(formId)
-                      .collection('notifications')
-                      .doc(notification['notificationId']);
-
-                  await docRef.update({
-                    'empNotiStatus': 'read',
-                  });
-
-                  setState(() {
-                    _notifications[index]['empNotiStatus'] = 'read';
-                    _unreadNotifications--;
-                  });
-                } catch (e) {
-                  print('Error marking notifications as read: $e');
-                }
-              }
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-      ),
+              },
+              separatorBuilder: (context, index) {
+                return Divider();
+              },
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {

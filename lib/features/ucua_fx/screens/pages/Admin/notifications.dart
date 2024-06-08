@@ -19,6 +19,7 @@ class _AdminNotyPageState extends State<adminNotyPage> {
   int _unreadNotifications = 0;
   List<Map<String, dynamic>> _notifications = [];
   late NotificationService _notificationService;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -51,6 +52,9 @@ class _AdminNotyPageState extends State<adminNotyPage> {
   }
 
   Future<void> _fetchNotifications() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       QuerySnapshot ucFormSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
       QuerySnapshot uaFormSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
@@ -67,9 +71,13 @@ class _AdminNotyPageState extends State<adminNotyPage> {
 
       setState(() {
         _unreadNotifications = unreadCount;
+        _isLoading = false;
       });
     } catch (e) {
       print('Error fetching notifications: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -128,84 +136,84 @@ class _AdminNotyPageState extends State<adminNotyPage> {
         title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        itemCount: _notifications.length,
-        itemBuilder: (context, index) {
-          var notification = _notifications[index];
-          var timestamp = notification['timestamp'] as Timestamp;
-          var date = timestamp.toDate();
-          var formattedTime = timeAgo(date);
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.separated(
+              itemCount: _notifications.length,
+              itemBuilder: (context, index) {
+                var notification = _notifications[index];
+                var timestamp = notification['timestamp'] as Timestamp;
+                var date = timestamp.toDate();
+                var formattedTime = timeAgo(date);
 
-          return ListTile(
-            title: Text(
-              notification['title']!,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(notification['body']!),
-                ),
-                Flexible(
-                  child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
-                ),
-              ],
-            ),
-            trailing: notification['adminNotiStatus'] == 'unread'
-                ? Transform.translate(
-                    offset: Offset(0, 12), // Adjust this value to move the dot down
-                    child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
-                  )
-                : null,
-            onTap: () async {
-              String formType = notification['type'];
-              String formId = notification['formId'];
-
-              if (formType == 'ucform' || formType == 'uaform') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => formType == 'ucform'
-                        ? adminViewUCForm(docId: formId)
-                        : adminViewUAForm(docId: formId),
+                return ListTile(
+                  title: Text(
+                    notification['title']!,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(notification['body']!),
+                      ),
+                      Flexible(
+                        child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
+                      ),
+                    ],
+                  ),
+                  trailing: notification['adminNotiStatus'] == 'unread'
+                      ? Transform.translate(
+                          offset: Offset(0, 12), // Adjust this value to move the dot down
+                          child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                        )
+                      : null,
+                  onTap: () async {
+                    String formType = notification['type'];
+                    String formId = notification['formId'];
+
+                    if (formType == 'ucform' || formType == 'uaform') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => formType == 'ucform'
+                              ? adminViewUCForm(docId: formId)
+                              : adminViewUAForm(docId: formId),
+                        ),
+                      );
+                    }
+
+                    bool isAdmin = true; // Change this based on your role-checking logic
+
+                    if (isAdmin && notification['adminNotiStatus'] != 'read') {
+                      try {
+                        final docRef = FirebaseFirestore.instance
+                            .collection(formType)
+                            .doc(formId)
+                            .collection('notifications')
+                            .doc(notification['notificationId']);
+
+                        await docRef.update({
+                          'adminNotiStatus': 'read',
+                        }).then((_) {
+                          setState(() {
+                            _notifications[index]['adminNotiStatus'] = 'read';
+                            _unreadNotifications--;
+                          });
+                        }).catchError((error) {
+                          print('Error updating document: $error');
+                        });
+                      } catch (e) {
+                        print('Error marking notifications as read: $e');
+                      }
+                    }
+                  },
                 );
-              }
-
-              
-
-              bool isAdmin = true; // Change this based on your role-checking logic
-
-              if (isAdmin && notification['adminNotiStatus'] != 'read') {
-                try {
-                  final docRef = FirebaseFirestore.instance
-                      .collection(formType)
-                      .doc(formId)
-                      .collection('notifications')
-                      .doc(notification['notificationId']);
-
-                  await docRef.update({
-                    'adminNotiStatus': 'read',
-                  }).then((_) {
-                    setState(() {
-                      _notifications[index]['adminNotiStatus'] = 'read';
-                      _unreadNotifications--;
-                    });
-                  }).catchError((error) {
-                    print('Error updating document: $error');
-                  });
-                } catch (e) {
-                  print('Error marking notifications as read: $e');
-                }
-              }
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider(); // Adds a divider between each ListTile
-        },
-      ),
+              },
+              separatorBuilder: (context, index) {
+                return Divider(); // Adds a divider between each ListTile
+              },
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {

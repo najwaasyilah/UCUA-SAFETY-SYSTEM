@@ -19,6 +19,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
   int _unreadNotifications = 0;
   List<Map<String, dynamic>> _notifications = [];
   late NotificationService _notificationService;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
             'formId': formId,
             'notificationId': notificationId,
             'sdNotiStatus': 'unread',
+            'timestamp': Timestamp.now(), // Assuming current timestamp for new notifications
           });
           _unreadNotifications++;
         });
@@ -50,6 +52,9 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
   }
 
   Future<void> _fetchNotifications() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       QuerySnapshot ucFormSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
       QuerySnapshot uaFormSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
@@ -66,9 +71,13 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
 
       setState(() {
         _unreadNotifications = unreadCount;
+        _isLoading = false;
       });
     } catch (e) {
       print('Error fetching notifications: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -127,82 +136,84 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
         title: const Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        itemCount: _notifications.length,
-        itemBuilder: (context, index) {
-          var notification = _notifications[index];
-          var timestamp = notification['timestamp'] as Timestamp;
-          var date = timestamp.toDate();
-          var formattedTime = timeAgo(date);
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.separated(
+              itemCount: _notifications.length,
+              itemBuilder: (context, index) {
+                var notification = _notifications[index];
+                var timestamp = notification['timestamp'] as Timestamp;
+                var date = timestamp.toDate();
+                var formattedTime = timeAgo(date);
 
-          return ListTile(
-            title: Text(
-              notification['title']!,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(notification['body']!),
-                ),
-                Flexible(
-                  child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
-                ),
-              ],
-            ),
-            trailing: notification['sdNotiStatus'] == 'unread'
-                ? Transform.translate(
-                    offset: Offset(0, 12), // Adjust this value to move the dot down
-                    child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
-                  )
-                : null,
-            onTap: () async {
-              String formType = notification['type'];
-              String formId = notification['formId'];
-
-              if (formType == 'ucform' || formType == 'uaform') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => formType == 'ucform'
-                        ? safeDeptViewUCForm(docId: formId)
-                        : safeDeptViewUAForm(docId: formId),
+                return ListTile(
+                  title: Text(
+                    notification['title']!,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(notification['body']!),
+                      ),
+                      Flexible(
+                        child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
+                      ),
+                    ],
+                  ),
+                  trailing: notification['sdNotiStatus'] == 'unread'
+                      ? Transform.translate(
+                          offset: Offset(0, 12), // Adjust this value to move the dot down
+                          child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                        )
+                      : null,
+                  onTap: () async {
+                    String formType = notification['type'];
+                    String formId = notification['formId'];
+
+                    if (formType == 'ucform' || formType == 'uaform') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => formType == 'ucform'
+                              ? safeDeptViewUCForm(docId: formId)
+                              : safeDeptViewUAForm(docId: formId),
+                        ),
+                      );
+                    }
+
+                    bool isSafetyDepartment = true; // Change this based on your role-checking logic
+
+                    if (isSafetyDepartment && notification['sdNotiStatus'] != 'read') {
+                      try {
+                        final docRef = FirebaseFirestore.instance
+                            .collection(formType)
+                            .doc(formId)
+                            .collection('notifications')
+                            .doc(notification['notificationId']);
+
+                        await docRef.update({
+                          'sdNotiStatus': 'read',
+                        }).then((_) {
+                          setState(() {
+                            _notifications[index]['sdNotiStatus'] = 'read';
+                            _unreadNotifications--;
+                          });
+                        }).catchError((error) {
+                          print('Error updating document: $error');
+                        });
+                      } catch (e) {
+                        print('Error marking notifications as read: $e');
+                      }
+                    }
+                  },
                 );
-              }
-
-              bool isSafetyDepartment = true; // Change this based on your role-checking logic
-
-              if (isSafetyDepartment && notification['sdNotiStatus'] != 'read') {
-                try {
-                  final docRef = FirebaseFirestore.instance
-                      .collection(formType)
-                      .doc(formId)
-                      .collection('notifications')
-                      .doc(notification['notificationId']);
-
-                  await docRef.update({
-                    'sdNotiStatus': 'read',
-                  }).then((_) {
-                    setState(() {
-                      _notifications[index]['sdNotiStatus'] = 'read';
-                      _unreadNotifications--;
-                    });
-                  }).catchError((error) {
-                    print('Error updating document: $error');
-                  });
-                } catch (e) {
-                  print('Error marking notifications as read: $e');
-                }
-              }
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider(); // Adds a divider between each ListTile
-        },
-      ),
+              },
+              separatorBuilder: (context, index) {
+                return Divider(); // Adds a divider between each ListTile
+              },
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
