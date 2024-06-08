@@ -101,7 +101,20 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Users'),
+        title: Row(
+          children: [
+            const Text(
+              'Manage Users',
+              style: TextStyle(color: Colors.white),
+            ),
+            const Spacer(),
+            Image.asset(
+              'assets/manage.png',
+              color: Colors.white,
+              scale: 11,
+            ),
+          ],
+        ),
         backgroundColor: mainColor,
       ),
       body: StreamBuilder(
@@ -124,6 +137,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
               String? profileImageUrl = user['profileImageUrl'];
 
               return Card(
+                color: Colors.cyan,
                 margin:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: ListTile(
@@ -134,27 +148,44 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                         : const AssetImage('assets/default_profile_picture.png')
                             as ImageProvider,
                   ),
-                  title: Text('$firstName $lastName'),
+                  title: Text(
+                    '$firstName $lastName',
+                    style: const TextStyle(color: Colors.white),
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Staff ID: $staffID'),
-                      Text('Email: $email'),
-                      Text('Phone: $phone'),
-                      Text('Role: $role'),
+                      Text(
+                        'Staff ID: $staffID',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        'Email: $email',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        'Phone: $phone',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        'Role: $role',
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ],
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit, color: mainColor),
+                        icon: Icon(Icons.edit,
+                            color: Color.fromARGB(255, 146, 8, 144)),
                         onPressed: () {
                           _showUserForm(context, userId: doc.id, user: user);
                         },
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red.shade800),
+                        icon: Icon(Icons.remove_circle,
+                            color: Colors.red.shade800),
                         onPressed: () {
                           _deleteUser(doc.id);
                         },
@@ -197,6 +228,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     final TextEditingController passwordController = TextEditingController();
 
     showDialog(
+      barrierColor: Colors.blue,
       context: context,
       builder: (context) {
         return AlertDialog(

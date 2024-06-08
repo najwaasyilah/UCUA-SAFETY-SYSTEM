@@ -37,6 +37,7 @@ flutter:
     - assets/ucua-logo.png
     - assets/ucua-logo2.png
     - assets/pfp.png
+    - assets/manage.png
 
 flutter_launcher_icons:
   android: "launcher_icon"
