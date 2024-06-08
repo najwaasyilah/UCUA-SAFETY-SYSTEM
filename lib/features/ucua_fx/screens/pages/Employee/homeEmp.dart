@@ -37,30 +37,37 @@ class _empHomePageState extends State<empHomePage> {
   Future<void> _fetchUnreadNotificationsCount() async {
     try {
       int unreadCount = 0;
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        String staffID = userDoc['staffID'];
 
-      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
-      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
-        QuerySnapshot notificationSnapshot = await ucformDoc.reference
-            .collection('notifications')
-            .where('empNotiStatus', isEqualTo: 'unread')
-            .get();
+        QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
+        for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
+          QuerySnapshot notificationSnapshot = await ucformDoc.reference
+              .collection('notifications')
+              .where('empNotiStatus', isEqualTo: 'unread')
+              .where('staffID', isEqualTo: staffID)
+              .get();
 
-        unreadCount += notificationSnapshot.size;
+          unreadCount += notificationSnapshot.size;
+        }
+
+        QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
+        for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
+          QuerySnapshot notificationSnapshot = await uaformDoc.reference
+              .collection('notifications')
+              .where('empNotiStatus', isEqualTo: 'unread')
+              .where('staffID', isEqualTo: staffID)
+              .get();
+
+          unreadCount += notificationSnapshot.size;
+        }
+
+        setState(() {
+          _unreadNotifications = unreadCount;
+        });
       }
-
-      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
-      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
-        QuerySnapshot notificationSnapshot = await uaformDoc.reference
-            .collection('notifications')
-            .where('empNotiStatus', isEqualTo: 'unread')
-            .get();
-
-        unreadCount += notificationSnapshot.size;
-      }
-
-      setState(() {
-        _unreadNotifications = unreadCount;
-      });
     } catch (e) {
       print('Error fetching unread notifications count: $e');
     }
