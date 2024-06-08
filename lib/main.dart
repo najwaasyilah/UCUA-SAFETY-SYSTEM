@@ -32,7 +32,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_prof
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/signUpPage.dart';
-import 'package:ucua_staging/notification.dart';
+import 'package:ucua_staging/ucuaNotify.dart';
 //import 'ucuaNotify.dart';
 import 'firebase_options.dart';
 

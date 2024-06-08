@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/viewAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/viewCondition_form.dart';
-import '../../../../../notification.dart';
+import '../../../../../ucuaNotify.dart';
 import 'package:badges/badges.dart' as badges;
 
 class adminNotyPage extends StatefulWidget {

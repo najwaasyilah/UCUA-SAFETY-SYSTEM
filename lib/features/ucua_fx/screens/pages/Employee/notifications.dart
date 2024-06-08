@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/viewAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_form/viewCondition_form.dart';
 import 'package:badges/badges.dart' as badges;
-import '../../../../../notification.dart';
+import '../../../../../ucuaNotify.dart';
 
 class empNotyPage extends StatefulWidget {
   const empNotyPage({super.key});

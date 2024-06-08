@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/viewAction_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/viewCondition_form.dart';
-import '../../../../../notification.dart';
+import '../../../../../ucuaNotify.dart';
 import 'package:badges/badges.dart' as badges;
 
 class SafeDeptNotyPage extends StatefulWidget {
