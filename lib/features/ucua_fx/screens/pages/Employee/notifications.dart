@@ -32,7 +32,7 @@ class _empNotyPageState extends State<empNotyPage> {
       _fetchNotifications();
     });
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    /*FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         final data = message.data;
         final String type = data['formType'] ?? 'unknown';
@@ -55,7 +55,7 @@ class _empNotyPageState extends State<empNotyPage> {
           });
         }
       }
-    });
+    });*/
   }
 
   Future<void> getCurrentUserStaffID() async {
