@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, use_super_parameters, camel_case_types, avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,9 @@ class safeDeptListUCForm extends StatefulWidget {
 
 class _safeDeptListUCFormState extends State<safeDeptListUCForm> {
   String? currentUserStaffID;
+
+  String searchQuery = '';
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -101,137 +103,187 @@ class _safeDeptListUCFormState extends State<safeDeptListUCForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("List of Unsafe Condition Forms"),
-      ),
-      body: Container(
-        color: Colors.grey.withOpacity(.35),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20.0),
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'LIST OF UNSAFE CONDITION REPORT',
-                        style: TextStyle(
-                          fontSize: 23.0,
-                          fontWeight: FontWeight.w900,
-                          color: Color.fromARGB(255, 199, 26, 230),
-                        ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("List of Unsafe Condition Forms"),
+      foregroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 33, 82, 243),
+    ),
+    body: Container(
+      color: Colors.grey.withOpacity(.35),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Unsafe Condition Report',
+                      style: TextStyle(
+                        fontSize: 23.0,
+                        fontWeight: FontWeight.w900,
+                        color: const Color.fromARGB(255, 33, 82, 243),
                       ),
-                      SizedBox(height: 20),
-                      StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('ucform')
-                            .where('staffID', isEqualTo: currentUserStaffID)
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search by Form ID',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value.trim().toUpperCase();
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    StreamBuilder(
+                      stream: (searchQuery.isEmpty)
+                        ? FirebaseFirestore.instance.collection('ucform').where('staffID', isEqualTo: currentUserStaffID).orderBy('date', descending: true).snapshots()
+                        : FirebaseFirestore.instance.collection('ucform')
+                          .where('staffID', isEqualTo: currentUserStaffID)
+                          .where('ucformid', isGreaterThanOrEqualTo: searchQuery)
+                          .where('ucformid', isLessThanOrEqualTo: '$searchQuery\uf8ff')
+                          .snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
 
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          }
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (DocumentSnapshot document in snapshot.data!.docs)
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return Center(child: Text('No forms found', style: TextStyle(fontSize: 18, color: Colors.black54)));
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: snapshot.data!.docs.map((document) {
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 20),
+                              padding: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
                                     color: Colors.grey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Form ID: ${document['ucformid']}',
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 33, 82, 243),),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Date Created: ${document['date']}',
+                                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                                  ),
+                                  SizedBox(height: 5),
+                                  if ((document.data() as Map<String, dynamic>).containsKey('status'))
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: getStatusColor(document['status']),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Text(
+                                            'Status: ${document['status']}',
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
-                                      Text(
-                                        '${document['ucformid']}',
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'Date Created: ${document['date']}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(height: 5),
-                                      if ((document.data() as Map<String, dynamic>).containsKey('status'))
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: getStatusColor(document['status']), 
-                                              borderRadius: BorderRadius.circular(5),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => safeDeptViewUCForm(docId: document.id),
                                             ),
-                                            child: Text(
-                                              'Status: ${document['status']}', 
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                                            ),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white, backgroundColor: Colors.blueAccent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
                                           ),
-                                        ],
+                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        ),
+                                        child: Text(
+                                          'View',
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                      SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => safeDeptViewUCForm(docId: document.id),
-                                                ),
-                                              );
-                                            },
-                                            child: Text('View'),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          deleteConditionForm(document.id);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
                                           ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              deleteConditionForm(document.id);
-                                            },
-                                            child: Text('Delete'),
-                                          ),
-                                        ],
+                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        ),
+                                        child: Text(
+                                          'Delete',
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
       ),
-    );
+    ));
   }
 }
