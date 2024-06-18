@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/listAllUAForm.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listAllUCForm.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/listAllUAForm.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition_form/listAllUCForm.dart';
 
 class safeDeptListOfReports extends StatelessWidget {
   const safeDeptListOfReports({super.key, Key});
@@ -30,7 +30,7 @@ class safeDeptListOfReports extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const adminListAllUAForm(),
+                        builder: (context) => const safeDeptListAllUAForm(),
                       ),
                     );
                   },
@@ -68,7 +68,7 @@ class safeDeptListOfReports extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const adminListAllUCForm(),
+                        builder: (context) => const safeDeptListAllUCForm(),
                       ),
                     );
                   },
