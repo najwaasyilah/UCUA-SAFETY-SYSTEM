@@ -10,6 +10,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/feedback.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/action_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/listAction_form.dart';
@@ -18,6 +19,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/condition_f
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/homeEmp.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/aboutUs.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/faq.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/feedback.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/action_form/action_form.dart';
@@ -29,6 +31,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/feedback.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/notifications.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/loginPage.dart';
@@ -79,6 +82,8 @@ class MyApp extends StatelessWidget {
         '/adminListtAllUAForms': (context) => const adminListAllUAForm(),
         '/adminListtAllUForms': (context) => const adminListAllUCForm(),
         '/adminListReports': (context) => const adminListOfReports(),
+        '/adminFeedback': (context) => const AdminFeedbackFormPage(),
+        
 
         //safetyDept
         '/sdUCForm': (context) => const safeDeptUCForm(),
@@ -89,19 +94,25 @@ class MyApp extends StatelessWidget {
         '/sdListtAllUForms': (context) => const safeDeptListAllUCForm(),
         '/sdListReports': (context) => const safeDeptListOfReports(),
         '/sdGallery': (context) => const galleryPage(),
+        '/safetyDeptFeedback': (context) => const safeDeptFeedbackFormPage(),
+        
 
         //employee
         '/empUCForm': (context) => const empUCForm(),
         '/empUCFormList': (context) => const empListUCForm(),
         '/empUAForm': (context) => const empUAForm(),
         '/empUAFormList': (context) => const empListUAForm(),
-        '/empSettings': (context) => const empFeedbackFormPage(),
-        '/aboutUs': (context) => const aboutUsPage(),
+        '/empFeedback': (context) => const empFeedbackFormPage(),
 
         //View notification page
         '/empNoty': (context) => const empNotyPage(),
         '/adminNoty': (context) => const adminNotyPage(),
         '/safeDeptNoty': (context) => const SafeDeptNotyPage(),
+        
+
+        //Profile
+        '/aboutUs': (context) => const AboutUsPage(),
+        '/faqPage' : (context) => const FAQPage(),
       },
     );
   }
