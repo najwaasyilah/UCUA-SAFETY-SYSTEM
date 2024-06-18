@@ -1,11 +1,11 @@
-import 'dart:io'; // For File
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart'; // For Firebase Storage
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; // For Image Picker
+import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/profile.dart';
-import 'change_password_page.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/change_password_page.dart';
 import 'package:badges/badges.dart' as badges;
 
 class AdminProfile extends StatefulWidget {
@@ -16,14 +16,12 @@ class AdminProfile extends StatefulWidget {
 }
 
 class _AdminProfileState extends State<AdminProfile> {
-  int _selectedIndex =
-      1; // Set the initial index to 1 to have Profile as the selected item
+  int _selectedIndex = 1;
   String? adminName;
   String? adminEmail;
   String? profileImageUrl;
   final ImagePicker _picker = ImagePicker();
-
-    int _unreadNotifications = 0;
+  int _unreadNotifications = 0;
 
   @override
   void initState() {
@@ -79,7 +77,7 @@ class _AdminProfileState extends State<AdminProfile> {
         setState(() {
           adminName = userData['firstName'] ?? 'No Name';
           adminEmail = userData['email'] ?? 'No Email';
-          profileImageUrl = userData['profileImageUrl']; // Add this line
+          profileImageUrl = userData['profileImageUrl'];
         });
       }
     }
@@ -88,33 +86,39 @@ class _AdminProfileState extends State<AdminProfile> {
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      File image = File(pickedFile.path);
-      _uploadImage(image);
-    }
-  }
-
-  Future<void> _uploadImage(File image) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
       try {
-        Reference storageReference = FirebaseStorage.instance
-            .ref()
-            .child('profile_pictures')
-            .child('${user.uid}.jpg');
-        UploadTask uploadTask = storageReference.putFile(image);
-        await uploadTask.whenComplete(() => null);
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          // Upload image to Firebase Storage
+          String fileName = '${user.uid}.jpg';
+          Reference storageRef = FirebaseStorage.instance
+              .ref()
+              .child('profile_pictures/$fileName');
+          UploadTask uploadTask = storageRef.putFile(File(pickedFile.path));
+          TaskSnapshot snapshot = await uploadTask;
+          String downloadUrl = await snapshot.ref.getDownloadURL();
 
-        String downloadUrl = await storageReference.getDownloadURL();
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'profileImageUrl': downloadUrl});
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({'profileImageUrl': downloadUrl});
 
-        setState(() {
-          profileImageUrl = downloadUrl;
-        });
+          setState(() {
+            profileImageUrl = downloadUrl;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Profile picture updated successfully')),
+          );
+        }
       } catch (e) {
-        print('Error uploading image: $e');
+        print('Error uploading profile picture: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Error uploading profile picture. Please try again later.')),
+        );
       }
     }
   }
@@ -125,209 +129,275 @@ class _AdminProfileState extends State<AdminProfile> {
       appBar: AppBar(
         title: const Text(
           'User Profile',
-          textAlign: TextAlign.center, // Center the text
+          textAlign: TextAlign.center,
         ),
-        centerTitle: true, // Center the title horizontally
-        automaticallyImplyLeading: false, // Remove back icon
+        centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundImage: profileImageUrl != null
-                      ? NetworkImage(profileImageUrl!)
-                      : const AssetImage('assets/profile_picture.png')
-                          as ImageProvider,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: profileImageUrl != null
+                        ? NetworkImage(profileImageUrl!)
+                        : const AssetImage('assets/profile_picture.png')
+                            as ImageProvider,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                        child: Icon(Icons.camera_alt, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                adminName ?? 'Loading...',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.camera_alt),
-                    onPressed: _pickImage,
-                    color: Colors.white,
+              ),
+              Text(
+                adminEmail ?? 'Loading...',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const adminViewProfile()),
+                  );
+                },
+                child: Container(
+                  width: 150,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 33, 82, 243),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Edit Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              adminName ?? 'Loading...',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            Text(
-              adminEmail ?? 'Loading...',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const adminViewProfile()),
-                );
-              },
-              child: Container(
-                width: 150, // Set the desired width here
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10), // Adjust the vertical padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 33, 82, 243),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              const SizedBox(height: 30),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChangePasswordPage()),
+                  );
+                },
+                child: Container(
+                  width: 300,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.lock, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'Change Password',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ChangePasswordPage()),
-                );
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.lock, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
-                        Text(
-                          'Change Password',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/faqPage');
+                },
+                child: Container(
+                  width: 300,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.question_mark, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'FAQ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/adminViewProfile');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.settings, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
-                        Text(
-                          'Settings',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/aboutUs');
+                },
+                child: Container(
+                  width: 300,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.pageview, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'About Us',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.logout, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
-                        Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/adminFeedback');
+                },
+                child: Container(
+                  width: 300,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.feedback, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'Feedback',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Container(
+                  width: 300,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.logout, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'Logout',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked, // Align FAB to center
+          FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(
-              context, "/adminHome"); // Add your FAB functionality here
+          Navigator.pushNamed(context, "/adminHome");
         },
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
         child: const Icon(
           Icons.home,
-          size: 30, // Change the size of the FAB icon
+          size: 30,
           color: Colors.white,
         ),
       ),
@@ -341,9 +411,9 @@ class _AdminProfileState extends State<AdminProfile> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
+              child: const Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
             ),
             label: 'Notifications',
@@ -362,8 +432,7 @@ class _AdminProfileState extends State<AdminProfile> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamed(
-              context, "/adminNoty"); // Navigate without back button
+          Navigator.pushNamed(context, "/adminNoty");
           break;
         case 1:
           Navigator.pushNamed(context, "/adminProfile");
