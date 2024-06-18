@@ -243,76 +243,87 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
       return timestampB.compareTo(timestampA);
     });
 
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Follow-Up Update',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
-          ),
-          const SizedBox(height: 10),
-          ...followUps.map((update) {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey.shade300),
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Follow-Up Update',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+            ),
+            SizedBox(height: 10),
+            ...followUps.map((update) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300),
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
-                      const SizedBox(width: 8),
-                      Text(
-                        update['userRole'] ?? 'Unknown Role', // Display the role
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                update['userRole'] ?? 'Unknown Role',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                (update['timestamp'] as Timestamp).toDate().toString(),
+                                style: TextStyle(color: const Color.fromARGB(255, 107, 107, 107), fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(update['remark']),
+                    SizedBox(height: 8),
+                    if (update['imageUrls'] != null && update['imageUrls'].length > 0)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: update['imageUrls'].map<Widget>((url) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              child: Image.network(
+                                url,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                      const Spacer(),
-                      Text(
-                        (update['timestamp'] as Timestamp).toDate().toString(),
-                        style: const TextStyle(color: Color.fromARGB(255, 107, 107, 107), fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(update['remark']),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      if (update['imageUrls'] != null && update['imageUrls'].length > 0)
-                        ...update['imageUrls'].map<Widget>((url) {
-                          return Expanded(
-                            child: Image.network(
-                              url,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          );
-                        }).toList(),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
       ),
     );
   }
