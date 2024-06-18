@@ -145,261 +145,265 @@ class _empProfileState extends State<empProfile> {
         centerTitle: true, // Center the title horizontally
         automaticallyImplyLeading: false, // Remove back icon
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundImage: profileImageUrl != null
-                      ? NetworkImage(profileImageUrl!)
-                      : const AssetImage('assets/profile_picture.png')
-                          as ImageProvider,
+      body: SingleChildScrollView( // Added SingleChildScrollView
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20), // Added top padding
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: profileImageUrl != null
+                        ? NetworkImage(profileImageUrl!)
+                        : const AssetImage('assets/profile_picture.png')
+                            as ImageProvider,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                        child: Icon(Icons.camera_alt, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                userName ?? 'Loading...',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Color.fromARGB(255, 33, 82, 243),
-                      child: Icon(Icons.camera_alt, color: Colors.white),
+              ),
+              Text(
+                userEmail ?? 'Loading...',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const employeeViewProfile()),
+                  );
+                },
+                child: Container(
+                  width: 150, // Set the desired width here
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10), // Adjust the vertical padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 33, 82, 243),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Edit Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              userName ?? 'Loading...',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            Text(
-              userEmail ?? 'Loading...',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const employeeViewProfile()),
-                );
-              },
-              child: Container(
-                width: 150, // Set the desired width here
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10), // Adjust the vertical padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 33, 82, 243),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              const SizedBox(height: 30), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChangePasswordPage()),
+                  );
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.lock, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'Change Password',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ChangePasswordPage()),
-                );
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.lock, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
-                        Text(
-                          'Change Password',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/faqPage');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.question_mark, color: Colors.white),
+                          SizedBox(width: 10), // Add some space between the icon and text
+                          Text(
+                            'FAQ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/faqPage');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.question_mark, color: Colors.white),
-                        SizedBox(width: 10), // Add some space between the icon and text
-                        Text(
-                          'FAQ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/aboutUs');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.pageview, color: Colors.white),
+                          SizedBox(width: 10), // Add some space between the icon and text
+                          Text(
+                            'About Us',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/aboutUs');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.pageview, color: Colors.white),
-                        SizedBox(width: 10), // Add some space between the icon and text
-                        Text(
-                          'About Us',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/empFeedback');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.feedback, color: Colors.white),
+                          SizedBox(width: 10), // Add some space between the icon and text
+                          Text(
+                            'Feedback',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/empSettings');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.feedback, color: Colors.white),
-                        SizedBox(width: 10), // Add some space between the icon and text
-                        Text(
-                          'Feedback',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.logout, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'Logout',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white), // Add arrow icon
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Add some space between the buttons
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Container(
-                width: 300, // Set the desired width here
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15, horizontal: 15), // Adjust the padding here
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.logout, color: Colors.white),
-                        SizedBox(
-                            width:
-                                10), // Add some space between the icon and text
-                        Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18, // Increase the text size
-                          ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Colors.white), // Add arrow icon
-                  ],
-                ),
-              ),
-            ),
-          ],
+              const SizedBox(height: 20), // Add some space between the buttons
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation:
