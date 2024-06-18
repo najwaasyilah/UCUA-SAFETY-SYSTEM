@@ -15,6 +15,8 @@ class adminListUAForm extends StatefulWidget {
 
 class _listUAFormState extends State<adminListUAForm> {
   String? currentUserStaffID;
+  String searchQuery = '';
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -106,6 +108,8 @@ class _listUAFormState extends State<adminListUAForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text("List of Unsafe Action Forms"),
+        foregroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 33, 82, 243),
       ),
       body: Container(
         color: Colors.grey.withOpacity(.35),
@@ -132,19 +136,37 @@ class _listUAFormState extends State<adminListUAForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'LIST OF UNSAFE ACTION REPORT',
+                        'Unsafe Action Report',
                         style: TextStyle(
                           fontSize: 23.0,
                           fontWeight: FontWeight.w900,
-                          color: Color.fromARGB(255, 199, 26, 230),
+                          color: const Color.fromARGB(255, 33, 82, 243),
                         ),
                       ),
                       SizedBox(height: 20),
+                      TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search by Form ID',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            searchQuery = value.trim().toUpperCase();
+                          });
+                        },
+                      ),
+                      SizedBox(height: 20),
                       StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('uaform')
+                        stream: (searchQuery.isEmpty)
+                          ? FirebaseFirestore.instance.collection('uaform').where('staffID', isEqualTo: currentUserStaffID).orderBy('date', descending: true).snapshots()
+                          : FirebaseFirestore.instance.collection('uaform')
                             .where('staffID', isEqualTo: currentUserStaffID)
-                            .orderBy('date', descending: true)
+                            .where('uaformid', isGreaterThanOrEqualTo: searchQuery)
+                            .where('uaformid', isLessThanOrEqualTo: '$searchQuery\uf8ff')
                             .snapshots(),
                         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasError) {
@@ -152,76 +174,107 @@ class _listUAFormState extends State<adminListUAForm> {
                           }
 
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return Center(child: CircularProgressIndicator());
+                          }
+
+                          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                            return Center(child: Text('No forms found', style: TextStyle(fontSize: 18, color: Colors.black54)));
                           }
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (DocumentSnapshot document in snapshot.data!.docs)
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${document['uaformid']}',
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'Date Created: ${document['date']}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(height: 5),
-                                      if ((document.data() as Map<String, dynamic>).containsKey('status'))
+                            children: snapshot.data!.docs.map((document) {
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 20),
+                                padding: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Form ID: ${document['uaformid']}',
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 33, 82, 243),),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Date Created: ${document['date']}',
+                                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                                    ),
+                                    SizedBox(height: 5),
+                                    if ((document.data() as Map<String, dynamic>).containsKey('status'))
                                       Row(
                                         children: [
                                           Container(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                             decoration: BoxDecoration(
-                                              color: getStatusColor(document['status']), 
+                                              color: getStatusColor(document['status']),
                                               borderRadius: BorderRadius.circular(5),
                                             ),
                                             child: Text(
-                                              'Status: ${document['status']}', 
+                                              'Status: ${document['status']}',
                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => adminViewUAForm(docId: document.id),
-                                                ),
-                                              );
-                                            },
-                                            child: Text('View'),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => adminViewUAForm(docId: document.id),
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.white, backgroundColor: Colors.blueAccent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                            ),
+                                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                           ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              deleteActionForm(document.id);
-                                            },
-                                            child: Text('Delete'),
+                                          child: Text(
+                                            'View',
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            deleteActionForm(document.id);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                            ),
+                                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                          ),
+                                          child: Text(
+                                            'Delete',
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                            ],
+                              );
+                            }).toList(),
                           );
                         },
                       ),
