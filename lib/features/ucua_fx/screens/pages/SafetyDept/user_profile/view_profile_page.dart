@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/profile.dart';
+// import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/feedback.dart';
+// import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/faq.dart';
 import 'package:badges/badges.dart' as badges;
 
 class SafeDeptProfile extends StatefulWidget {
@@ -16,10 +19,11 @@ class SafeDeptProfile extends StatefulWidget {
 }
 
 class _SafeDeptProfileState extends State<SafeDeptProfile> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
   String? userName;
   String? userEmail;
-  String? userProfileImageUrl;
+  String? profileImageUrl;
+  final ImagePicker _picker = ImagePicker();
 
   int _unreadNotifications = 0;
 
@@ -33,30 +37,22 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
   Future<void> _fetchUnreadNotificationsCount() async {
     try {
       int unreadCount = 0;
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        String staffID = userDoc['staffID'];
 
-      QuerySnapshot ucformSnapshot = await FirebaseFirestore.instance.collection('ucform').get();
-      for (QueryDocumentSnapshot ucformDoc in ucformSnapshot.docs) {
-        QuerySnapshot notificationSnapshot = await ucformDoc.reference
-            .collection('notifications')
-            .where('sdNotiStatus', isEqualTo: 'unread')
+        QuerySnapshot notificationsSnapshot = await FirebaseFirestore.instance.collection('notifications')
+            .where('deptNotiStatus', isEqualTo: 'unread')
+            .where('staffID', isEqualTo: staffID)
             .get();
 
-        unreadCount += notificationSnapshot.size;
+        unreadCount += notificationsSnapshot.size;
+
+        setState(() {
+          _unreadNotifications = unreadCount;
+        });
       }
-
-      QuerySnapshot uaformSnapshot = await FirebaseFirestore.instance.collection('uaform').get();
-      for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
-        QuerySnapshot notificationSnapshot = await uaformDoc.reference
-            .collection('notifications')
-            .where('sdNotiStatus', isEqualTo: 'unread')
-            .get();
-
-        unreadCount += notificationSnapshot.size;
-      }
-
-      setState(() {
-        _unreadNotifications = unreadCount;
-      });
     } catch (e) {
       print('Error fetching unread notifications count: $e');
     }
@@ -77,52 +73,48 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
         setState(() {
           userName = userData['firstName'] ?? 'No Name';
           userEmail = userData['email'] ?? 'No Email';
-          userProfileImageUrl = userData['profileImageUrl'];
+          profileImageUrl = userData['profileImageUrl'];
         });
       }
     }
   }
 
-  Future<void> _uploadProfileImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
-      User? user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        try {
+      try {
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          // Upload image to Firebase Storage
           String fileName = '${user.uid}.jpg';
           Reference storageRef = FirebaseStorage.instance
               .ref()
-              .child('profile_images')
-              .child(fileName);
-          UploadTask uploadTask = storageRef.putFile(imageFile);
-
-          TaskSnapshot storageSnapshot = await uploadTask;
-          String downloadUrl = await storageSnapshot.ref.getDownloadURL();
+              .child('profile_pictures/$fileName');
+          UploadTask uploadTask = storageRef.putFile(File(pickedFile.path));
+          TaskSnapshot snapshot = await uploadTask;
+          String downloadUrl = await snapshot.ref.getDownloadURL();
 
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
-              .update({
-            'profileImageUrl': downloadUrl,
-          });
+              .update({'profileImageUrl': downloadUrl});
 
           setState(() {
-            userProfileImageUrl = downloadUrl;
+            profileImageUrl = downloadUrl;
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile image updated successfully')),
-          );
-        } catch (e) {
-          print('Error uploading profile image: $e');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error uploading profile image')),
+            const SnackBar(
+                content: Text('Profile picture updated successfully')),
           );
         }
+      } catch (e) {
+        print('Error uploading profile picture: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Error uploading profile picture. Please try again later.')),
+        );
       }
     }
   }
@@ -133,204 +125,301 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
       appBar: AppBar(
         title: const Text(
           'User Profile',
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.center, // Center the text
         ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
+        centerTitle: true, // Center the title horizontally
+        automaticallyImplyLeading: false, // Remove back icon
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundImage: userProfileImageUrl != null
-                      ? NetworkImage(userProfileImageUrl!)
-                      : const AssetImage('assets/profile_picture.png')
-                          as ImageProvider,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: profileImageUrl != null
+                        ? NetworkImage(profileImageUrl!)
+                        : const AssetImage('assets/profile_picture.png')
+                            as ImageProvider,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                        child: Icon(Icons.camera_alt, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                userName ?? 'Loading...',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.camera_alt, color: Colors.white),
-                    onPressed: _uploadProfileImage,
+              ),
+              Text(
+                userEmail ?? 'Loading...',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SafeDeptViewProfile()),
+                  );
+                },
+                child: Container(
+                  width: 150, // Set the desired width here
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10), // Adjust the vertical padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 33, 82, 243),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Edit Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              userName ?? 'Loading...',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            Text(
-              userEmail ?? 'Loading...',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SafeDeptViewProfile()),
-                );
-              },
-              child: Container(
-                width: 150,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 33, 82, 243),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              const SizedBox(height: 30), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChangePasswordPage()),
+                  );
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.lock, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'Change Password',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ChangePasswordPage()),
-                );
-              },
-              child: Container(
-                width: 300,
-                alignment: Alignment.centerLeft,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.lock, color: Colors.white),
-                        SizedBox(width: 10),
-                        Text(
-                          'Change Password',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/faqPage');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.question_mark, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'FAQ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white),
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/safeDeptViewProfile');
-              },
-              child: Container(
-                width: 300,
-                alignment: Alignment.centerLeft,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.settings, color: Colors.white),
-                        SizedBox(width: 10),
-                        Text(
-                          'Settings',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/aboutUs');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.pageview, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'About Us',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white),
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Container(
-                width: 300,
-                alignment: Alignment.centerLeft,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 81, 76, 76),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.logout, color: Colors.white),
-                        SizedBox(width: 10),
-                        Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/safetyDeptFeedback');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.feedback, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'Feedback',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: Colors.white),
-                  ],
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20), // Add some space between the buttons
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Container(
+                  width: 300, // Set the desired width here
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15, horizontal: 15), // Adjust the padding here
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 81, 76, 76),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.logout, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10), // Add some space between the icon and text
+                          Text(
+                            'Logout',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18, // Increase the text size
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.white), // Add arrow icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20), // Add some space between the buttons
+            ],
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked, // Align FAB to center
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/safetyHome");
+          Navigator.pushNamed(
+              context, "/safetyHome"); // Add your FAB functionality here
         },
         backgroundColor: const Color.fromARGB(255, 33, 82, 243),
         child: const Icon(
           Icons.home,
-          size: 30,
+          size: 30, // Change the size of the FAB icon
           color: Colors.white,
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color.fromARGB(255, 33, 82, 243),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.grey, // Change the selected item color
+        unselectedItemColor: const Color.fromARGB(
+            255, 33, 82, 243), // Change the unselected item color
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: badges.Badge(
@@ -357,7 +446,8 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushNamed(context, "/safeDeptNoty");
+          Navigator.pushNamed(
+              context, "/safeDeptNoty"); // Navigate without back button
           break;
         case 1:
           Navigator.pushNamed(context, "/safeDeptProfile");
