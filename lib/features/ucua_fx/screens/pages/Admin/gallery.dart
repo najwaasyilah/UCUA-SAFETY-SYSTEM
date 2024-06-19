@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class safeDeptGalleryPage extends StatefulWidget {
-  const safeDeptGalleryPage({super.key});
+class adminGalleryPage extends StatefulWidget {
+  const adminGalleryPage({super.key});
 
   @override
-  State<safeDeptGalleryPage> createState() => _safeDeptGalleryPageState();
+  State<adminGalleryPage> createState() => _adminGalleryPageState();
 }
 
-class _safeDeptGalleryPageState extends State<safeDeptGalleryPage> {
+class _adminGalleryPageState extends State<adminGalleryPage> {
   List<String> imageUrls = [];
   bool isLoading = true;
 

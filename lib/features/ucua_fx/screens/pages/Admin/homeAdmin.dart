@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'action_form/listAction_form.dart';
 import 'condition_form/listCondition_form.dart';
@@ -515,7 +516,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     iconColor: const Color.fromARGB(255, 29, 112, 180),
                     label: 'Gallery',
                     text: '',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const adminGalleryPage()),
+                      );
+                    },
                     width: boxWidth,
                     height: 100,
                     iconSize: 35,

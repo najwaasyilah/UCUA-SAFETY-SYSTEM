@@ -7,6 +7,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/action_form/li
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/condition_form.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listAllUCForm.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form/listCondition_form.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
         '/adminListtAllUAForms': (context) => const adminListAllUAForm(),
         '/adminListtAllUForms': (context) => const adminListAllUCForm(),
         '/adminListReports': (context) => const adminListOfReports(),
+        '/adminGallery': (context) => const adminGalleryPage(),
         '/adminFeedback': (context) => const AdminFeedbackFormPage(),
         '/adminAboutUs': (context) => const adminAboutUsPage(),
         '/adminFaqPage' : (context) => const adminFAQPage(),
@@ -99,7 +101,7 @@ class MyApp extends StatelessWidget {
         '/sdListtAllUAForms': (context) => const safeDeptListAllUAForm(),
         '/sdListtAllUForms': (context) => const safeDeptListAllUCForm(),
         '/sdListReports': (context) => const safeDeptListOfReports(),
-        '/sdGallery': (context) => const galleryPage(),
+        '/sdGallery': (context) => const safeDeptGalleryPage(),
         '/safetyDeptFeedback': (context) => const safeDeptFeedbackFormPage(),
         '/safeDeptAboutUs': (context) => const safeDeptAboutUsPage(),
         '/safeDeptFaqPage' : (context) => const safeDeptFAQPage(),
