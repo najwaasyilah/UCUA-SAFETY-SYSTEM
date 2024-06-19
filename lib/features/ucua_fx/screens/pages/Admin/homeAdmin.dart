@@ -53,7 +53,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
       for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
         QuerySnapshot notificationSnapshot = await uaformDoc.reference
             .collection('notifications')
-            //.doc('notificationId')
             .where('adminNotiStatus', isEqualTo: 'unread')
             .get();
 
@@ -101,7 +100,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
       void processDocument(QueryDocumentSnapshot doc, String collectionName) {
         var data = doc.data() as Map<String, dynamic>?;
         if (data != null) {
-          //print('$collectionName document data: $data');  
           if (data.containsKey('status')) {
             switch (data['status']) {
               case 'Pending':
@@ -124,7 +122,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
         }
       }
 
-      // Count statuses in ucform collection
       for (var doc in ucformSnapshot.docs) {
         processDocument(doc, 'ucform');
       }
@@ -139,11 +136,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
         approvedCount = approved;
         rejectedCount = rejected;
       });
-
-      /*print('Total Forms: $totalForms');
-      print('Pending Count: $pendingCount');
-      print('Approved Count: $approvedCount');
-      print('Rejected Count: $rejectedCount');*/
     } catch (e) {
       print('Error fetching form statistics: $e');
     }
@@ -295,8 +287,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ),
         const SizedBox(height: 20),
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -310,67 +301,73 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description_rounded,
-              iconColor: const Color.fromARGB(
-                  255, 33, 82, 243), // Set the icon color for "Submitted"
-              label: 'Reported',
-              text: '$reportedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 1
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.pending_actions_rounded,
-              iconColor: Colors.orange, // Set the icon color for "Pending"
-              label: 'Pending',
-              text: '$pendingCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 2
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.check_circle_rounded,
-              iconColor: Colors.green, // Set the icon color for "Approved"
-              label: 'Approved',
-              text: '$approvedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 3
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.cancel,
-              iconColor: Colors.red, // Set the icon color for "Rejected"
-              label: 'Rejected',
-              text: '$rejectedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 4
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final boxWidth = (constraints.maxWidth - 80) / 4; // Adjusted box width to ensure no overflow
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.description_rounded,
+                    iconColor: const Color.fromARGB(255, 33, 82, 243),
+                    label: 'Reported',
+                    text: '$reportedCount',
+                    onTap: () {
+                      // Add navigation or functionality for Chart 1
+                    },
+                    width: boxWidth,
+                    height: 90, // Adjusted height to better fit the screen
+                    iconSize: 30, // Adjusted icon size
+                  ),
+                  const SizedBox(width: 20),
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.pending_actions_rounded,
+                    iconColor: Colors.orange,
+                    label: 'Pending',
+                    text: '$pendingCount',
+                    onTap: () {
+                      // Add navigation or functionality for Chart 2
+                    },
+                    width: boxWidth,
+                    height: 90, // Adjusted height to better fit the screen
+                    iconSize: 30, // Adjusted icon size
+                  ),
+                  const SizedBox(width: 20),
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.check_circle_rounded,
+                    iconColor: Colors.green,
+                    label: 'Approved',
+                    text: '$approvedCount',
+                    onTap: () {
+                      // Add navigation or functionality for Chart 3
+                    },
+                    width: boxWidth,
+                    height: 90, // Adjusted height to better fit the screen
+                    iconSize: 30, // Adjusted icon size
+                  ),
+                  const SizedBox(width: 20),
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.cancel,
+                    iconColor: Colors.red,
+                    label: 'Rejected',
+                    text: '$rejectedCount',
+                    onTap: () {
+                      // Add navigation or functionality for Chart 4
+                    },
+                    width: boxWidth,
+                    height: 90, // Adjusted height to better fit the screen
+                    iconSize: 30, // Adjusted icon size
+                  ),
+                ],
+              ),
+            );
+          },
         ),
         const SizedBox(height: 30),
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -384,42 +381,47 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
         ),
         const SizedBox(height: 10), // Adjusted height here
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description,
-              iconColor: const Color.fromARGB(
-                  255, 194, 63, 216), // Set the icon color for "Unsafe Action"
-              label: '',
-              text: 'Unsafe Action',
-              onTap: () {
-                Navigator.pushNamed(context, "/adminUAForm");
-              },
-              width: 150, // Increased width for better spacing
-              height: 150, // Increased height for better spacing
-              iconSize: 60, // Increased icon size
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63,
-                  216), // Set the icon color for "Unsafe Condition"
-              label: '',
-              text: 'Unsafe Condition',
-              onTap: () {
-                Navigator.pushNamed(context, "/adminUCForm");
-              },
-              width: 150, // Increased width for better spacing
-              height: 150, // Increased height for better spacing
-              iconSize: 60, // Increased icon size
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final boxWidth = (constraints.maxWidth - 80) / 2; // Adjusted box width to ensure no overflow
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.description,
+                    iconColor: const Color.fromARGB(255, 194, 63, 216),
+                    label: '',
+                    text: 'Unsafe Action',
+                    onTap: () {
+                      Navigator.pushNamed(context, "/adminUAForm");
+                    },
+                    width: boxWidth,
+                    height: 150, // Increased height for better spacing
+                    iconSize: 60, // Increased icon size
+                  ),
+                  const SizedBox(width: 20),
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.description,
+                    iconColor: const Color.fromARGB(255, 194, 63, 216),
+                    label: '',
+                    text: 'Unsafe Condition',
+                    onTap: () {
+                      Navigator.pushNamed(context, "/adminUCForm");
+                    },
+                    width: boxWidth,
+                    height: 150, // Increased height for better spacing
+                    iconSize: 60, // Increased icon size
+                  ),
+                ],
+              ),
+            );
+          },
         ),
         const SizedBox(height: 5),
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -433,31 +435,43 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        _buildRectangleRoundedBox(
-          "Unsafe Actions",
-          icon: Icons.list,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const adminListUAForm()),
-            );
-          },
-        ),
-        const SizedBox(height: 10), // Added spacing
-        _buildRectangleRoundedBox(
-          "Unsafe Conditions",
-          icon: Icons.list,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const adminListUCForm()),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final buttonWidth = constraints.maxWidth - 70; // Adjusted button width to ensure no overflow
+            return Column(
+              children: [
+                _buildRectangleRoundedBox(
+                  "Unsafe Actions",
+                  icon: Icons.list,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const adminListUAForm()),
+                    );
+                  },
+                  width: buttonWidth,
+                  height: 70, // Adjusted height to better fit the screen
+                ),
+                const SizedBox(height: 10), // Added spacing
+                _buildRectangleRoundedBox(
+                  "Unsafe Conditions",
+                  icon: Icons.list,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const adminListUCForm()),
+                    );
+                  },
+                  width: buttonWidth,
+                  height: 70, // Adjusted height to better fit the screen
+                ),
+              ],
             );
           },
         ),
         const SizedBox(height: 30), // Added spacing for the new text header
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -471,54 +485,62 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.people,
-              iconColor: const Color.fromARGB(
-                  255, 90, 86, 86), // Set the icon color for "Users"
-              label: 'Users',
-              text: '',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AdminUserManagementScreen()),
-                );
-              },
-              width: 80,
-              height: 100,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.photo_rounded,
-              iconColor: const Color.fromARGB(
-                  255, 29, 112, 180), // Set the icon color for "Gallery"
-              label: 'Gallery',
-              text: '',
-              onTap: () {},
-              width: 80,
-              height: 100,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.library_books,
-              iconColor: const Color.fromARGB(
-                  255, 22, 111, 22), // Set the icon color for "Reports"
-              label: 'Reports',
-              text: '',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const adminListOfReports()),
-                );
-              },
-              width: 80,
-              height: 100,
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final boxWidth = (constraints.maxWidth - 80) / 3; // Adjusted box width to ensure no overflow
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.people,
+                    iconColor: const Color.fromARGB(255, 90, 86, 86),
+                    label: 'Users',
+                    text: '',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdminUserManagementScreen()),
+                      );
+                    },
+                    width: boxWidth,
+                    height: 100,
+                    iconSize: 35,
+                  ),
+                  const SizedBox(width: 20),
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.photo_rounded,
+                    iconColor: const Color.fromARGB(255, 29, 112, 180),
+                    label: 'Gallery',
+                    text: '',
+                    onTap: () {},
+                    width: boxWidth,
+                    height: 100,
+                    iconSize: 35,
+                  ),
+                  const SizedBox(width: 20),
+                  _buildSquareRoundedBoxWithLabel(
+                    icon: Icons.library_books,
+                    iconColor: const Color.fromARGB(255, 22, 111, 22),
+                    label: 'Reports',
+                    text: '',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const adminListOfReports()),
+                      );
+                    },
+                    width: boxWidth,
+                    height: 100,
+                    iconSize: 35,
+                  ),
+                ],
+              ),
+            );
+          },
         ),
         const SizedBox(height: 40.0),
       ],
@@ -612,12 +634,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   Widget _buildRectangleRoundedBox(String text,
-      {IconData? icon, VoidCallback? onTap}) {
+      {IconData? icon, VoidCallback? onTap, double? width, double? height}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 370, // Increased width
-        height: 70, // Added height to increase size
+        width: width ?? 370, // Use passed width or default
+        height: height ?? 70, // Use passed height or default
         padding: const EdgeInsets.all(20), // Increased padding for a larger box
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 33, 82, 243),

@@ -17,7 +17,6 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
 
   void _addUser(Map<String, dynamic> user, String password) async {
     try {
-      // Create a new user without signing out the current admin
       await _auth
           .createUserWithEmailAndPassword(
         email: user['email'],
@@ -27,10 +26,10 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
         user['uid'] = userCredential.user!.uid;
         _firestore.collection('users').doc(userCredential.user!.uid).set(user);
         userCredential.user!.sendEmailVerification();
-        _auth.signOut(); // Sign out the newly created user
+        _auth.signOut();
         _auth.signInWithEmailAndPassword(
-          email: 'admin@example.com', // Use admin's credentials
-          password: 'adminpassword', // Use admin's credentials
+          email: 'admin@example.com',
+          password: 'adminpassword',
         );
       });
     } catch (e) {
@@ -138,8 +137,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
 
               return Card(
                 color: Colors.cyan,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: ListTile(
                   leading: CircleAvatar(
                     radius: 30,
@@ -177,15 +175,13 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit,
-                            color: Color.fromARGB(255, 146, 8, 144)),
+                        icon: Icon(Icons.edit, color: const Color.fromARGB(255, 146, 8, 144)),
                         onPressed: () {
                           _showUserForm(context, userId: doc.id, user: user);
                         },
                       ),
                       IconButton(
-                        icon: Icon(Icons.remove_circle,
-                            color: Colors.red.shade800),
+                        icon: Icon(Icons.remove_circle, color: Colors.red.shade800),
                         onPressed: () {
                           _deleteUser(doc.id);
                         },
