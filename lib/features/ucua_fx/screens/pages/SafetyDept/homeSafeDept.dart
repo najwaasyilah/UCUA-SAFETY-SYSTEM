@@ -53,7 +53,6 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       for (QueryDocumentSnapshot uaformDoc in uaformSnapshot.docs) {
         QuerySnapshot notificationSnapshot = await uaformDoc.reference
             .collection('notifications')
-            //.doc('notificationId')
             .where('sdNotiStatus', isEqualTo: 'unread')
             .get();
 
@@ -155,13 +154,11 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Padding(
-          padding:
-              EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
+        title: const Center(
           child: Text(
             "UCUA",
             style: TextStyle(
-              fontSize: 40,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
@@ -175,8 +172,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           children: [
             const SizedBox(height: 10),
             if (safeDeptName != null && staffID != null)
-              _buildSafeDeptCard(safeDeptName!, staffID!,
-                  profileImageUrl), // Inserting the Safety Department Card
+              _buildSafeDeptCard(safeDeptName!, staffID!, profileImageUrl),
             if (safeDeptName == null || staffID == null)
               const Center(child: CircularProgressIndicator()),
           ],
@@ -287,9 +283,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               CircleAvatar(
                 radius: 45,
                 backgroundImage: profileImageUrl != null
-                    ? NetworkImage(profileImageUrl)
-                    : const AssetImage('assets/profile_picture.png')
-                        as ImageProvider,
+                    ? NetworkImage(profileImageUrl!)
+                    : const AssetImage('assets/profile_picture.png') as ImageProvider,
               ),
             ],
           ),
@@ -311,62 +306,65 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description_rounded,
-              iconColor: const Color.fromARGB(
-                  255, 33, 82, 243), // Set the icon color for "Submitted"
-              label: 'Reported',
-              text: '$reportedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 1
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.pending_actions_rounded,
-              iconColor: Colors.orange, // Set the icon color for "Pending"
-              label: 'Pending',
-              text: '$pendingCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 2
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.check_circle_rounded,
-              iconColor: Colors.green, // Set the icon color for "Approved"
-              label: 'Approved',
-              text: '$approvedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 3
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.cancel,
-              iconColor: Colors.red, // Set the icon color for "Rejected"
-              label: 'Rejected',
-              text: '$rejectedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 4
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.description_rounded,
+                iconColor: const Color.fromARGB(
+                    255, 33, 82, 243), // Set the icon color for "Submitted"
+                label: 'Reported',
+                text: '$reportedCount',
+                onTap: () {
+                  // Add navigation or functionality for Chart 1
+                },
+                width: 80,
+                height: 100,
+                iconSize: 35,
+              ),
+              const SizedBox(width: 20),
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.pending_actions_rounded,
+                iconColor: Colors.orange, // Set the icon color for "Pending"
+                label: 'Pending',
+                text: '$pendingCount',
+                onTap: () {
+                  // Add navigation or functionality for Chart 2
+                },
+                width: 80,
+                height: 100,
+                iconSize: 35,
+              ),
+              const SizedBox(width: 20),
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.check_circle_rounded,
+                iconColor: Colors.green, // Set the icon color for "Approved"
+                label: 'Approved',
+                text: '$approvedCount',
+                onTap: () {
+                  // Add navigation or functionality for Chart 3
+                },
+                width: 80,
+                height: 100,
+                iconSize: 35,
+              ),
+              const SizedBox(width: 20),
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.cancel,
+                iconColor: Colors.red, // Set the icon color for "Rejected"
+                label: 'Rejected',
+                text: '$rejectedCount',
+                onTap: () {
+                  // Add navigation or functionality for Chart 4
+                },
+                width: 80,
+                height: 100,
+                iconSize: 35,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 30),
         const Padding(
@@ -385,37 +383,40 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           ),
         ),
         const SizedBox(height: 10), // Adjusted height here
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description,
-              iconColor: const Color.fromARGB(
-                  255, 194, 63, 216), // Set the icon color for "Unsafe Action"
-              label: '',
-              text: 'Unsafe Action',
-              onTap: () {
-                Navigator.pushNamed(context, "/sdUAForm");
-              },
-              width: 150, // Increased width for better spacing
-              height: 150, // Increased height for better spacing
-              iconSize: 60, // Increased icon size
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63,
-                  216), // Set the icon color for "Unsafe Condition"
-              label: '',
-              text: 'Unsafe Condition',
-              onTap: () {
-                Navigator.pushNamed(context, "/sdUCForm");
-              },
-              width: 150, // Increased width for better spacing
-              height: 150, // Increased height for better spacing
-              iconSize: 60, // Increased icon size
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.description,
+                iconColor: const Color.fromARGB(
+                    255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+                label: '',
+                text: 'Unsafe Action',
+                onTap: () {
+                  Navigator.pushNamed(context, "/sdUAForm");
+                },
+                width: 150, // Increased width for better spacing
+                height: 150, // Increased height for better spacing
+                iconSize: 60, // Increased icon size
+              ),
+              const SizedBox(width: 20),
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.description,
+                iconColor: const Color.fromARGB(255, 194, 63,
+                    216), // Set the icon color for "Unsafe Condition"
+                label: '',
+                text: 'Unsafe Condition',
+                onTap: () {
+                  Navigator.pushNamed(context, "/sdUCForm");
+                },
+                width: 150, // Increased width for better spacing
+                height: 150, // Increased height for better spacing
+                iconSize: 60, // Increased icon size
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 5),
         const Padding(
@@ -474,47 +475,50 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.photo_rounded,
-              iconColor: const Color.fromARGB(
-                  255, 29, 112, 180), // Set the icon color for "Gallery"
-              label: 'Gallery',
-              text: '',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const galleryPage(),
-                  ),
-                ); // Add navigation for "Gallery" here
-              },
-              width: 80,
-              height: 100,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.library_books,
-              iconColor: const Color.fromARGB(
-                  255, 22, 111, 22), // Set the icon color for "Reports"
-              label: 'Reports',
-              text: '',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const safeDeptListOfReports(), // Remove 'const' keyword here
-                  ),
-                );
-              },
-              width: 80,
-              height: 100,
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(width: 20),
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.photo_rounded,
+                iconColor: const Color.fromARGB(
+                    255, 29, 112, 180), // Set the icon color for "Gallery"
+                label: 'Gallery',
+                text: '',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const galleryPage(),
+                    ),
+                  ); // Add navigation for "Gallery" here
+                },
+                width: 80,
+                height: 100,
+              ),
+              const SizedBox(width: 20),
+              _buildSquareRoundedBoxWithLabel(
+                icon: Icons.library_books,
+                iconColor: const Color.fromARGB(
+                    255, 22, 111, 22), // Set the icon color for "Reports"
+                label: 'Reports',
+                text: '',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const safeDeptListOfReports(), // Remove 'const' keyword here
+                    ),
+                  );
+                },
+                width: 80,
+                height: 100,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 40.0),
       ],
@@ -557,8 +561,8 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
 
   Widget _buildSquareRoundedBox({
     required IconData icon,
-    required String text, // New text parameter
-    required Color iconColor, // Add iconColor parameter
+    required String text,
+    required Color iconColor, 
     VoidCallback? onTap,
     double width = 150,
     double height = 150,

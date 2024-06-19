@@ -493,41 +493,44 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
                       ),
                       const SizedBox(height: 8),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          GestureDetector(
-                            onTap: () => getImageGallery(0, _conditionImages),
-                            child: Container(
-                              width: 150, // Adjusted width here
-                              height: 150,
-                              margin: EdgeInsets.only(right: 8.0),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10),
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () => getImageGallery(0, _conditionImages),
+                              child: Container(
+                                height: 150,
+                                margin: EdgeInsets.only(right: 8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _conditionImages[0] != null
+                                    ? Image.file(_conditionImages[0]!, fit: BoxFit.cover)
+                                    : Center(
+                                        child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                      ),
                               ),
-                              child: _conditionImages[0] != null
-                                  ? Image.file(_conditionImages[0]!, fit: BoxFit.cover)
-                                  : Center(
-                                      child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
-                                    ),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => getImageGallery(1, _conditionImages),
-                            child: Container(
-                              width: 150, // Adjusted width here
-                              height: 150,
-                              margin: EdgeInsets.only(left: 8.0), 
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10),
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () => getImageGallery(1, _conditionImages),
+                              child: Container(
+                                height: 150,
+                                margin: EdgeInsets.only(left: 8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _conditionImages[1] != null
+                                    ? Image.file(_conditionImages[1]!, fit: BoxFit.cover)
+                                    : Center(
+                                        child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                      ),
                               ),
-                              child: _conditionImages[1] != null
-                                  ? Image.file(_conditionImages[1]!, fit: BoxFit.cover)
-                                  : Center(
-                                      child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
-                                    ),
                             ),
                           ),
                         ],
