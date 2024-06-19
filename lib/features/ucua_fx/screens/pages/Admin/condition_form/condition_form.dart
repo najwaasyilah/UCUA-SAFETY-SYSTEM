@@ -276,41 +276,44 @@ class _adminUCFormState extends State<adminUCForm> {
                       ),
                       const SizedBox(height: 4),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          GestureDetector(
-                            onTap: () => getImageGallery(0),
-                            child: Container(
-                              width: 150, // Adjusted width here
-                              height: 150,
-                              margin: EdgeInsets.only(right: 8.0), // Added margin here
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10),
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () => getImageGallery(0),
+                              child: Container(
+                                height: 150,
+                                margin: EdgeInsets.only(right: 8.0), // Added margin here
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _images.isNotEmpty && _images[0] != null // Modified condition here
+                                    ? Image.file(_images[0]!, fit: BoxFit.cover)
+                                    : Center(
+                                        child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                      ),
                               ),
-                              child: _images.isNotEmpty && _images[0] != null // Modified condition here
-                                ? Image.file(_images[0]!, fit: BoxFit.cover)
-                                : Center(
-                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
-                                  ),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => getImageGallery(1),
-                            child: Container(
-                              width: 150, // Adjusted width here
-                              height: 150,
-                              margin: EdgeInsets.only(left: 8.0), // Added margin here
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10),
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () => getImageGallery(1),
+                              child: Container(
+                                height: 150,
+                                margin: EdgeInsets.only(left: 8.0), // Added margin here
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _images.length > 1 && _images[1] != null // Modified condition here
+                                    ? Image.file(_images[1]!, fit: BoxFit.cover)
+                                    : Center(
+                                        child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
+                                      ),
                               ),
-                              child: _images.length > 1 && _images[1] != null // Modified condition here
-                                ? Image.file(_images[1]!, fit: BoxFit.cover)
-                                : Center(
-                                    child: Icon(Icons.add_a_photo, color: Colors.grey[800], size: 50),
-                                  ),
                             ),
                           ),
                         ],

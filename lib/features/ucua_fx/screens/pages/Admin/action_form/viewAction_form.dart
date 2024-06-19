@@ -500,55 +500,58 @@ class _adminViewUAFormState extends State<adminViewUAForm> {
                     const Text('Upload Action Taken Picture:', style: TextStyle(fontSize: 16.0)),
                     const SizedBox(height: 8),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        GestureDetector(
-                          onTap: () => getImageGallery(0, _actionImages),
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            margin: const EdgeInsets.only(right: 8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: _actionImages[0] != null
-                                ? Image.file(
-                                    _actionImages[0]!,
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Center(
-                                    child: Icon(
-                                      Icons.add_a_photo,
-                                      size: 40.0,
-                                      color: Colors.grey,
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () => getImageGallery(0, _actionImages),
+                            child: Container(
+                              height: 150,
+                              margin: EdgeInsets.only(right: 8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _actionImages[0] != null
+                                  ? Image.file(
+                                      _actionImages[0]!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Center(
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        size: 40.0,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () => getImageGallery(1, _actionImages),
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            margin: const EdgeInsets.only(right: 8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: _actionImages[1] != null
-                                ? Image.file(
-                                    _actionImages[1]!,
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Center(
-                                    child: Icon(
-                                      Icons.add_a_photo,
-                                      size: 40.0,
-                                      color: Colors.grey,
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () => getImageGallery(1, _actionImages),
+                            child: Container(
+                              height: 150,
+                              margin: EdgeInsets.only(left: 8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _actionImages[1] != null
+                                  ? Image.file(
+                                      _actionImages[1]!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Center(
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        size: 40.0,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
+                            ),
                           ),
                         ),
                       ],
