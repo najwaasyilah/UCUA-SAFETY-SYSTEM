@@ -101,7 +101,6 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
       void processDocument(QueryDocumentSnapshot doc, String collectionName) {
         var data = doc.data() as Map<String, dynamic>?;
         if (data != null) {
-          //print('$collectionName document data: $data');  
           if (data.containsKey('status')) {
             switch (data['status']) {
               case 'Pending':
@@ -139,11 +138,6 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         approvedCount = approved;
         rejectedCount = rejected;
       });
-
-      /*print('Total Forms: $totalForms');
-      print('Pending Count: $pendingCount');
-      print('Approved Count: $approvedCount');
-      print('Rejected Count: $rejectedCount');*/
     } catch (e) {
       print('Error fetching form statistics: $e');
     }
@@ -306,65 +300,66 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildSquareRoundedBoxWithLabel(
-                icon: Icons.description_rounded,
-                iconColor: const Color.fromARGB(
-                    255, 33, 82, 243), // Set the icon color for "Submitted"
-                label: 'Reported',
-                text: '$reportedCount',
-                onTap: () {
-                  // Add navigation or functionality for Chart 1
-                },
-                width: 80,
-                height: 100,
-                iconSize: 35,
-              ),
-              const SizedBox(width: 20),
-              _buildSquareRoundedBoxWithLabel(
-                icon: Icons.pending_actions_rounded,
-                iconColor: Colors.orange, // Set the icon color for "Pending"
-                label: 'Pending',
-                text: '$pendingCount',
-                onTap: () {
-                  // Add navigation or functionality for Chart 2
-                },
-                width: 80,
-                height: 100,
-                iconSize: 35,
-              ),
-              const SizedBox(width: 20),
-              _buildSquareRoundedBoxWithLabel(
-                icon: Icons.check_circle_rounded,
-                iconColor: Colors.green, // Set the icon color for "Approved"
-                label: 'Approved',
-                text: '$approvedCount',
-                onTap: () {
-                  // Add navigation or functionality for Chart 3
-                },
-                width: 80,
-                height: 100,
-                iconSize: 35,
-              ),
-              const SizedBox(width: 20),
-              _buildSquareRoundedBoxWithLabel(
-                icon: Icons.cancel,
-                iconColor: Colors.red, // Set the icon color for "Rejected"
-                label: 'Rejected',
-                text: '$rejectedCount',
-                onTap: () {
-                  // Add navigation or functionality for Chart 4
-                },
-                width: 80,
-                height: 100,
-                iconSize: 35,
-              ),
-            ],
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final boxWidth = (constraints.maxWidth - 80) / 4; // Adjusted box width to ensure no overflow
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.description_rounded,
+                  iconColor: const Color.fromARGB(255, 33, 82, 243),
+                  label: 'Reported',
+                  text: '$reportedCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 1
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.pending_actions_rounded,
+                  iconColor: Colors.orange,
+                  label: 'Pending',
+                  text: '$pendingCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 2
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.check_circle_rounded,
+                  iconColor: Colors.green,
+                  label: 'Approved',
+                  text: '$approvedCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 3
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.cancel,
+                  iconColor: Colors.red,
+                  label: 'Rejected',
+                  text: '$rejectedCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 4
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+              ],
+            );
+          },
         ),
         const SizedBox(height: 30),
         const Padding(
@@ -383,40 +378,40 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           ),
         ),
         const SizedBox(height: 10), // Adjusted height here
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildSquareRoundedBoxWithLabel(
-                icon: Icons.description,
-                iconColor: const Color.fromARGB(
-                    255, 194, 63, 216), // Set the icon color for "Unsafe Action"
-                label: '',
-                text: 'Unsafe Action',
-                onTap: () {
-                  Navigator.pushNamed(context, "/sdUAForm");
-                },
-                width: 150, // Increased width for better spacing
-                height: 150, // Increased height for better spacing
-                iconSize: 60, // Increased icon size
-              ),
-              const SizedBox(width: 20),
-              _buildSquareRoundedBoxWithLabel(
-                icon: Icons.description,
-                iconColor: const Color.fromARGB(255, 194, 63,
-                    216), // Set the icon color for "Unsafe Condition"
-                label: '',
-                text: 'Unsafe Condition',
-                onTap: () {
-                  Navigator.pushNamed(context, "/sdUCForm");
-                },
-                width: 150, // Increased width for better spacing
-                height: 150, // Increased height for better spacing
-                iconSize: 60, // Increased icon size
-              ),
-            ],
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final boxWidth = (constraints.maxWidth - 50) / 2; // Adjusted box width to ensure no overflow
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.description,
+                  iconColor: const Color.fromARGB(255, 194, 63, 216),
+                  label: '',
+                  text: 'Unsafe Action',
+                  onTap: () {
+                    Navigator.pushNamed(context, "/sdUAForm");
+                  },
+                  width: boxWidth,
+                  height: 140, // Adjusted height to better fit the screen
+                  iconSize: 55, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.description,
+                  iconColor: const Color.fromARGB(255, 194, 63, 216),
+                  label: '',
+                  text: 'Unsafe Condition',
+                  onTap: () {
+                    Navigator.pushNamed(context, "/sdUCForm");
+                  },
+                  width: boxWidth,
+                  height: 140, // Adjusted height to better fit the screen
+                  iconSize: 55, // Adjusted icon size
+                ),
+              ],
+            );
+          },
         ),
         const SizedBox(height: 5),
         const Padding(
@@ -435,37 +430,50 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        _buildRectangleRoundedBox(
-          "Unsafe Actions",
-          icon: Icons.list,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const safeDeptListUAForm()),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final buttonWidth = constraints.maxWidth - 40; // Adjusted button width to ensure no overflow
+            return Column(
+              children: [
+                _buildRectangleRoundedBox(
+                  "Unsafe Actions",
+                  icon: Icons.list,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const safeDeptListUAForm()),
+                    );
+                  },
+                  width: buttonWidth,
+                  height: 70, // Adjusted height to better fit the screen
+                ),
+                const SizedBox(height: 10), // Added spacing
+                _buildRectangleRoundedBox(
+                  "Unsafe Conditions",
+                  icon: Icons.list,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const safeDeptListUCForm()),
+                    );
+                  },
+                  width: buttonWidth,
+                  height: 70, // Adjusted height to better fit the screen
+                ),
+              ],
             );
           },
         ),
-        const SizedBox(height: 10), // Added spacing
-        _buildRectangleRoundedBox(
-          "Unsafe Conditions",
-          icon: Icons.list,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const safeDeptListUCForm()),
-            );
-          },
-        ),
-        const SizedBox(height: 30), // Added spacing for the new text header
+        const SizedBox(height: 30), 
         const Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+              horizontal: 35.0), 
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
-              "Tools",
+              "Tools Management",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -483,8 +491,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               const SizedBox(width: 20),
               _buildSquareRoundedBoxWithLabel(
                 icon: Icons.photo_rounded,
-                iconColor: const Color.fromARGB(
-                    255, 29, 112, 180), // Set the icon color for "Gallery"
+                iconColor: const Color.fromARGB(255, 29, 112, 180),
                 label: 'Gallery',
                 text: '',
                 onTap: () {
@@ -493,7 +500,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
                     MaterialPageRoute(
                       builder: (context) => const galleryPage(),
                     ),
-                  ); // Add navigation for "Gallery" here
+                  );
                 },
                 width: 80,
                 height: 100,
@@ -501,8 +508,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               const SizedBox(width: 20),
               _buildSquareRoundedBoxWithLabel(
                 icon: Icons.library_books,
-                iconColor: const Color.fromARGB(
-                    255, 22, 111, 22), // Set the icon color for "Reports"
+                iconColor: const Color.fromARGB(255, 22, 111, 22),
                 label: 'Reports',
                 text: '',
                 onTap: () {
@@ -510,7 +516,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          const safeDeptListOfReports(), // Remove 'const' keyword here
+                          const safeDeptListOfReports(),
                     ),
                   );
                 },
@@ -531,9 +537,9 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
     required String text, // New text parameter
     required Color iconColor, // Add iconColor parameter
     VoidCallback? onTap,
-    double width = 150,
-    double height = 150,
-    double iconSize = 40, // Default icon size
+    double width = 80,
+    double height = 100,
+    double iconSize = 35, // Default icon size
   }) {
     return Column(
       children: [
@@ -562,11 +568,11 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
   Widget _buildSquareRoundedBox({
     required IconData icon,
     required String text,
-    required Color iconColor, 
+    required Color iconColor,
     VoidCallback? onTap,
-    double width = 150,
-    double height = 150,
-    double iconSize = 40, // Default icon size
+    double width = 80,
+    double height = 100,
+    double iconSize = 35, // Default icon size
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -574,8 +580,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
         width: width,
         height: height,
         padding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 5), // Adjust padding to make space for text
+            vertical: 10, horizontal: 5), // Adjust padding to make space for text
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -596,12 +601,12 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               size: iconSize,
               color: iconColor,
             ),
-            const SizedBox(height: 5), 
+            const SizedBox(height: 5),
             Text(
               text,
-              textAlign: TextAlign.center, 
+              textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 14, 
+                fontSize: 14,
                 color: Colors.black,
               ),
             ),
@@ -612,13 +617,13 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
   }
 
   Widget _buildRectangleRoundedBox(String text,
-      {IconData? icon, VoidCallback? onTap}) {
+      {IconData? icon, VoidCallback? onTap, double? width, double? height}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 370,
-        height: 70, 
-        padding: const EdgeInsets.all(20), 
+        width: width ?? 370, // Use passed width or default
+        height: height ?? 70, // Use passed height or default
+        padding: const EdgeInsets.all(20), // Increased padding for a larger box
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 33, 82, 243),
           borderRadius: BorderRadius.circular(20),
