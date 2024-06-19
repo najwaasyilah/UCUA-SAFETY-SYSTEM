@@ -30,7 +30,6 @@ class _empHomePageState extends State<empHomePage> {
   void initState() {
     super.initState();
     _fetchEmpData();
-    //_fetchFormStatistics(staffID);
     _fetchUnreadNotificationsCount();
   }
 
@@ -157,12 +156,11 @@ class _empHomePageState extends State<empHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Padding(
-          padding:
-              EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
+          padding: EdgeInsets.only(left: 136.0), // Adjust the left padding as needed
           child: Text(
             "UCUA",
             style: TextStyle(
-              fontSize: 40,
+              fontSize: 30, // Reduced font size
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
@@ -176,8 +174,7 @@ class _empHomePageState extends State<empHomePage> {
           children: [
             const SizedBox(height: 10),
             if (employeeName != null && staffID != null)
-              _buildEmpCard(employeeName!, staffID!,
-                  profileImageUrl), // Inserting the Employee Card
+              _buildEmpCard(employeeName!, staffID!, profileImageUrl), // Inserting the Employee Card
             if (employeeName == null || staffID == null)
               const Center(child: CircularProgressIndicator()),
           ],
@@ -199,7 +196,7 @@ class _empHomePageState extends State<empHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor:  const Color.fromRGBO(158, 158, 158, 1),
+        selectedItemColor: const Color.fromRGBO(158, 158, 158, 1),
         unselectedItemColor: Colors.grey,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -297,13 +294,11 @@ class _empHomePageState extends State<empHomePage> {
         ),
         const SizedBox(height: 20),
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0
-          ), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
-              "Form statistics", // New text header
+              "Form statistics",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -313,67 +308,70 @@ class _empHomePageState extends State<empHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.description_rounded,
-              iconColor: const Color.fromARGB(
-                  255, 33, 82, 243), // Set the icon color for "Submitted"
-              label: 'Reported',
-              text: '$reportedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 1
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.pending_actions_rounded,
-              iconColor: Colors.orange, // Set the icon color for "Pending"
-              label: 'Pending',
-              text: '$pendingCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 2
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.check_circle_rounded,
-              iconColor: Colors.green, // Set the icon color for "Approved"
-              label: 'Approved',
-              text: '$approvedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 3
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-            const SizedBox(width: 20),
-            _buildSquareRoundedBoxWithLabel(
-              icon: Icons.cancel,
-              iconColor: Colors.red, // Set the icon color for "Rejected"
-              label: 'Rejected',
-              text: '$rejectedCount',
-              onTap: () {
-                // Add navigation or functionality for Chart 4
-              },
-              width: 80,
-              height: 100,
-              iconSize: 35,
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final boxWidth = (constraints.maxWidth - 80) / 4; // Adjusted box width to ensure no overflow
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.description_rounded,
+                  iconColor: const Color.fromARGB(255, 33, 82, 243),
+                  label: 'Reported',
+                  text: '$reportedCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 1
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.pending_actions_rounded,
+                  iconColor: Colors.orange,
+                  label: 'Pending',
+                  text: '$pendingCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 2
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.check_circle_rounded,
+                  iconColor: Colors.green,
+                  label: 'Approved',
+                  text: '$approvedCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 3
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+                const SizedBox(width: 20),
+                _buildSquareRoundedBoxWithLabel(
+                  icon: Icons.cancel,
+                  iconColor: Colors.red,
+                  label: 'Rejected',
+                  text: '$rejectedCount',
+                  onTap: () {
+                    // Add navigation or functionality for Chart 4
+                  },
+                  width: boxWidth,
+                  height: 90, // Adjusted height to better fit the screen
+                  iconSize: 30, // Adjusted icon size
+                ),
+              ],
+            );
+          },
         ),
         const SizedBox(height: 30),
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -392,37 +390,34 @@ class _empHomePageState extends State<empHomePage> {
           children: [
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: const Color.fromARGB(
-                  255, 194, 63, 216), // Set the icon color for "Unsafe Action"
+              iconColor: const Color.fromARGB(255, 194, 63, 216),
               label: '',
               text: 'Unsafe Action',
               onTap: () {
                 Navigator.pushNamed(context, "/empUAForm");
               },
-              width: 150, // Increased width for better spacing
-              height: 150, // Increased height for better spacing
-              iconSize: 60, // Increased icon size
+              width: 140, // Increased width for better spacing
+              height: 140, // Increased height for better spacing
+              iconSize: 55, // Increased icon size
             ),
             const SizedBox(width: 20),
             _buildSquareRoundedBoxWithLabel(
               icon: Icons.description,
-              iconColor: const Color.fromARGB(255, 194, 63,
-                  216), // Set the icon color for "Unsafe Condition"
+              iconColor: const Color.fromARGB(255, 194, 63, 216),
               label: '',
               text: 'Unsafe Condition',
               onTap: () {
                 Navigator.pushNamed(context, "/empUCForm");
               },
-              width: 150, // Increased width for better spacing
-              height: 150, // Increased height for better spacing
-              iconSize: 60, // Increased icon size
+              width: 140, // Increased width for better spacing
+              height: 140, // Increased height for better spacing
+              iconSize: 55, // Increased icon size
             ),
           ],
         ),
         const SizedBox(height: 5),
         const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 35.0), // Increased the left padding
+          padding: EdgeInsets.symmetric(horizontal: 35.0), // Increased the left padding
           child: Align(
             alignment: Alignment.centerLeft, // Align text to the left
             child: Text(
@@ -436,24 +431,37 @@ class _empHomePageState extends State<empHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        _buildRectangleRoundedBox(
-          "Unsafe Actions",
-          icon: Icons.list,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const empListUAForm()),
-            );
-          },
-        ),
-        const SizedBox(height: 10), // Added spacing
-        _buildRectangleRoundedBox(
-          "Unsafe Conditions",
-          icon: Icons.list,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const empListUCForm()),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final buttonWidth = (constraints.maxWidth - 70); // Adjusted button width to ensure no overflow
+            return Column(
+              children: [
+                _buildRectangleRoundedBox(
+                  "Unsafe Actions",
+                  icon: Icons.list,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const empListUAForm()),
+                    );
+                  },
+                  width: buttonWidth,
+                  height: 70, // Adjusted height to better fit the screen
+                ),
+                const SizedBox(height: 10), // Added spacing
+                _buildRectangleRoundedBox(
+                  "Unsafe Conditions",
+                  icon: Icons.list,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const empListUCForm()),
+                    );
+                  },
+                  width: buttonWidth,
+                  height: 70, // Adjusted height to better fit the screen
+                ),
+              ],
             );
           },
         ),
@@ -549,12 +557,12 @@ class _empHomePageState extends State<empHomePage> {
   }
 
   Widget _buildRectangleRoundedBox(String text,
-      {IconData? icon, VoidCallback? onTap}) {
+      {IconData? icon, VoidCallback? onTap, double? width, double? height}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 370, // Increased width
-        height: 70, // Added height to increase size
+        width: width ?? 370, // Use passed width or default
+        height: height ?? 70, // Use passed height or default
         padding: const EdgeInsets.all(20), // Increased padding for a larger box
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 33, 82, 243),
