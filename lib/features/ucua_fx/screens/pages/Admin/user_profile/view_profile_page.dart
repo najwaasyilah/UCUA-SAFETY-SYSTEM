@@ -281,7 +281,7 @@ class _AdminProfileState extends State<AdminProfile> {
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/aboutUs');
+                  Navigator.pushNamed(context, '/adminAboutUs');
                 },
                 child: Container(
                   width: 300,

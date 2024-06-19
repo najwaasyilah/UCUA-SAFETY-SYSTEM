@@ -296,7 +296,7 @@ class _empProfileState extends State<empProfile> {
               const SizedBox(height: 20), // Add some space between the buttons
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/aboutUs');
+                  Navigator.pushNamed(context, '/empAboutUs');
                 },
                 child: Container(
                   width: 300, // Set the desired width here

@@ -10,6 +10,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/condition_form
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/homeAdmin.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/listReports.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/notifications.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/aboutUs.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/feedback.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Admin/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/action_form/action_form.dart';
@@ -31,6 +32,7 @@ import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/condition
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/gallery.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/homeSafeDept.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/listReports.dart';
+import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/aboutUs.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/feedback.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/user_profile/view_profile_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/SafetyDept/notifications.dart';
@@ -83,6 +85,7 @@ class MyApp extends StatelessWidget {
         '/adminListtAllUForms': (context) => const adminListAllUCForm(),
         '/adminListReports': (context) => const adminListOfReports(),
         '/adminFeedback': (context) => const AdminFeedbackFormPage(),
+        '/adminAboutUs': (context) => const adminAboutUsPage(),
         
 
         //safetyDept
@@ -95,6 +98,7 @@ class MyApp extends StatelessWidget {
         '/sdListReports': (context) => const safeDeptListOfReports(),
         '/sdGallery': (context) => const galleryPage(),
         '/safetyDeptFeedback': (context) => const safeDeptFeedbackFormPage(),
+        '/safeDeptAboutUs': (context) => const safeDeptAboutUsPage(),
         
 
         //employee
@@ -103,15 +107,16 @@ class MyApp extends StatelessWidget {
         '/empUAForm': (context) => const empUAForm(),
         '/empUAFormList': (context) => const empListUAForm(),
         '/empFeedback': (context) => const empFeedbackFormPage(),
+        '/empAboutUs': (context) => const empAboutUsPage(),
 
         //View notification page
         '/empNoty': (context) => const empNotyPage(),
         '/adminNoty': (context) => const adminNotyPage(),
         '/safeDeptNoty': (context) => const SafeDeptNotyPage(),
         
+        
 
         //Profile
-        '/aboutUs': (context) => const AboutUsPage(),
         '/faqPage' : (context) => const FAQPage(),
       },
     );
