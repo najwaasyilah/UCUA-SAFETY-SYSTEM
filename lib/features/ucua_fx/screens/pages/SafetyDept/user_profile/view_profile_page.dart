@@ -246,7 +246,7 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
               const SizedBox(height: 20), // Add some space between the buttons
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/faqPage');
+                  Navigator.pushNamed(context, '/safeDeptFaqPage');
                 },
                 child: Container(
                   width: 300, // Set the desired width here
