@@ -40,6 +40,12 @@ flutter:
     - assets/ucua-logo2.png
     - assets/pfp.png
     - assets/manage.png
+    - assets/musab.jpg
+    - assets/aiman.jpeg
+    - assets/hafiy.jpeg
+    - assets/naufal.jpeg
+    - assets/najwa.jpeg
+
 
 flutter_launcher_icons:
   android: "launcher_icon"
