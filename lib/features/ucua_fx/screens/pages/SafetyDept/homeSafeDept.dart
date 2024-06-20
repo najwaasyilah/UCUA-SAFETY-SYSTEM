@@ -498,7 +498,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const galleryPage(),
+                      builder: (context) => const safeDeptGalleryPage(),
                     ),
                   );
                 },
