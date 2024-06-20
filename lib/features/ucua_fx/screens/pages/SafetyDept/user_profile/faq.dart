@@ -22,7 +22,7 @@ class FAQList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16.0),
-      children: const [
+      children: [
         FAQItem(
           question: 'How can I reset my password?',
           answer:
