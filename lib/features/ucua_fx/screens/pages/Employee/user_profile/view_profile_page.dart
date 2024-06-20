@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/change_password_page.dart';
 import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/profile.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/feedback.dart';
-import 'package:ucua_staging/features/ucua_fx/screens/pages/Employee/user_profile/faq.dart';
 import 'package:badges/badges.dart' as badges;
 
 class empProfile extends StatefulWidget {
@@ -431,10 +429,10 @@ class _empProfileState extends State<empProfile> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
+              child: const Icon(Icons.notifications),
             ),
             label: 'Notifications',
           ),

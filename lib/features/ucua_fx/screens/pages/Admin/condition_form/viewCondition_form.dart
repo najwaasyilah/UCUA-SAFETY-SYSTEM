@@ -331,7 +331,7 @@ class _adminViewUCFormState extends State<adminViewUCForm> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

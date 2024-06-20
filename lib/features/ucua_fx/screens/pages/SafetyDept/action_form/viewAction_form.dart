@@ -323,7 +323,7 @@ class _SafeDeptViewUAFormState extends State<safeDeptViewUAForm> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

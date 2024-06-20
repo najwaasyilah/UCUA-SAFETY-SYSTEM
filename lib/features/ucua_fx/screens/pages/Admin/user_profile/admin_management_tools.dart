@@ -175,7 +175,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit, color: const Color.fromARGB(255, 146, 8, 144)),
+                        icon: const Icon(Icons.edit, color: Color.fromARGB(255, 146, 8, 144)),
                         onPressed: () {
                           _showUserForm(context, userId: doc.id, user: user);
                         },

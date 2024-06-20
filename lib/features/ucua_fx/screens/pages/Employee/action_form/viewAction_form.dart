@@ -84,7 +84,7 @@ class _empViewUAFormState extends State<empViewUAForm> {
 
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -93,21 +93,21 @@ class _empViewUAFormState extends State<empViewUAForm> {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Follow-Up Update',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ...followUps.map((update) {
               return Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: Colors.grey.shade300),
@@ -119,35 +119,35 @@ class _empViewUAFormState extends State<empViewUAForm> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
-                        SizedBox(width: 8),
+                        const Icon(Icons.security, color: Color.fromARGB(255, 33, 82, 243)),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 update['userRole'] ?? 'Unknown Role',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 (update['timestamp'] as Timestamp).toDate().toString(),
-                                style: TextStyle(color: const Color.fromARGB(255, 107, 107, 107), fontSize: 12),
+                                style: const TextStyle(color: Color.fromARGB(255, 107, 107, 107), fontSize: 12),
                               ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(update['remark']),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     if (update['imageUrls'] != null && update['imageUrls'].length > 0)
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: update['imageUrls'].map<Widget>((url) {
                             return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              margin: const EdgeInsets.symmetric(horizontal: 5.0),
                               child: Image.network(
                                 url,
                                 height: 200,
@@ -160,7 +160,7 @@ class _empViewUAFormState extends State<empViewUAForm> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

@@ -163,7 +163,7 @@ class _empNotyPageState extends State<empNotyPage> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.separated(
               itemCount: _notifications.length,
               itemBuilder: (context, index) {
@@ -175,7 +175,7 @@ class _empNotyPageState extends State<empNotyPage> {
                 return ListTile(
                   title: Text(
                     notification['title']!,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,14 +184,14 @@ class _empNotyPageState extends State<empNotyPage> {
                         child: Text(notification['body']!),
                       ),
                       Flexible(
-                        child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
+                        child: Text(formattedTime, style: const TextStyle(color: Colors.grey)),
                       ),
                     ],
                   ),
                   trailing: notification['empNotiStatus'] == 'unread'
                       ? Transform.translate(
-                          offset: Offset(0, 12),
-                          child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                          offset: const Offset(0, 12),
+                          child: const Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
                         )
                       : null,
                   onTap: () async {
@@ -233,7 +233,7 @@ class _empNotyPageState extends State<empNotyPage> {
                 );
               },
               separatorBuilder: (context, index) {
-                return Divider();
+                return const Divider();
               },
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -258,10 +258,10 @@ class _empNotyPageState extends State<empNotyPage> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
+              child: const Icon(Icons.notifications),
             ),
             label: 'Notifications',
           ),

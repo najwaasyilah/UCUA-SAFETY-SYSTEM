@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class adminAboutUsPage extends StatelessWidget {
-  const adminAboutUsPage({Key? key}) : super(key: key);
+  const adminAboutUsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class adminAboutUsPage extends StatelessWidget {
                     children: [
                       Text(
                         'What is UCUA?',
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -49,7 +49,7 @@ class adminAboutUsPage extends StatelessWidget {
                     children: [
                       Text(
                         'Why is UCUA Important?',
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                       ),

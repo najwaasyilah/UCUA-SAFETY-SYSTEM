@@ -99,9 +99,9 @@ class _adminUCFormState extends State<adminUCForm> {
 
     await firestore.collection('ucform').doc(ucformid).collection('notifications').add(
         {
-        'message': '[${ucformid}] ${reporterName} has submitted a new UC Form',
+        'message': '[$ucformid] $reporterName has submitted a new UC Form',
         'timestamp': FieldValue.serverTimestamp(),
-        'department': '${reporterDesignation}',
+        'department': reporterDesignation,
         'formType': 'ucform',
         'formId': ucformid,
         'sdNotiStatus': 'unread',

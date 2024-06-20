@@ -8,7 +8,7 @@ import '../../../../../ucuaNotify.dart';
 import 'package:badges/badges.dart' as badges;
 
 class SafeDeptNotyPage extends StatefulWidget {
-  const SafeDeptNotyPage({Key? key}) : super(key: key);
+  const SafeDeptNotyPage({super.key});
 
   @override
   _SafeDeptNotyPageState createState() => _SafeDeptNotyPageState();
@@ -17,7 +17,7 @@ class SafeDeptNotyPage extends StatefulWidget {
 class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
   int _selectedIndex = 0;
   int _unreadNotifications = 0;
-  List<Map<String, dynamic>> _notifications = [];
+  final List<Map<String, dynamic>> _notifications = [];
   late NotificationService _notificationService;
   bool _isLoading = true;
 
@@ -137,7 +137,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.separated(
               itemCount: _notifications.length,
               itemBuilder: (context, index) {
@@ -149,7 +149,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
                 return ListTile(
                   title: Text(
                     notification['title']!,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -158,14 +158,14 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
                         child: Text(notification['body']!),
                       ),
                       Flexible(
-                        child: Text(formattedTime, style: TextStyle(color: Colors.grey)),
+                        child: Text(formattedTime, style: const TextStyle(color: Colors.grey)),
                       ),
                     ],
                   ),
                   trailing: notification['sdNotiStatus'] == 'unread'
                       ? Transform.translate(
-                          offset: Offset(0, 12), // Adjust this value to move the dot down
-                          child: Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
+                          offset: const Offset(0, 12), // Adjust this value to move the dot down
+                          child: const Icon(Icons.circle, color: Color.fromARGB(255, 33, 82, 243), size: 20),
                         )
                       : null,
                   onTap: () async {
@@ -211,7 +211,7 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
                 );
               },
               separatorBuilder: (context, index) {
-                return Divider(); // Adds a divider between each ListTile
+                return const Divider(); // Adds a divider between each ListTile
               },
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -236,10 +236,10 @@ class _SafeDeptNotyPageState extends State<SafeDeptNotyPage> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
+              child: const Icon(Icons.notifications),
             ),
             label: 'Notifications',
           ),

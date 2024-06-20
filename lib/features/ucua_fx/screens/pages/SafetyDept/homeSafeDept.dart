@@ -195,10 +195,10 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
+              child: const Icon(Icons.notifications),
             ),
             label: 'Notifications',
           ),
@@ -277,7 +277,7 @@ class _SafetyDeptHomePageState extends State<SafetyDeptHomePage> {
               CircleAvatar(
                 radius: 45,
                 backgroundImage: profileImageUrl != null
-                    ? NetworkImage(profileImageUrl!)
+                    ? NetworkImage(profileImageUrl)
                     : const AssetImage('assets/profile_picture.png') as ImageProvider,
               ),
             ],

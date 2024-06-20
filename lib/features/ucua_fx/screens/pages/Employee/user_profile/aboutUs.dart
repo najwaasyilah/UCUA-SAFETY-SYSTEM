@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class empAboutUsPage extends StatelessWidget {
-  const empAboutUsPage({Key? key}) : super(key: key);
+  const empAboutUsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class empAboutUsPage extends StatelessWidget {
                   children: [
                     Text(
                       'What is UCUA?',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -48,7 +48,7 @@ class empAboutUsPage extends StatelessWidget {
                   children: [
                     Text(
                       'Why is UCUA Important?',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),

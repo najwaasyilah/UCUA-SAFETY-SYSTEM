@@ -186,7 +186,7 @@ class _employeeViewProfileState extends State<employeeViewProfile> {
                     right: 0,
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundColor: Color.fromARGB(255, 33, 82, 243),
+                      backgroundColor: const Color.fromARGB(255, 33, 82, 243),
                       child: IconButton(
                         icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
                         onPressed: _pickImage,

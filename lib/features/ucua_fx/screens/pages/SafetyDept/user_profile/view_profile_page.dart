@@ -425,10 +425,10 @@ class _SafeDeptProfileState extends State<SafeDeptProfile> {
             icon: badges.Badge(
               badgeContent: Text(
                 '$_unreadNotifications',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
-              child: Icon(Icons.notifications),
               showBadge: _unreadNotifications > 0,
+              child: const Icon(Icons.notifications),
             ),
             label: 'Notifications',
           ),

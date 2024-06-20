@@ -330,7 +330,7 @@ class _safeDeptViewUCFormState extends State<safeDeptViewUCForm> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

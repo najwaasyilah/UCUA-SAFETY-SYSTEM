@@ -94,7 +94,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
       case 'rejected':
         return Colors.red;
       case 'pending':
-        return Color.fromARGB(255, 212, 192, 6);
+        return const Color.fromARGB(255, 212, 192, 6);
       default:
         return Colors.grey; 
     }
@@ -104,7 +104,7 @@ class _adminListAllUCFormState extends State<adminListAllUCForm> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text("List All Unsafe Condition Forms"),
+      title: const Text("List All Unsafe Condition Forms"),
       foregroundColor: Colors.white,
       backgroundColor: const Color.fromARGB(255, 33, 82, 243),
     ),
@@ -122,7 +122,7 @@ Widget build(BuildContext context) {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 5,
                   blurRadius: 7,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -132,15 +132,15 @@ Widget build(BuildContext context) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Unsafe Condition Reports',
                       style: TextStyle(
                         fontSize: 23.0,
                         fontWeight: FontWeight.w900,
-                        color: const Color.fromARGB(255, 33, 82, 243),
+                        color: Color.fromARGB(255, 33, 82, 243),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     TextField(
                       controller: searchController,
                       decoration: InputDecoration(
@@ -148,7 +148,7 @@ Widget build(BuildContext context) {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        prefixIcon: Icon(Icons.search),
+                        prefixIcon: const Icon(Icons.search),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -156,7 +156,7 @@ Widget build(BuildContext context) {
                         });
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     StreamBuilder(
                       stream: (searchQuery.isEmpty)
                         ? FirebaseFirestore.instance.collection('ucform').orderBy('date', descending: true).snapshots()
@@ -170,19 +170,19 @@ Widget build(BuildContext context) {
                         }
 
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
                         }
 
                         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return Center(child: Text('No forms found', style: TextStyle(fontSize: 18, color: Colors.black54)));
+                          return const Center(child: Text('No forms found', style: TextStyle(fontSize: 18, color: Colors.black54)));
                         }
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: snapshot.data!.docs.map((document) {
                             return Container(
-                              margin: EdgeInsets.only(bottom: 20),
-                              padding: EdgeInsets.all(15),
+                              margin: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -191,7 +191,7 @@ Widget build(BuildContext context) {
                                     color: Colors.grey.withOpacity(0.2),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   ),
                                 ],
                               ),
@@ -200,31 +200,31 @@ Widget build(BuildContext context) {
                                 children: [
                                   Text(
                                     'Form ID: ${document['ucformid']}',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 33, 82, 243)),
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 33, 82, 243)),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 5),
                                   Text(
                                     'Date Created: ${document['date']}',
-                                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                                    style: const TextStyle(fontSize: 16, color: Colors.black54),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 5),
                                   if ((document.data() as Map<String, dynamic>).containsKey('status'))
                                     Row(
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: getStatusColor(document['status']),
                                             borderRadius: BorderRadius.circular(5),
                                           ),
                                           child: Text(
                                             'Status: ${document['status']}',
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
@@ -242,9 +242,9 @@ Widget build(BuildContext context) {
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(10.0),
                                           ),
-                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                         ),
-                                        child: Text(
+                                        child: const Text(
                                           'View',
                                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                         ),
@@ -258,9 +258,9 @@ Widget build(BuildContext context) {
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(10.0),
                                           ),
-                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                         ),
-                                        child: Text(
+                                        child: const Text(
                                           'Delete',
                                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                         ),
