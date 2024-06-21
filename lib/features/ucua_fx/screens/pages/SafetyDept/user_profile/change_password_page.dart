@@ -1,7 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ucua_staging/global_common/toast.dart';
 
-class ChangePasswordPage extends StatelessWidget {
-  const ChangePasswordPage({super.key});
+class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({super.key, Key});
+
+  @override
+  _ChangePasswordPageState createState() => _ChangePasswordPageState();
+}
+
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController =
+      TextEditingController();
+
+  bool isChangingPassword = false;
+
+  @override
+  void dispose() {
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _changePassword() async {
+    setState(() {
+      isChangingPassword = true;
+    });
+
+    String currentPassword = _currentPasswordController.text;
+    String newPassword = _newPasswordController.text;
+    String confirmNewPassword = _confirmNewPasswordController.text;
+
+    if (newPassword != confirmNewPassword) {
+      showToast(message: "New passwords do not match");
+      setState(() {
+        isChangingPassword = false;
+      });
+      return;
+    }
+
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!, password: currentPassword);
+        await user.reauthenticateWithCredential(credential);
+        await user.updatePassword(newPassword);
+        showToast(message: "Password changed successfully");
+        Navigator.pushNamed(context, "/employeeProfile");
+      } else {
+        showToast(message: "User not logged in");
+      }
+    } catch (e) {
+      showToast(message: "Error changing password: $e");
+    }
+
+    setState(() {
+      isChangingPassword = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,30 +76,34 @@ class ChangePasswordPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              controller: _currentPasswordController,
               decoration: const InputDecoration(labelText: 'Current Password'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             TextFormField(
+              controller: _newPasswordController,
               decoration: const InputDecoration(labelText: 'New Password'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             TextFormField(
-              decoration: const InputDecoration(labelText: 'Confirm New Password'),
+              controller: _confirmNewPasswordController,
+              decoration:
+                  const InputDecoration(labelText: 'Confirm New Password'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implement change password logic
-                Navigator.pushNamed(context, "/safeDeptProfile");// Navigate back to View Profile page
-              },
-              style: ButtonStyle(
-                 foregroundColor: WidgetStateProperty.all<Color>(Colors.white), // Set text color to white
-                backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 33, 82, 243)), // Set button background color to blue
+              onPressed: isChangingPassword ? null : _changePassword,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(255, 33, 82, 243),
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: const Text('Change Password'),
+              child: Text(isChangingPassword
+                  ? 'Changing Password...'
+                  : 'Change Password'),
             ),
           ],
         ),
