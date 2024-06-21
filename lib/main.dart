@@ -114,7 +114,7 @@ class MyApp extends StatelessWidget {
         '/empUAFormList': (context) => const empListUAForm(),
         '/empFeedback': (context) => const empFeedbackFormPage(),
         '/empAboutUs': (context) => const empAboutUsPage(),
-        '/empFaqPage' : (context) => const empFAQPage(),
+        '/empFaqPage' : (context) => const EmpFAQPage(),
 
         //View notification page
         '/empNoty': (context) => const empNotyPage(),
